@@ -4,14 +4,12 @@ A card game that I work on sporadically.
 Can be played by a single person against AI opponent, or 2 players locally or over a connection (LAN easy, over the wider internet also pretty easy if you can setup port-forwarding).
 
 For the moment, I have not prioritized making it easy for you to setup and play. If you do want to play it, go through these steps:
-/*:
 1. Download pycharm: https://www.jetbrains.com/pycharm/
 2. Launch pycharm, open the Celestial project.
 3. Preferences > Project: Celestial > Project Interpreter
 4. Make sure that the interpreter is Python 3.7, and add the packages (bottom left '+' button) pyglet 1.5.5 and cocos2d 0.6.8
 5. If playing locally, go to *Run* then *Run clients + server*, build decks for both players, then in 1 window press *a* to autoplay.
 6. If playing remotely, change the internet > settings python-file. Run main.py on each player's machine, run server.py on whichever machine is serving.
-*/
 
 # Credit
 All icons come from https://game-icons.net/, under a CC BY 3.0 license: https://creativecommons.org/licenses/by/3.0/
