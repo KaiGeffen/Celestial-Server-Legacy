@@ -1,5 +1,5 @@
 from logic.Card import *
-from logic.Effects import *
+from logic.Effects import Status, Quality
 
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?")
 
@@ -198,7 +198,7 @@ class Pine(Card):
 pine = Pine(name="Pine", cost=4, points=2, text="4:2, Gentle, final: +2")
 class Bulb(Card):
     def play(self, player, game, index, bonus):
-        if game.status[player].count(Support.NOURISH) > 0:
+        if game.status[player].count(Status.NOURISH) > 0:
             bonus += 2
 
         return super().play(player, game, index, bonus)

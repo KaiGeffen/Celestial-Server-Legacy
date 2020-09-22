@@ -4,7 +4,7 @@ import random
 # from logic.ClientModel import ClientModel
 import CardCodec
 from logic.Catalog import hidden_card
-from logic.Effects import Aura, Quality, Support, Trauma
+from logic.Effects import Quality
 
 DRAW_PER_TURN = 2
 START_HAND = 3 - DRAW_PER_TURN
@@ -16,6 +16,7 @@ MANA_CAP = 10
 
 # Input signifying user wants to pass
 PASS = 10
+
 
 class ServerModel(pyglet.event.EventDispatcher):
     def __init__(self, deck1, deck2):
@@ -32,7 +33,7 @@ class ServerModel(pyglet.event.EventDispatcher):
         self.max_mana = [0, 0]
         self.mana = [0, 0]
 
-        # The statuses the player is under (Supports + Trauma)
+        # The statuses the player is under
         self.status = [[], []]
 
         self.stack = []
@@ -47,198 +48,6 @@ class ServerModel(pyglet.event.EventDispatcher):
 
         # The number of times an action has occcured, used for syncing with clients
         self.version_no = 0
-
-    """PHASES"""
-    # Begin the game
-    def start(self):
-        self.do_setup()
-
-        self.do_upkeep()
-        # while self.get_winner() == None:
-        #     self.do_upkeep()
-        #     self.do_play_phase()
-        #     self.do_takedown()
-
-    # Perform the setup phase
-    def do_setup(self):
-        for player in (0, 1):
-            self.draw(player, START_HAND)
-            self.max_mana = [START_MANA, START_MANA]
-
-    # Perform the upkeep phase
-    def do_upkeep(self):
-        self.vision = [False, False]
-
-        # Give priority to the player in the lead, or random if tied
-        if self.wins[0] > self.wins[1]:
-            self.priority = 0
-        elif self.wins[1] > self.wins[0]:
-            self.priority = 1
-        else:
-            self.priority = random.choice([0, 1])
-
-        # Each player draws, resets their mana, performs upkeep effects
-        for player in (0, 1):
-            self.draw(player, DRAW_PER_TURN)
-
-            self.max_mana[player] += MANA_GAIN_PER_TURN
-            if self.max_mana[player] > MANA_CAP:
-                self.max_mana[player] = MANA_CAP
-            self.mana[player] = self.max_mana[player]
-
-            self.do_upkeep_statuses(player)
-
-    # Perform the takedown phase
-    def do_takedown(self):
-
-        # Resolve the stack
-        points = [0, 0]
-        wins = [0, 0]
-        auras = []
-
-        # Reset to a new Recap for this round's takedown
-        self.recap.reset()
-
-        # Before the stack is resolved, leftmost cards in player's hands can spring
-        self.handle_springs()
-
-        # The starting position of this card on the stack
-        index = 0
-        while len(self.stack) > 0:
-            card, player = self.stack.pop(0)
-            recap_text = ''
-
-            # Put the spent card in players pile, unless it has Fleeting
-            if Quality.FLEETING not in card.qualities:
-                self.pile[player].append(card)
-
-            # Reset sets the points to 0 this round
-            if Quality.RESET in card.qualities:
-                points = [0, 0]
-                recap_text += 'Reset\n'
-
-            # Cleanse removes all statuses from each player
-            if Quality.CLEANSE in card.qualities:
-                self.status = [[], []]
-                recap_text += 'Cleanse\n'
-
-            """SUPPORTS"""
-            # card_points = card.play(index, self.stack, auras, self.status[player])
-            bonus = 0
-
-
-            # FORTRESS : Cancel any round win, if you do, -4
-            if Quality.FORTRESS in card.qualities and wins != [0, 0]:
-                wins = [0, 0]
-                bonus = -4
-
-            # NOURISH : Add 1 for each, remove all Nourish from list
-            bonus += self.status[player].count(Support.NOURISH)
-            self.status[player] = list(filter((Support.NOURISH).__ne__, self.status[player]))
-            # STARVE : Subtract 1 for each, remove all Starve from list
-            bonus -= self.status[player].count(Support.STARVE)
-            self.status[player] = list(filter((Support.STARVE).__ne__, self.status[player]))
-
-            # Add the points from this card to the owner's points this round
-            # Stack gets passed since it can influence how much a card is worth
-            card_points = card.get_points(bonus, self.stack, auras, index, player)
-            points[player] += card_points
-            if card_points > 0:
-                recap_text += f"+{card_points}"
-            else:
-                recap_text += f"{card_points}"
-
-            # SPIKE - None of the card's effects happen
-            if Aura.SPIKE in auras:
-                recap_text += f"\nSPIKED"
-                auras.remove(Aura.SPIKE)
-
-            else:
-                # Add all of the card's auras to this rounds auras
-                card_auras = card.get_auras(self.stack, player)
-                auras.extend(card_auras)
-                for s in card_auras:
-                    recap_text += f"\n{s.value}"
-
-                # Add all of the card's supports to the players status
-                self.status[player].extend(card.supports)
-                for s in card.supports:
-                    recap_text += f"\n{s.value}"
-
-                # Add all of the card's traumas to the opponent's status
-                self.status[(player + 1) % 2].extend(card.traumas)
-                for s in card.traumas:
-                    recap_text += f"\n{s.value}"
-
-                # CELERITY : Boost 1 for each card you play after this card
-                if Support.CELERITY in self.status[player]:
-                    self.status[player].append(Support.BOOST)
-
-                # GOALS : Add to round wins based on this cards Goal
-                [p1_success, p2_success] = card.get_goal_result(self.stack)
-                if p1_success:
-                    wins[0] += 1
-                if p2_success:
-                    wins[1] += 1
-
-            # Recap this played card
-            self.recap.add(card, player, recap_text)
-
-            index += 1
-
-        # Add to wins here
-        if(points[0] > points[1]):
-            wins[0] += 1
-        elif(points[0] < points[1]):
-            wins[1] += 1
-        else:
-            pass
-        # Adjust the scores to reflect the wins from this round
-        self.wins[0] += wins[0]
-        self.wins[1] += wins[1]
-
-        # Recap the results
-        self.recap.add_total(points, wins)
-
-    # The leftmost card in each player's hand, starting with priority player
-    # may have an effect
-    def handle_springs(self):
-        for player in (self.priority, (self.priority + 1) % 2):
-            hand = self.hand[player]
-            if len(hand) is not 0:
-                if hand[0].spring:
-                    self.stack.append((hand[0].spring, player))
-                    # Discard the card whose spring effect was just used
-                    self.discard(player, 1)
-
-
-
-
-
-    def do_upkeep_statuses(self, player):
-        for stat in self.status[player]:
-
-            # Flock : Add a bird to player's hand
-            if stat is Support.FLOCK:
-                self.create_card(player, birds)
-
-            # Boost : Gain 1 temporary mana
-            if stat is Support.BOOST:
-                self.mana[player] += 1
-
-            if stat is Trauma.LOSS:
-                self.discard(player)
-
-            if stat is Support.WONDER:
-                self.draw(player)
-
-            if stat is Support.RELEASE:
-                self.oust(player)
-
-        cleared_statuses = [Support.BOOST, Support.FLOCK, Support.CELERITY, Trauma.LOSS, Support.WONDER, Support.RELEASE]
-        def clear_temp_statuses(stat):
-            return stat not in cleared_statuses
-        self.status[player] = list(filter(clear_temp_statuses, self.status[player]))
 
     """GENERIC ACTIONS"""
     # Player draws X cards from their deck
@@ -268,10 +77,6 @@ class ServerModel(pyglet.event.EventDispatcher):
         while amt > 0 and len(self.hand[player]) > index:
             card = self.hand[player].pop(index)
             self.pile[player].append(card)
-
-
-            if Quality.FUEL in card.qualities:
-                self.status[player].append(Support.BOOST)
 
             amt -= 1
 
@@ -323,10 +128,6 @@ class ServerModel(pyglet.event.EventDispatcher):
         while len(self.hand[player]) > 0:
             for i in range(len(self.hand[player])):
                 if self.hand[player][i].cost is cost:
-                    # FUEL : If card is ousted, add 1 mana
-                    if Quality.FUEL in self.hand[player][i].qualities:
-                        self.status[player].append(Support.BOOST)
-
                     card = self.hand[player][i]
                     del self.hand[player][i]
                     return card
@@ -428,7 +229,7 @@ class ServerModel(pyglet.event.EventDispatcher):
         def hide_opponents_cards(live_card):
             card, owner = live_card
             if owner != player and Quality.VISIBLE not in card.qualities:
-                return (hidden_card, owner)
+                return hidden_card, owner
             else:
                 return live_card
 

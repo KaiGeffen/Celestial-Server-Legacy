@@ -3,9 +3,8 @@ import random
 from logic.ServerModel import ServerModel
 
 from logic import Catalog
-from logic.Effects import Aura, Quality, Support, Trauma
+from logic.Effects import Quality, Status
 
-#TODO Dry
 
 DRAW_PER_TURN = 2
 START_HAND = 3 - DRAW_PER_TURN
@@ -117,7 +116,6 @@ class ServerController():
         # Resolve the stack
         self.model.score = [0, 0]
         wins = [0, 0]
-        auras = []
 
         # Reset to a new Recap for this round's takedown
         self.model.recap.reset()
@@ -138,37 +136,6 @@ class ServerController():
             # Put the spent card in players pile, unless it has Fleeting
             if Quality.FLEETING not in card.qualities:
                 self.model.pile[player].append(card)
-
-                # TODO
-                # # Add all of the card's auras to this rounds auras
-                # card_auras = card.get_auras(self.stack, player)
-                # auras.extend(card_auras)
-                # for s in card_auras:
-                #     recap_text += f"\n{s.value}"
-            #
-            #     # Add all of the card's supports to the players status
-            #     self.status[player].extend(card.supports)
-            #     for s in card.supports:
-            #         recap_text += f"\n{s.value}"
-            #
-            #     # Add all of the card's traumas to the opponent's status
-            #     self.status[(player + 1) % 2].extend(card.traumas)
-            #     for s in card.traumas:
-            #         recap_text += f"\n{s.value}"
-            #
-            #     # CELERITY : Boost 1 for each card you play after this card
-            #     if Support.CELERITY in self.status[player]:
-            #         self.status[player].append(Support.BOOST)
-            #
-            #     # GOALS : Add to round wins based on this cards Goal
-            #     [p1_success, p2_success] = card.get_goal_result(self.stack)
-            #     if p1_success:
-            #         wins[0] += 1
-            #     if p2_success:
-            #         wins[1] += 1
-            #
-            # # Recap this played card
-            # self.recap.add(card, player, recap_text)
 
             index += 1
 
@@ -197,29 +164,16 @@ class ServerController():
         for stat in self.model.status[player]:
 
             # Flock : Add a bird to player's hand
-            if stat is Support.FLOCK:
+            if stat is Status.FLOCK:
                 self.model.create_card(player, Catalog.dove)
 
             # Boost : Gain 1 temporary mana
-            if stat is Support.BOOST:
+            if stat is Status.BOOST:
                 self.model.mana[player] += 1
 
-            if stat is Trauma.LOSS:
-                self.model.discard(player)
-
-            if stat is Support.WONDER:
-                self.model.draw(player)
-
-            if stat is Support.RELEASE:
-                self.model.oust(player)
-
-        cleared_statuses = [Support.BOOST,
-                            Support.FLOCK,
-                            Support.CELERITY,
-                            Trauma.LOSS,
-                            Support.WONDER,
-                            Support.RELEASE,
-                            Support.GENTLE]
+        cleared_statuses = [Status.BOOST,
+                            Status.FLOCK,
+                            Status.GENTLE]
 
         def clear_temp_statuses(stat):
             return stat not in cleared_statuses
@@ -240,10 +194,10 @@ class ServerController():
     def do_gentle(self):
         score_dif = self.model.score[0] - self.model.score[1]
 
-        if score_dif > 0 and Support.GENTLE in self.model.status[0]:
-            self.model.status[0].extend((score_dif - 1) * [Support.NOURISH])
-        elif score_dif < 0 and Support.GENTLE in self.model.status[1]:
-            self.model.status[1].extend((abs(score_dif) - 1) * [Support.NOURISH])
+        if score_dif > 0 and Status.GENTLE in self.model.status[0]:
+            self.model.status[0].extend((score_dif - 1) * [Status.NOURISH])
+        elif score_dif < 0 and Status.GENTLE in self.model.status[1]:
+            self.model.status[1].extend((abs(score_dif) - 1) * [Status.NOURISH])
 
     """UTILITY CHECKS"""
     # Check if the given player can play the given card

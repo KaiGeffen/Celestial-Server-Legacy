@@ -1,16 +1,12 @@
-from logic.Effects import *
+from logic.Effects import Status, Quality
 import logic.Catalog
 
 class Card:
-    def __init__(self, name, cost=0, points=0, qualities=[], auras=[], supports=[], traumas=[], goals=[], text='', spring=None, dynamic_text=''):
+    def __init__(self, name, cost=0, points=0, qualities=[], text='', spring=None, dynamic_text=''):
         self.name = name
         self.cost = cost
         self.points = points
         self.qualities = qualities
-        self.auras = auras
-        self.supports = supports
-        self.traumas = traumas
-        self.goals = goals
         self.text = text
         self.spring = spring
         self.dynamic_text = dynamic_text
@@ -20,10 +16,10 @@ class Card:
     def play(self, player, game, index, bonus):
         result = self.points + bonus
 
-        result += game.status[player].count(Support.NOURISH)
-        game.status[player] = list(filter((Support.NOURISH).__ne__, game.status[player]))
-        result -= game.status[player].count(Support.STARVE)
-        game.status[player] = list(filter((Support.STARVE).__ne__, game.status[player]))
+        result += game.status[player].count(Status.NOURISH)
+        game.status[player] = list(filter(Status.NOURISH.__ne__, game.status[player]))
+        result -= game.status[player].count(Status.STARVE)
+        game.status[player] = list(filter(Status.STARVE.__ne__, game.status[player]))
 
         game.score[player] += result
 
@@ -61,7 +57,7 @@ class Card:
             recap += f' {amt}'
 
         for _ in range(amt):
-            game.status[player].append(Support.BOOST)
+            game.status[player].append(Status.BOOST)
 
         return recap
 
@@ -72,7 +68,7 @@ class Card:
             recap += f' {amt}'
 
         for _ in range(amt):
-            game.status[player].append(Support.NOURISH)
+            game.status[player].append(Status.NOURISH)
 
         return recap
 
@@ -83,7 +79,7 @@ class Card:
             recap += f' -{amt}'
 
         for _ in range(amt):
-            game.status[player].append(Support.STARVE)
+            game.status[player].append(Status.STARVE)
 
         return recap
 
@@ -151,7 +147,7 @@ class Card:
             recap += f' {amt}'
 
         for _ in range(amt):
-            game.status[player].append(Support.FLOCK)
+            game.status[player].append(Status.FLOCK)
 
         return recap
 
@@ -159,7 +155,7 @@ class Card:
     def gentle(self, game, player):
         recap = '\nGentle'
 
-        game.status[player].append(Support.GENTLE)
+        game.status[player].append(Status.GENTLE)
 
         return recap
 
@@ -187,83 +183,6 @@ class Card:
             if owner == player:
                 return False
         return True
-
-    def get_points(self, bonus, stack, auras, index, player):
-        result = self.points + bonus
-
-        if Quality.LAUNCH in self.qualities:
-            if index == 0:
-                result += 2
-
-        if Quality.FINALE in self.qualities:
-            if len(stack) == 0:
-                result += 2
-
-        if Quality.TRIBUTE in self.qualities:
-            result += index
-
-        if Quality.SMASH in self.qualities:
-            if len(stack) > 0:
-                next_card_on_stack = stack[0][0]
-                if next_card_on_stack.cost >= 2:
-                    result += 2
-
-        # PLUMMET
-        result -= auras.count(Aura.PLUMMET)
-
-        # Spike reduces points to 0 after everything
-        if Aura.SPIKE in auras:
-            result = 0
-
-        return result
-        # return max(0, result)
-
-    def get_auras(self, stack, player):
-        return self.auras
-
-    # Return 2 bools for if each player met the goal and should be awarded a heart
-    # If self isn't a goal card, return False for both
-    def get_goal_result(self, stack):
-
-        # Pointless Machines : Player who plays the most cards more than 3
-        if Goal.POINTLESS_MACHINES in self.goals:
-
-            MINIMUM = 3
-            card_count = [0, 0]
-            for (card, owner) in stack:
-                if owner == 0:
-                    card_count[0] += 1
-                else:
-                    card_count[1] += 1
-
-            if card_count[0] >= MINIMUM and card_count[0] > card_count[1]:
-                return [True, False]
-            elif card_count[1] >= MINIMUM and card_count[1] > card_count[0]:
-                return [False, True]
-            elif card_count[0] >= MINIMUM and card_count[0] == card_count[1]:
-                return [True, True]
-            else:
-                return [False, False]
-
-        # Resurrections : Player who played highest cost card, costing at least 5
-        if Goal.RESURRECTIONS in self.goals:
-            MINIMUM = 5
-            high_score = [0, 0]
-            for (card, owner) in stack:
-                # TODO Current implementation means that any 5 ties with Mirror (Even if it would become higher)
-                high_score[owner] = max(card.cost, high_score[owner])
-
-            if high_score[0] >= MINIMUM and high_score[0] > high_score[1]:
-                return [True, False]
-            elif high_score[1] >= MINIMUM and high_score[1] > high_score[0]:
-                return [False, True]
-            elif high_score[0] >= MINIMUM and high_score[0] == high_score[1]:
-                return [True, True]
-            else:
-                return [False, False]
-
-        # Self is not a goal
-        return [False, False]
 
 
 class FireCard(Card):
@@ -300,6 +219,6 @@ class FlockCard(Card):
             recap += f' x{self.amt}'
 
         for _ in range(self.amt):
-            game.status[player].append(Support.FLOCK)
+            game.status[player].append(Status.FLOCK)
 
         return super().play(player, game, index, bonus) + recap

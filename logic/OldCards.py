@@ -90,8 +90,8 @@ ouroboros = Card(name="Ouroboros", cost=2, points=2, text="2 for 2, spring: oust
 serpent_spring = Card(name="Serpent", qualities=[Quality.FLEETING], traumas=[Trauma.LOSS], text="3 for 3, spring: opponent discards 1")
 serpent = Card(name="Serpent", cost=3, points=3, text="3 for 3, spring: opponent discards 1", spring=serpent_spring)
 
-temptation_spring = Card(name="Temptation", qualities=[Quality.FLEETING, Quality.CLEANSE], text="3 for 4, spring or play: remove all statuses from both players")
-temptation = Card(name="Temptation", cost=3, points=4, qualities=[Quality.CLEANSE], text="3 for 4, spring or play: remove all statuses from both players", spring=temptation_spring)
+temptation_spring = Card(name="Temptation", qualities=[Quality.FLEETING, Quality.gone], text="3 for 4, spring or play: remove all statuses from both players")
+temptation = Card(name="Temptation", cost=3, points=4, qualities=[Quality.gone], text="3 for 4, spring or play: remove all statuses from both players", spring=temptation_spring)
 
 sand_snake_spring = Card(name="Sand Snake", qualities=[Quality.FLEETING], supports=[Support.WONDER], text="5 for 5, spring: draw 1")
 sand_snake = Card(name="Sand Snake", cost=5, points=5, text="5 for 5, spring: draw 1", spring=sand_snake_spring)
