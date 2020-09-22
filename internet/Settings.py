@@ -7,7 +7,7 @@ HOST = "127.0.0.1"
 LOCAL = "127.0.0.1"
 
 # Time client waits between sending requests for changed state
-CLIENT_WAIT = 0.01
+CLIENT_WAIT = 0.1
 
 # Messages
 GET_STATE = 'Get'
