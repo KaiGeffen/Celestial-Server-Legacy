@@ -48,15 +48,27 @@ class GameController(Layer):
     # On response from network, set client's model to response, update view, and act if autoplay is enabled
     def start_network_thread(self):
         while True:
-            response = self.net.on_tic(self.model, self.queued_act)
+            new_state = self.net.get_state(self.model)
 
-            if response is not None:
-                self.model = response
+            if new_state:
+                self.model = new_state
                 self.redraw_queued = True
+
+                # Since the state in which we decided on the action wasn't current, forget our choice
                 self.queued_act = None
 
-                if self.autoplay:
+                # State changed and we now have priority, queue up a play
+                if self.autoplay and new_state.priority == 0:
                     self.on_choice(AI.get_action(self.model))
+
+            elif self.queued_act is not None:
+                valid = self.net.send_action(self.queued_act)
+
+                if not valid:
+                    print("Invalid action")
+                    self.queued_act = None
+                else:
+                    self.queued_act = None
 
             time.sleep(internet.Settings.CLIENT_WAIT)
 

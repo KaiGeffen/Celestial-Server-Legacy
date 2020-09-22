@@ -74,8 +74,10 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
                     valid = game.on_player_input(player, action)
 
                     # TODO care about if valid
-                    self.wfile.write(INVALID_CHOICE.encode())
-
+                    if valid:
+                        self.wfile.write(VALID_CHOICE.encode())
+                    else:
+                        self.wfile.write(INVALID_CHOICE.encode())
                 else:
                     self.wfile.write(INVALID_CHOICE.encode())
         except ConnectionResetError as e:

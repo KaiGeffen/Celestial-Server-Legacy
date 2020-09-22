@@ -27,16 +27,6 @@ class Network:
         # One would send actions
         # The other would listen for state
 
-    def on_tic(self, model, action):
-        response = self.get_state(model)
-
-        if response is None:
-            self.send_action(action)
-            return None
-        else:
-            # Our version of state is outdated, don't take the action, do return the stated we got back
-            return response
-
     # Ask the server for state
     # Include the version num of the state we have
     # So that if nothing has changed, we don't update
@@ -58,7 +48,7 @@ class Network:
             encoded_state = response.split(b':', 1)[1]
             return ClientModel(json.loads(encoded_state))
 
-    # Send the server an action that the user wishes to take
+    # Send the server an action that the user wishes to take, return true if action was valid
     def send_action(self, action):
         if action is not None:
             msg = f"{DO_ACTION}:{action}\n"
@@ -67,9 +57,12 @@ class Network:
                 self.conn.send(msg.encode())
                 response = self.conn.recv(BUFSIZE).decode()
 
-                # TODO care about returned responses
-                return response
-
+                if response == VALID_CHOICE:
+                    return True
+                elif response == INVALID_CHOICE:
+                    return False
+                else:
+                    raise Exception(f"Servers response to an action wasn't valid or invalid but instead {response}")
             except:
                 print("problem")
 

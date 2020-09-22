@@ -17,7 +17,9 @@ INIT_MSG = 'Init'
 # Responses
 NO_UPDATE = 'No update'
 UPDATE = 'Update'
+VALID_CHOICE = 'Valid choice'
 INVALID_CHOICE = 'Invalid choice'
+
 
 # Log into router, port forwarding, port 5555 to my local machine
 # Tell my router goes to the ip I had been using
