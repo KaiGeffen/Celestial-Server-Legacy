@@ -396,6 +396,7 @@ class Gnaw(Card):
         for (card, owner) in game.stack:
             if card is broken_bone:
                 bonus += 3
+                break
 
         return super().play(player, game, index, bonus)
 gnaw = Gnaw(name="Gnaw", cost=3, points=3, text="3:3, +3 if there is a broken bone on stack")
