@@ -4,6 +4,7 @@ from cocos.actions import *
 from cocos.sprite import Sprite
 
 from logic.Catalog import hidden_card
+from logic.Effects import Status
 
 from view.Settings import *
 from view.Shared import BaseView
@@ -76,14 +77,14 @@ class StatusLayer(Layer):
         w, h = director.get_window_size()
 
         self.status1 = Label('Status:', font_size=TEXT_SIZE,
-                           color=(255, 255, 255, 255),
+                           color=STATUS_COLOR,
                            anchor_x='right',
                            anchor_y='bottom')
         self.status1.position = (w, (TEXT_SIZE + TEXT_BUFFER) * 2)
         self.add(self.status1)
 
         self.status2 = Label('Status:', font_size=TEXT_SIZE,
-                           color=(255, 255, 255, 255),
+                           color=STATUS_COLOR,
                            anchor_x='right',
                            anchor_y='top')
         self.status2.position = (w, h - (TEXT_SIZE + TEXT_BUFFER) * 2)
@@ -95,8 +96,18 @@ class StatusLayer(Layer):
         super().draw()
 
     def display(self, model):
-        self.status1.element.text = f'Status: {model.status}'
-        self.status2.element.text = f'Status: {model.opp_status}'
+        def get_status_text(statuses):
+            result = ''
+
+            for status_type in Status:
+                count = statuses.count(status_type)
+                if count:
+                    result += f'{status_type.value} {count}\n'
+
+            return result
+
+        self.status1.element.text = get_status_text(model.status)
+        self.status2.element.text = get_status_text(model.opp_status)
 
 
 class PriorityLayer(Layer):
