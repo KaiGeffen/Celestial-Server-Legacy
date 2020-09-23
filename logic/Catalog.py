@@ -137,6 +137,10 @@ class BoneKnife(Card):
         opp = (player + 1) % 2
         return super().play(player, game, index, bonus) + self.discard(1, game, opp)
 bone_knife = BoneKnife(name="Bone Knife", text="0: opponent discards 1")
+class Mute(Card):
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus) + self.restrict(1, game, player ^ 1)
+mute = Mute(name="Mute", cost=1, points=1, text="1:1 restrict 1 (Your opponent can't play their leftmost unrestricted card next turn)")
 class Robe(Card):
     def play(self, player, game, index, bonus):
         opp = (player + 1) % 2
@@ -550,7 +554,7 @@ full_catalog = [
     ember, dash, firewall, charcoal, kindle, force,
     dove, twitter, owl, nest, peace, phoenix, pelican, ostrich,
     snake_egg, ouroboros, serpent, salamander, frog_prince, wyvern, cobra,
-    bone_knife, robe, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
+    bone_knife, mute, robe, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
     cog, drone, gears, factory, anvil, cogsplosion, ai, sine, foundry,
     stars, cosmos, roots, sprout, fruiting, pine, bulb, lotus, leaf_swirl, pollen, oak,
     crossed_bones, dig, mine, gnaw, dinosaur_bones, stone_golem, atlas, uluru,

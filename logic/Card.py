@@ -83,6 +83,15 @@ class Card:
 
         return recap
 
+    # Your x leftmost cards you can't play next round
+    def restrict(self, amt, game, player):
+        recap = f'\nRestrict {amt}'
+
+        for _ in range(amt):
+            game.status[player].append(Status.RESTRICT)
+
+        return recap
+
     # Draw x cards from deck
     def draw(self, amt, game, player):
         recap = ''

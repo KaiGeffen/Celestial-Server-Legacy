@@ -161,6 +161,10 @@ class ServerController():
 
     """SUB-PHASES"""
     def do_upkeep_statuses(self, player):
+
+        # Clear Restricted first, so any added for this round aren't removed below
+        self.model.status[player] = list(filter(Status.RESTRICTED.__ne__, self.model.status[player]))
+
         for stat in self.model.status[player]:
 
             # Flock : Add a bird to player's hand
@@ -171,9 +175,14 @@ class ServerController():
             if stat is Status.BOOST:
                 self.model.mana[player] += 1
 
+            # Restrict : Disallow played your leftmost card this round
+            if stat is Status.RESTRICT:
+                self.model.status[player].append(Status.RESTRICTED)
+
         cleared_statuses = [Status.BOOST,
                             Status.FLOCK,
-                            Status.GENTLE]
+                            Status.GENTLE,
+                            Status.RESTRICT]
 
         def clear_temp_statuses(stat):
             return stat not in cleared_statuses
@@ -183,8 +192,11 @@ class ServerController():
     # may have an effect
     def do_spring(self):
         for player in (self.model.priority, (self.model.priority + 1) % 2):
+
             hand = self.model.hand[player]
-            if len(hand) is not 0:
+            restricted = Status.RESTRICTED in self.model.status[player]
+
+            if not restricted and len(hand) is not 0:
                 if hand[0].spring:
                     self.model.stack.append((hand[0].spring, player))
                     # Discard the card whose spring effect was just used
@@ -210,6 +222,10 @@ class ServerController():
 
         # Player doesn't have enough mana
         if card.get_cost(player, self.model) > self.model.mana[player]:
+            return False
+
+        # Card is restricted by Restrict status
+        if card_num + 1 <= self.model.status[player].count(Status.RESTRICTED):
             return False
 
         return True

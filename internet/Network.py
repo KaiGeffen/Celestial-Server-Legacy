@@ -53,18 +53,12 @@ class Network:
         if action is not None:
             msg = f"{DO_ACTION}:{action}\n"
 
-            try:
-                self.conn.send(msg.encode())
-                response = self.conn.recv(BUFSIZE).decode()
+            self.conn.send(msg.encode())
+            response = self.conn.recv(BUFSIZE).decode()
 
-                if response == VALID_CHOICE:
-                    return True
-                elif response == INVALID_CHOICE:
-                    return False
-                else:
-                    raise Exception(f"Servers response to an action wasn't valid or invalid but instead {response}")
-            except:
-                print("problem")
-
-                # TODO Experimental, if it failed, try again
-                return self.send_action(action)
+            if response == VALID_CHOICE:
+                return True
+            elif response == INVALID_CHOICE:
+                return False
+            else:
+                raise Exception(f"Servers response to an action wasn't valid or invalid but instead {response}")

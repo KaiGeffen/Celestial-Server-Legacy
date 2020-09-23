@@ -1,6 +1,8 @@
 from itertools import chain, combinations
 import time
 
+from logic.Effects import Status
+
 # From itertools recipe
 def powerset(l):
     "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
@@ -12,12 +14,15 @@ def powerset(l):
 def get_action(model) -> int:
     time.sleep(.4)
 
+    # Don't consider any of the restricted cards, which is the first X cards
+    amt_restricted = model.status.count(Status.RESTRICTED)
+
     # Determine how to play cards such that the least mana is left over
     # Make a 2^6 bit number to represent which cards are considered, then check how close
     # that combination gets to spending all available mana
     high_score = 100
     best_possible = None
-    for possible_turn in powerset(range(len(model.hand))):
+    for possible_turn in powerset(range(amt_restricted, len(model.hand))):
         total_cost = 0
         for card_num in possible_turn:
             total_cost += model.hand[card_num].cost

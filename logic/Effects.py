@@ -12,3 +12,5 @@ class Status(Enum):
     NOURISH = "Nourish"
     STARVE = "Starve"
     GENTLE = "Gentle"
+    RESTRICT = "Restrict"
+    RESTRICTED = "Restricted"
