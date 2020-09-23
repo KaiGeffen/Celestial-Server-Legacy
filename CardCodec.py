@@ -2,6 +2,7 @@ import copy
 
 from logic.Catalog import all_cards
 from logic.ServerModel import Recap
+from logic.Effects import Status
 
 # DELIM1 separates the elements of the largest data structure (ex: Recap)
 # DELIM2 separates the individual entries of the lower level data struct (ex: List of cards)
@@ -116,3 +117,16 @@ def decode_recap(s):
 
     stack = list(map(decode_play, plays))
     return Recap(stack=stack, sums=sums, wins=wins)
+
+
+def encode_statuses(statuses):
+    def encode_status(status): return status.value
+    return DELIM1.join(list(map(encode_status, statuses)))
+
+
+def decode_statuses(s):
+    if not s:
+        return []
+
+    def decode_status(stat: str): return Status(stat)
+    return list(map(decode_status, s.split(DELIM1)))

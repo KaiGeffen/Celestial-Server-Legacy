@@ -70,6 +70,35 @@ class ScoreLayer(Layer):
         self.score2.element.text = f'Score: {model.wins[1]}'
 
 
+class StatusLayer(Layer):
+    def __init__(self):
+        super().__init__()
+        w, h = director.get_window_size()
+
+        self.status1 = Label('Status:', font_size=TEXT_SIZE,
+                           color=(255, 255, 255, 255),
+                           anchor_x='right',
+                           anchor_y='bottom')
+        self.status1.position = (w, (TEXT_SIZE + TEXT_BUFFER) * 2)
+        self.add(self.status1)
+
+        self.status2 = Label('Status:', font_size=TEXT_SIZE,
+                           color=(255, 255, 255, 255),
+                           anchor_x='right',
+                           anchor_y='top')
+        self.status2.position = (w, h - (TEXT_SIZE + TEXT_BUFFER) * 2)
+        self.add(self.status2)
+
+        self.position = (0, 0)
+
+    def draw(self):
+        super().draw()
+
+    def display(self, model):
+        self.status1.element.text = f'Status: {model.status}'
+        self.status2.element.text = f'Status: {model.opp_status}'
+
+
 class PriorityLayer(Layer):
     def __init__(self):
         super().__init__()
@@ -90,6 +119,7 @@ class PriorityLayer(Layer):
         else:
             self.position = self.p2_pos
 
+
 class HUD(BaseView):
     def __init__(self):
         super().__init__(color=True)
@@ -99,10 +129,14 @@ class HUD(BaseView):
         self.score_layer = ScoreLayer()
         self.add(self.score_layer)
 
+        self.status_layer = StatusLayer()
+        self.add(self.status_layer)
+
         self.priority_layer = PriorityLayer()
         self.add(self.priority_layer, z=-1)
 
     def display(self, model):
         self.mana_layer.display(model)
         self.score_layer.display(model)
+        self.status_layer.display(model)
         self.priority_layer.display(model)

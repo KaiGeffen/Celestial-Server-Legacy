@@ -189,40 +189,13 @@ class ServerModel(pyglet.event.EventDispatcher):
             'wins': self.wins[::slice_step],
             'max_mana': self.max_mana[::slice_step],
             'mana': self.mana[player],
-            'supports': self.status[::slice_step],
+            'status': CardCodec.encode_statuses(self.status[player]),
+            'opp_status': CardCodec.encode_statuses(self.status[player ^ 1]),
             'stack': self.get_relative_stack(player),
             'priority': self.priority ^ player,
             'recap': CardCodec.encode_recap(relative_recap),
             'version_num': self.version_no
-            #     self.wins,
-            #     self.max_mana,
-            #     self.mana[0],
-            #     self.status,
-            #     self.get_relative_stack(player),
-            #     self.priority,
-            #     self.recap,
-            #     self.version_no
-            # ) max_mana, mana, supports, stack, priority, recap, version_num
         }
-        # else:
-        #     return {
-        #         'hand': self.hand[1]
-        #     }
-        #     # return ClientModel(
-        #     #     self.hand[1],
-        #     #     len(self.hand[0]),
-        #     #     sorted(self.deck[1], key=deck_sort),
-        #     #     len(self.deck[0]),
-        #     #     self.pile[::-1],
-        #     #     self.wins[::-1],
-        #     #     self.max_mana[::-1],
-        #     #     self.mana[1],
-        #     #     self.status[::-1],
-        #     #     self.get_relative_stack(player),
-        #     #     (self.priority + 1) % 2,
-        #     #     self.recap.get_flipped(),
-        #     #     self.version_no
-        #     # )
 
     # Get a view of the stack that the given player can see
     def get_relative_stack(self, player):
