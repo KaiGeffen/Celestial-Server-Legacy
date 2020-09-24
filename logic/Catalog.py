@@ -85,20 +85,25 @@ ostrich = Ostrich(name="Ostrich", cost=8, points=6, text="8:6, costs 1 less for 
 
 
 """SNAKE"""
-snake_egg_spring = Card(name="Snake Egg", points=1, qualities=[Quality.FLEETING], text="1:1, spring: 1 point")
-snake_egg = Card(name="Snake Egg", cost=1, points=1, text="1:1, spring: 1 point", spring=snake_egg_spring)
+class Snake_Egg(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+        recap += self.draw(1, game, player)
+
+        return recap
+snake_egg_spring = Snake_Egg(name="Snake Egg", points=1, qualities=[Quality.FLEETING], text="SHOULD NOT SEE")
+snake_egg = Card(name="Snake Egg", cost=1, points=1, text="1:1, spring: 1 point, draw 1", spring=snake_egg_spring)
 
 class Ouroboros(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
 
-        amt = len(game.hand[player])
-        recap += self.oust(amt, game, player)
-        recap += self.draw(amt, game, player)
+        recap += self.oust(2, game, player)
+        recap += self.draw(2, game, player)
 
         return  recap
 ouroboros_spring = Ouroboros(name="Ouroboros", qualities=[Quality.FLEETING], text="TODO you shouldnt see this error error")
-ouroboros = Card(name="Ouroboros", cost=2, points=2, text="2:2, spring: oust up to cards 3 from your hand, draw that many", spring=ouroboros_spring)
+ouroboros = Card(name="Ouroboros", cost=2, points=2, text="2:2, spring: oust 2, draw 2", spring=ouroboros_spring)
 
 class Serpent(Card):
     def play(self, player, game, index, bonus):
@@ -106,6 +111,13 @@ class Serpent(Card):
         return super().play(player, game, index, bonus) + self.discard(1, game, opp)
 serpent_spring = Serpent(name="Serpent", qualities=[Quality.FLEETING], text="3:3, spring: opponent discards 1")
 serpent = Card(name="Serpent", cost=3, points=3, text="3:3, spring: opponent discards 1", spring=serpent_spring)
+
+class SnakeSpiral(Card):
+    def on_play(self, player, game):
+        if game.hand[player]:
+            first_card = game.hand[player].pop(0)
+            game.hand[player].append(first_card)
+snake_spiral = SnakeSpiral(name="Snake Spiral", cost=3, points=3, text="3:3. When played, move the first card in your hand to the last position.")
 
 salamander_spring = FireCard(name="Salamander", points=5, qualities=[Quality.FLEETING], text="4:5, flare, spring: 4 points")
 salamander = FireCard(name="Salamander", cost=4, points=5, text="4:5, flare, spring: 5 points", spring=salamander_spring)
@@ -560,7 +572,8 @@ full_catalog = [
     crossed_bones, dig, mine, gnaw, dinosaur_bones, stone_golem, atlas, uluru,
     flying_fish, perch, angler, school_of_fish,
     figurehead, fishing_boat, drakkar, ship_wreck, trireme,
-    hurricane, raise_dead, lock, spectre, spy
+    hurricane, raise_dead, lock, spectre, spy,
+    snake_spiral
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
