@@ -1,7 +1,7 @@
 from enum import Enum
 
 from logic.Recap import Recap
-
+from logic.Effects import Quality
 
 # How an act was added to the story
 # Played from hand, sprung from hand, etc
@@ -26,11 +26,22 @@ class Story:
         # TODO remove index and bonus from play signature
         index = 0
         # TODO use source
-        for act in self.acts:
-            result = act.card.play(player=act.owner,
-                                 game=game,
-                                 index=index,
-                                 bonus=0)
+        while self.acts:
+            act = self.acts.pop(0)
+
+            if act.source is Source.HAND:
+                result = act.card.play(player=act.owner,
+                                       game=game,
+                                       index=index,
+                                       bonus=0)
+            elif act.source is Source.SPRING:
+                result = act.card.play_spring(player=act.owner,
+                                       game=game,
+                                       index=index,
+                                       bonus=0)
+
+            if Quality.FLEETING not in act.card.qualities:
+                game.pile[act.owner].append(act.card)
 
             self.recap.add(act.card, act.owner, result)
 

@@ -2,7 +2,7 @@ from logic.Effects import Status, Quality
 import logic.Catalog
 
 class Card:
-    def __init__(self, name, cost=0, points=0, qualities=[], text='', spring=None, dynamic_text=''):
+    def __init__(self, name, cost=0, points=0, qualities=[], text='', spring=False, dynamic_text=''):
         self.name = name
         self.cost = cost
         self.points = points
@@ -14,6 +14,21 @@ class Card:
     # Who is playing, the game model, index of this card on stack, auras this round
     # Returns a text recap of playing this card, affects the score as it goes
     def play(self, player, game, index, bonus):
+        result = self.points + bonus
+
+        result += game.status[player].count(Status.NOURISH)
+        game.status[player] = list(filter(Status.NOURISH.__ne__, game.status[player]))
+        result -= game.status[player].count(Status.STARVE)
+        game.status[player] = list(filter(Status.STARVE.__ne__, game.status[player]))
+
+        game.score[player] += result
+
+        if result > 0:
+            return f"+{result}"
+        else:
+            return f"{result}"
+
+    def play_spring(self, player, game, index, bonus):
         result = self.points + bonus
 
         result += game.status[player].count(Status.NOURISH)

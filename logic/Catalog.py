@@ -86,31 +86,32 @@ ostrich = Ostrich(name="Ostrich", cost=8, points=6, text="8:6, costs 1 less for 
 
 """SNAKE"""
 class Snake_Egg(Card):
-    def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
+    def play_spring(self, player, game, index, bonus):
+        recap = super().play_spring(player, game, index, bonus)
+
         recap += self.draw(1, game, player)
 
         return recap
-snake_egg_spring = Snake_Egg(name="Snake Egg", points=1, qualities=[Quality.FLEETING], text="SHOULD NOT SEE")
-snake_egg = Card(name="Snake Egg", cost=1, points=1, text="1:1, spring: 1 point, draw 1", spring=snake_egg_spring)
+snake_egg = Snake_Egg(name="Snake Egg", cost=1, points=1, text="1:1, spring: 1 point, draw 1", spring=True)
 
 class Ouroboros(Card):
-    def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
+    def play_spring(self, player, game, index, bonus):
+        recap = super().play_spring(player, game, index, bonus - self.points)
 
         recap += self.oust(2, game, player)
         recap += self.draw(2, game, player)
 
-        return  recap
-ouroboros_spring = Ouroboros(name="Ouroboros", qualities=[Quality.FLEETING], text="TODO you shouldnt see this error error")
-ouroboros = Card(name="Ouroboros", cost=2, points=2, text="2:2, spring: oust 2, draw 2", spring=ouroboros_spring)
+        return recap
+ouroboros = Ouroboros(name="Ouroboros", cost=2, points=2, text="2:2, spring: oust 2, draw 2", spring=True)
 
 class Serpent(Card):
-    def play(self, player, game, index, bonus):
-        opp = (player + 1) % 2
-        return super().play(player, game, index, bonus) + self.discard(1, game, opp)
-serpent_spring = Serpent(name="Serpent", qualities=[Quality.FLEETING], text="3:3, spring: opponent discards 1")
-serpent = Card(name="Serpent", cost=3, points=3, text="3:3, spring: opponent discards 1", spring=serpent_spring)
+    def play_spring(self, player, game, index, bonus):
+        recap = super().play_spring(player, game, index, bonus - self.points)
+
+        recap += self.discard(1, game, player ^ 1)
+
+        return recap
+serpent = Serpent(name="Serpent", cost=3, points=3, text="3:3, spring: opponent discards 1", spring=True)
 
 class SnakeSpiral(Card):
     def on_play(self, player, game):
@@ -119,28 +120,37 @@ class SnakeSpiral(Card):
             game.hand[player].append(first_card)
 snake_spiral = SnakeSpiral(name="Snake Spiral", cost=3, points=3, text="3:3. When played, move the first card in your hand to the last position.")
 
-salamander_spring = FireCard(name="Salamander", points=4, qualities=[Quality.FLEETING], text="4:4, flare, spring: 4 points")
-salamander = FireCard(name="Salamander", cost=4, points=4, text="4:4, flare, spring: 4 points", spring=salamander_spring)
+class Salamander(FireCard):
+    def play_spring(self, player, game, index, bonus):
+        return self.play(player, game, index, bonus)
+salamander = Salamander(name="Salamander", cost=4, points=4, text="4:4, flare, spring: 4 points", spring=True)
 
 class FrogPrince(Card):
-    def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.inspire(1, game, player)
-frog_prince_spring = FrogPrince(name="Frog Prince", qualities=[Quality.FLEETING], text="6:6, spring: inspire 1")
-frog_prince = Card(name="Frog Prince", cost=6, points=6, text="6:6, spring: inspire 1", spring=frog_prince_spring)
+    def play_spring(self, player, game, index, bonus):
+        recap = super().play_spring(player, game, index, bonus - self.points)
+
+        recap += self.inspire(1, game, player)
+
+        return recap
+frog_prince = FrogPrince(name="Frog Prince", cost=6, points=6, text="6:6, spring: inspire 1", spring=True)
 
 class Wyvern(Card):
-    def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.flock(3, game, player)
-wyvern_spring = Wyvern(name="Wyvern", qualities=[Quality.FLEETING], text="7:7, spring: flock 3")
-wyvern = Card(name="Wyvern", cost=7, points=7, text="7:7, spring: flock 3", spring=wyvern_spring)
+    def play_spring(self, player, game, index, bonus):
+        recap = super().play_spring(player, game, index, bonus - self.points)
+
+        recap += self.flock(3, game, player)
+
+        return recap
+wyvern = Wyvern(name="Wyvern", cost=7, points=7, text="7:7, spring: flock 3", spring=True)
 
 class Cobra(Card):
-    def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
+    def play_spring(self, player, game, index, bonus):
+        recap = super().play_spring(player, game, index, bonus - self.points)
+
         recap += self.tutor(2, game, player)
-        return  recap
-cobra_spring = Cobra(name="Cobra", qualities=[Quality.FLEETING], text="8:9, spring: tutor a 2")
-cobra = Card(name="Cobra", cost=8, points=9, text="8:9, spring: tutor a 2", spring=cobra_spring)
+
+        return recap
+cobra = Cobra(name="Cobra", cost=8, points=9, text="8:9, spring: tutor a 2", spring=True)
 
 
 """Discard"""

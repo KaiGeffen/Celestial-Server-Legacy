@@ -211,6 +211,9 @@ class ServerController():
                 if hand[0].spring:
                     self.model.story.add_act(hand[0], player, Source.SPRING)
 
+                    # Remove the sprung card from hand
+                    self.model.hand[player].pop(0)
+
     # If the winning player has gentle, award carryover equal to how much extra they won by
     def do_gentle(self):
         score_dif = self.model.score[0] - self.model.score[1]

@@ -81,7 +81,7 @@ def encode_recap(recap):
 
     # If no plays happened, just return the sums and wins
     # Otherwise, add a semicolon before the recap
-    if not recap.stack:
+    if not recap.story:
         return result
     else:
         result += DELIM1
@@ -91,7 +91,7 @@ def encode_recap(recap):
         card, owner, text = play
         return f'{encode_card(card)}{DELIM2}{owner}{DELIM2}{text}'
 
-    result += DELIM1.join(list(map(encode_play, recap.stack)))
+    result += DELIM1.join(list(map(encode_play, recap.story)))
     return result
 
 
@@ -115,8 +115,8 @@ def decode_recap(s):
 
         return card, owner, text
 
-    stack = list(map(decode_play, plays))
-    return Recap(stack=stack, sums=sums, wins=wins)
+    story = list(map(decode_play, plays))
+    return Recap(story=story, sums=sums, wins=wins)
 
 
 def encode_statuses(statuses):

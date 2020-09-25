@@ -206,7 +206,7 @@ class RecapLayer(BaseView):
     # Add all recap visual objects
     def add_recap_objects(self, recap):
         index = 0
-        for (card, owner, play_text) in recap.stack:
+        for (card, owner, play_text) in recap.story:
             pos = self.get_card_pos(index, owner)
             self.add_card(card, pos)
 
@@ -447,7 +447,7 @@ class GameView(BaseView):
     # Add all recap visual objects
     def add_recap_objects(self, recap):
         index = 0
-        for (card, owner, play_text) in recap.stack:
+        for (card, owner, play_text) in recap.story:
             pos = self.get_stack_card_pos(index, owner)
             self.add_card(card, pos, self.recap, invisible=True)
 
