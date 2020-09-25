@@ -119,8 +119,8 @@ class SnakeSpiral(Card):
             game.hand[player].append(first_card)
 snake_spiral = SnakeSpiral(name="Snake Spiral", cost=3, points=3, text="3:3. When played, move the first card in your hand to the last position.")
 
-salamander_spring = FireCard(name="Salamander", points=5, qualities=[Quality.FLEETING], text="4:5, flare, spring: 4 points")
-salamander = FireCard(name="Salamander", cost=4, points=5, text="4:5, flare, spring: 5 points", spring=salamander_spring)
+salamander_spring = FireCard(name="Salamander", points=4, qualities=[Quality.FLEETING], text="4:4, flare, spring: 4 points")
+salamander = FireCard(name="Salamander", cost=4, points=4, text="4:4, flare, spring: 4 points", spring=salamander_spring)
 
 class FrogPrince(Card):
     def play(self, player, game, index, bonus):
@@ -545,6 +545,28 @@ class Spy(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.create(camera, game, player ^ 1)
 spy = Spy(name="Spy", cost=1, text="1: create a 2:0 camera in opponent's hand which gives you vision each upkeep")
+class Portal(Card):
+    def play(self, player, game, index, bonus):
+        result = super().play(player, game, index, bonus)
+
+        index_final_owned_card = -1
+        index = 0
+        for card, owner in game.stack:
+            if owner == player:
+                index_final_owned_card = index
+
+            index += 1
+
+        if index_final_owned_card != -1 and game.stack:
+            card, owner = game.stack.pop(index_final_owned_card)
+
+            result += f'\n{card.name} move {index_final_owned_card}'
+
+            game.stack.insert(0, (card, owner))
+
+        return result
+portal = Portal(name="Portal", cost=2, points=2, text="2:2, your last card this round moves to immediately after Portal on the stack.")
+
 
 
 """Tokens"""
@@ -573,7 +595,7 @@ full_catalog = [
     flying_fish, perch, angler, school_of_fish,
     figurehead, fishing_boat, drakkar, ship_wreck, trireme,
     hurricane, raise_dead, lock, spectre, spy,
-    snake_spiral
+    snake_spiral, portal
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
