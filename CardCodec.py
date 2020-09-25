@@ -1,7 +1,7 @@
 import copy
 
 from logic.Catalog import all_cards
-from logic.ServerModel import Recap
+from logic.Recap import Recap
 from logic.Effects import Status
 
 # DELIM1 separates the elements of the largest data structure (ex: Recap)

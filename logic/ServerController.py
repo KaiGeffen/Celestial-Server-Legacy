@@ -4,6 +4,8 @@ from logic.ServerModel import ServerModel
 
 from logic import Catalog
 from logic.Effects import Quality, Status
+# TODO Separate out source
+from logic.Story import Source
 
 
 DRAW_PER_TURN = 2
@@ -69,7 +71,7 @@ class ServerController():
 
         card.on_play(player, self.model)
 
-        self.model.stack.append((card, player))
+        self.model.story.add_act(card, owner=player, source=Source.HAND)
 
     """PHASES"""
     # Begin the game
@@ -113,31 +115,38 @@ class ServerController():
     # Perform the takedown phase
     def do_takedown(self):
 
-        # Resolve the stack
+        # Resolve the story
         self.model.score = [0, 0]
         wins = [0, 0]
 
         # Reset to a new Recap for this round's takedown
         self.model.recap.reset()
 
-        # Before the stack is resolved, leftmost cards in player's hands can spring
+        # Before the story is resolved, leftmost cards in player's hands can spring
         self.do_spring()
 
-        # The starting position of this card on the stack
-        index = 0
-        while len(self.model.stack) > 0:
-            card, player = self.model.stack.pop(0)
+        self.model.story.run(self.model)
 
-            # Add the points from this card to the owner's points this round
-            # Stack gets passed since it can influence how much a card is worth
-            recap_text = card.play(player, self.model, index, 0)
-            self.model.recap.add(card, player, recap_text)
-
-            # Put the spent card in players pile, unless it has Fleeting
-            if Quality.FLEETING not in card.qualities:
-                self.model.pile[player].append(card)
-
-            index += 1
+        #
+        #
+        # while self.model.story.do_act(self.model):
+        #
+        #
+        # # The starting position of this card on the story
+        # index = 0
+        # while len(self.model.stack) > 0:
+        #     card, player = self.model.stack.pop(0)
+        #
+        #     # Add the points from this card to the owner's points this round
+        #     # Stack gets passed since it can influence how much a card is worth
+        #     recap_text = card.play(player, self.model, index, 0)
+        #     self.model.recap.add(card, player, recap_text)
+        #
+        #     # Put the spent card in players pile, unless it has Fleeting
+        #     if Quality.FLEETING not in card.qualities:
+        #         self.model.pile[player].append(card)
+        #
+        #     index += 1
 
         # Add to wins here
         if self.model.score[0] > self.model.score[1]:
@@ -153,7 +162,9 @@ class ServerController():
         self.do_gentle()
 
         # Recap the results
-        self.model.recap.add_total(self.model.score, wins)
+        self.model.recap = self.model.story.recap
+
+        self.model.story.clear()
 
     """EXPOSED UTILITY METHODS"""
     def get_client_model(self, player):
@@ -198,9 +209,7 @@ class ServerController():
 
             if not restricted and len(hand) is not 0:
                 if hand[0].spring:
-                    self.model.stack.append((hand[0].spring, player))
-                    # Discard the card whose spring effect was just used
-                    self.model.discard(player, 1)
+                    self.model.story.add_act(hand[0], player, Source.SPRING)
 
     # If the winning player has gentle, award carryover equal to how much extra they won by
     def do_gentle(self):

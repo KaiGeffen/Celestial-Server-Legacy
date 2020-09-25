@@ -5,6 +5,8 @@ import random
 import CardCodec
 from logic.Catalog import hidden_card
 from logic.Effects import Quality
+from logic.Story import Story
+from logic.Recap import Recap
 
 DRAW_PER_TURN = 2
 START_HAND = 3 - DRAW_PER_TURN
@@ -36,7 +38,7 @@ class ServerModel(pyglet.event.EventDispatcher):
         # The statuses the player is under
         self.status = [[], []]
 
-        self.stack = []
+        self.story = Story()
         self.passes = 0
         self.priority = 0
 
@@ -137,13 +139,15 @@ class ServerModel(pyglet.event.EventDispatcher):
 
     # Counter the next card on the stack
     def counter(self):
-        if self.stack:
-            (card, owner) = self.stack.pop(0)
-            self.pile[owner].append(card)
-
-            return card
-        else:
-            return None
+        return None
+        # TODO
+        # if self.stack:
+        #     (card, owner) = self.stack.pop(0)
+        #     self.pile[owner].append(card)
+        #
+        #     return card
+        # else:
+        #     return None
 
     # Shuffle the player's pile into their deck
     def shuffle(self, player):
@@ -208,9 +212,12 @@ class ServerModel(pyglet.event.EventDispatcher):
 
         def switch_owners(live_card):
             card, owner = live_card
-            return (card, (owner + 1) % 2)
+            return card, owner ^ 1
 
-        result = self.stack
+        result = []
+        for act in self.story.acts:
+            result.append((act.card, act.owner))
+
         if not self.vision[player]:
             result = list(map(hide_opponents_cards, result))
 
@@ -236,36 +243,3 @@ class ServerModel(pyglet.event.EventDispatcher):
 
         return True
 
-
-class Recap():
-    def __init__(self, stack=[], sums=[0,0], wins=[0,0]):
-        self.stack = stack
-        self.sums = sums
-        self.wins = wins
-
-    # In most cases, text is +N, but for things like RESET it could be different
-    def add(self, card, owner, text):
-        self.stack.append((card, owner, text))
-
-    def add_total(self, sums, wins):
-        self.sums[0] += sums[0]
-        self.sums[1] += sums[1]
-
-        self.wins[0] += wins[0]
-        self.wins[1] += wins[1]
-
-    def reset(self):
-        self.stack = []
-        self.sums = [0, 0]
-        self.wins = [0, 0]
-
-    # Return a flipped version of this recap
-    def get_flipped(self):
-        stack = []
-        for (card, owner, text) in self.stack:
-            stack.append((card, (owner + 1) % 2, text))
-
-        sums = self.sums[::-1]
-        wins = self.wins[::-1]
-
-        return Recap(stack, sums, wins)
