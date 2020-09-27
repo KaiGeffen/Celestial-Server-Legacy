@@ -28,16 +28,19 @@ class Story:
         while self.acts:
             act = self.acts.pop(0)
 
-            if act.source is Source.HAND:
-                result = act.card.play(player=act.owner,
-                                       game=game,
-                                       index=index,
-                                       bonus=0)
-            elif act.source is Source.SPRING:
-                result = act.card.play_spring(player=act.owner,
-                                       game=game,
-                                       index=index,
-                                       bonus=0)
+            if act.countered:
+                result = 'Countered'
+            else:
+                if act.source is Source.HAND:
+                    result = act.card.play(player=act.owner,
+                                           game=game,
+                                           index=index,
+                                           bonus=0)
+                elif act.source is Source.SPRING:
+                    result = act.card.play_spring(player=act.owner,
+                                           game=game,
+                                           index=index,
+                                           bonus=0)
 
             if Quality.FLEETING not in act.card.qualities:
                 game.pile[act.owner].append(act.card)
@@ -52,6 +55,14 @@ class Story:
     def get_length(self):
         return len(self.acts)
 
+    def counter(self, index):
+        if self.get_length() > index:
+            self.acts[index].countered = True
+
+            return self.acts[index].card
+        else:
+            return None
+
     def move_act(self, index_origin, index_dest):
         act = self.acts.pop(index_origin)
         self.acts.insert(index_dest, act)
@@ -64,3 +75,4 @@ class Act:
         self.card = card
         self.owner = owner
         self.source = source
+        self.countered = False
