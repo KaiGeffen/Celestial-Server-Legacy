@@ -163,6 +163,7 @@ class ServerController():
 
         # Recap the results
         self.model.recap = self.model.story.recap
+        self.model.recap.add_total(self.model.score, wins)
 
         self.model.story.clear()
 

@@ -203,7 +203,7 @@ class Card:
 
     """UTILITY CHECKS"""
     def your_final(self, game, player):
-        for act in game.story:
+        for act in game.story.acts:
             if act.owner == player:
                 return False
         return True

@@ -25,7 +25,6 @@ class Story:
 
         # TODO remove index and bonus from play signature
         index = 0
-        # TODO use source
         while self.acts:
             act = self.acts.pop(0)
 
