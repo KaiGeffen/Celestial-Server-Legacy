@@ -41,25 +41,25 @@ dove = Card(name="Dove", cost=1, points=1, qualities=[Quality.VISIBLE, Quality.F
 class Twitter(Card):
     def play(self, player, game, index, bonus):
         amt = 0
-        for (card, owner) in game.stack:
-            if card is dove:
+        for act in game.story:
+            if act.card is dove:
                 amt += 1
 
         return super().play(player, game, index, bonus + amt)
-twitter = Twitter(name="Twitter", cost=1, qualities=[Quality.VISIBLE], text="1:X, visible, where x is later doves on stack")
+twitter = Twitter(name="Twitter", cost=1, qualities=[Quality.VISIBLE], text="1:X, visible, where x is later doves this round")
 class Owl(SightCard):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.flock(1, game, player)
-owl = Owl(name="Owl", cost=1, text="1: flock, this round stack is visible to you")
+owl = Owl(name="Owl", cost=1, text="1: flock, sight (This round the story is visible to you)")
 nest = FlockCard(name="Nest", amt=3, cost=2, points=1, text="2:1, flock 3")
 class Peace(Card):
     def play(self, player, game, index, bonus):
-        for (card, owner) in game.stack:
+        for act in game.story:
             if card is dove:
                 return super().play(player, game, index, bonus) + self.reset(game)
 
         return super().play(player, game, index, bonus)
-peace = Peace(name="Peace", cost=3, text="3: reset if a dove is later on the stack")
+peace = Peace(name="Peace", cost=3, text="3: reset if a dove is later this round")
 phoenix = FlockCard(name="Phoenix", amt=1, cost=5, points=5, qualities=[Quality.VISIBLE], text="5:5, visible, flock 1")
 class Pelican(Card):
     def play(self, player, game, index, bonus):
@@ -257,9 +257,9 @@ class Gears(Card):
 gears = Gears(name="Gears", cost=2, text="2: build 2")
 class Factory(Card):
     def play(self, player, game, index, bonus):
-        amt = len(game.stack)
+        amt = game.story.get_length()
         return super().play(player, game, index, bonus) + self.build(amt, game, player)
-factory = Factory(name="Factory", cost=3, text="3: build X, where X is number of later cards on stack")
+factory = Factory(name="Factory", cost=3, text="3: build X, where X is number of later cards in story")
 class Anvil(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.build(2, game, player)
@@ -304,7 +304,7 @@ class Foundry(Card):
         recap += self.build(amt, game, player)
 
         return recap
-foundry = Foundry(name="Foundry", cost=5, points=5, text="5:5-X, build X, where X is cards on stack before this card")
+foundry = Foundry(name="Foundry", cost=5, points=5, text="5:5-X, build X, where X is cards in story before this card")
 
 
 """Nature"""
@@ -315,17 +315,17 @@ stars = Stars(name="Stars", text="Inspire (Next turn gain 1 temporary mana)")
 class Cosmos(Card):
     def play(self, player, game, index, bonus):
         amt = 1
-        for (card, owner) in game.stack:
-            if owner == player:
+        for act in game.story:
+            if act.owner == player:
                 amt += 1
         return super().play(player, game, index, bonus) + self.inspire(amt, game, player)
 cosmos = Cosmos(name="Cosmos", cost=2, text="2: Inspire 1 + 1 for each card you play later this round")
 class Roots(Card):
     def play(self, player, game, index, bonus):
         your_last_card_cost = self.cost
-        for (card, owner) in game.stack:
-            if owner == player:
-                your_last_card_cost = card.cost
+        for act in game.story:
+            if act.owner == player:
+                your_last_card_cost = act.card.cost
 
         if your_last_card_cost >= 4:
             bonus += 1
@@ -419,13 +419,13 @@ class Dig(Card):
 dig = Dig(name="Dig", cost=2, points=2, text="2:2, Oust the top 2 cards of your discard pile")
 class Gnaw(Card):
     def play(self, player, game, index, bonus):
-        for (card, owner) in game.stack:
-            if card is broken_bone:
+        for act in game.story:
+            if act.card is broken_bone:
                 bonus += 3
                 break
 
         return super().play(player, game, index, bonus)
-gnaw = Gnaw(name="Gnaw", cost=3, points=3, text="3:3, +3 if there is a broken bone on stack")
+gnaw = Gnaw(name="Gnaw", cost=3, points=3, text="3:3, +3 if there is a broken bone in story")
 class Mine(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -492,12 +492,12 @@ angler = Angler(name="Angler", cost=4, points=4, qualities=[Quality.VISIBLE], te
 class SchoolOfFish(FlowCard):
     def get_cost(self, player, game):
         amt = 0
-        for (card, owner) in game.stack:
-            if owner == player and card.cost == 1:
+        for act in game.story:
+            if act.owner == player and act.card.cost == 1:
                 amt += 1
 
         return self.cost - amt
-school_of_fish = SchoolOfFish(name="School of Fish", cost=5, points=5, text="5:5, flow, costs 1 less for each 1-cost you have on stack")
+school_of_fish = SchoolOfFish(name="School of Fish", cost=5, points=5, text="5:5, flow, costs 1 less for each 1-cost you have in story")
 
 
 """Ships"""
@@ -561,21 +561,18 @@ class Portal(Card):
 
         index_final_owned_card = -1
         index = 0
-        for card, owner in game.stack:
-            if owner == player:
+        for act in game.story.acts:
+            if act.owner == player:
                 index_final_owned_card = index
 
             index += 1
 
-        if index_final_owned_card != -1 and game.stack:
-            card, owner = game.stack.pop(index_final_owned_card)
-
-            result += f'\n{card.name} move {index_final_owned_card}'
-
-            game.stack.insert(0, (card, owner))
+        if index_final_owned_card > 0:
+            act = game.story.move_act(index_final_owned_card, 0)
+            result += f'\n{act.card.name} move {index_final_owned_card - 1}'
 
         return result
-portal = Portal(name="Portal", cost=2, points=2, text="2:2, your last card this round moves to immediately after Portal on the stack.")
+portal = Portal(name="Portal", cost=2, points=2, text="2:2, your last card this round moves to immediately after Portal in the story.")
 
 
 

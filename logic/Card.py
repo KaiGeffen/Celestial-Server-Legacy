@@ -11,7 +11,7 @@ class Card:
         self.spring = spring
         self.dynamic_text = dynamic_text
 
-    # Who is playing, the game model, index of this card on stack, auras this round
+    # Who is playing, the game model, index of this card in story, auras this round
     # Returns a text recap of playing this card, affects the score as it goes
     def play(self, player, game, index, bonus):
         result = self.points + bonus
@@ -155,7 +155,7 @@ class Card:
 
         return recap
 
-    # Counter the next card on the stack
+    # Counter the next card this round
     def counter(self, game):
         card = game.counter()
         if card:
@@ -203,8 +203,8 @@ class Card:
 
     """UTILITY CHECKS"""
     def your_final(self, game, player):
-        for (card, owner) in game.stack:
-            if owner == player:
+        for act in game.story:
+            if act.owner == player:
                 return False
         return True
 
@@ -227,7 +227,7 @@ class FlowCard(Card):
         game.cycle(player, self)
         return True
 
-# Card that makes stack visible to owner this round
+# Card that makes story visible to owner this round
 class SightCard(Card):
     def on_play(self, player, game):
         game.vision[player] = True

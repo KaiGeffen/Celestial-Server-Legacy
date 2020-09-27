@@ -48,6 +48,15 @@ class Story:
     def clear(self):
         self.acts = []
 
+    def get_length(self):
+        return len(self.acts)
+
+    def move_act(self, index_origin, index_dest):
+        act = self.acts.pop(index_origin)
+        self.acts.insert(index_dest, act)
+
+        return act
+
 
 class Act:
     def __init__(self, card, owner, source):
