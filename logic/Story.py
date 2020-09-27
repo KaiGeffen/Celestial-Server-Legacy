@@ -42,6 +42,8 @@ class Story:
             if Quality.FLEETING not in act.card.qualities:
                 game.pile[act.owner].append(act.card)
 
+            index += 1
+
             self.recap.add(act.card, act.owner, result)
 
     def clear(self):
