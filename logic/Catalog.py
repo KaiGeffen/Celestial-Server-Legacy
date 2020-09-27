@@ -145,6 +145,11 @@ class Salamander(FireCard):
         return self.play(player, game, index, bonus)
 salamander = Salamander(name="Salamander", cost=4, points=4, text="4:4, flare, spring: 4 points", spring=True)
 
+class Temptation(Card):
+    def play_spring(self, player, game, index, bonus):
+        return self.play(player, game, index, bonus - self.points) + self.nourish(1, game, player)
+temptation = Temptation(name="Temptation", cost=5, points=5, text="5:5, spring: nourish 1", spring=True)
+
 class FrogPrince(Card):
     def play_spring(self, player, game, index, bonus):
         recap = super().play_spring(player, game, index, bonus - self.points)
@@ -593,6 +598,22 @@ class Portal(Card):
 
         return result
 portal = Portal(name="Portal", cost=2, points=2, text="2:2, your last card this round moves to immediately after Portal in the story.")
+class Wave(Card):
+    def get_cost(self, player, game):
+        high_score = 0
+        current_score = 0
+        for act in game.story.acts:
+            if act.owner == player:
+                current_score += 1
+            else:
+                current_score = 0
+
+            if current_score > high_score:
+                high_score = current_score
+
+        return self.cost - high_score
+wave = Wave(name="Wave", cost=8, points=7,
+            text="7:8, costs X less where X is the length of your longest chain in the story (Chain is cards in sequence)")
 
 
 
@@ -622,7 +643,7 @@ full_catalog = [
     flying_fish, perch, angler, school_of_fish,
     figurehead, fishing_boat, drakkar, ship_wreck, trireme,
     hurricane, raise_dead, lock, spectre, spy,
-    snake_spiral, portal, swamp, snake_eye
+    snake_spiral, portal, swamp, snake_eye, temptation, wave
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
