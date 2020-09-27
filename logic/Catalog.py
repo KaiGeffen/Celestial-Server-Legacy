@@ -1,6 +1,6 @@
 from logic.Card import *
 from logic.Effects import Status, Quality
-
+from logic.Story import Source
 
 """FIRE"""
 class Ember(Card):
@@ -41,7 +41,7 @@ dove = Card(name="Dove", cost=1, points=1, qualities=[Quality.VISIBLE, Quality.F
 class Twitter(Card):
     def play(self, player, game, index, bonus):
         amt = 0
-        for act in game.story:
+        for act in game.story.acts:
             if act.card is dove:
                 amt += 1
 
@@ -54,7 +54,7 @@ owl = Owl(name="Owl", cost=1, text="1: flock, sight (This round the story is vis
 nest = FlockCard(name="Nest", amt=3, cost=2, points=1, text="2:1, flock 3")
 class Peace(Card):
     def play(self, player, game, index, bonus):
-        for act in game.story:
+        for act in game.story.acts:
             if card is dove:
                 return super().play(player, game, index, bonus) + self.reset(game)
 
@@ -85,6 +85,15 @@ ostrich = Ostrich(name="Ostrich", cost=8, points=6, text="8:6, costs 1 less for 
 
 
 """SNAKE"""
+class Swamp(Card):
+    def play(self, player, game, index, bonus):
+        for act in game.story.acts:
+            if act.owner is player and act.source is Source.SPRING:
+                return act.card.play_spring(player, game, index, bonus)
+
+        return super().play(player, game, index, bonus)
+swamp = Swamp(name="Swamp", cost=0, text="0:0, swamp copies the effect of your first sprung card in the story.")
+
 class Snake_Egg(Card):
     def play_spring(self, player, game, index, bonus):
         recap = super().play_spring(player, game, index, bonus)
@@ -103,6 +112,17 @@ class Ouroboros(Card):
 
         return recap
 ouroboros = Ouroboros(name="Ouroboros", cost=2, points=2, text="2:2, spring: oust 2, draw 2", spring=True)
+
+class SnakeEye(SightCard):
+    def play(self, player, game, index, bonus):
+        amt = 0
+        if game.story.get_length() > 0:
+            if player is game.story.acts[-1].owner:
+                amt += 2
+
+        return super().play(player, game, index, bonus + amt)
+snake_eye = SnakeEye(name="Snake Eye", cost=2, points=1, qualities=[Quality.VISIBLE],
+                     text="2:1, visible, sight, +2 if the final card this round is yours (Not counting this)")
 
 class Serpent(Card):
     def play_spring(self, player, game, index, bonus):
@@ -315,7 +335,7 @@ stars = Stars(name="Stars", text="Inspire (Next turn gain 1 temporary mana)")
 class Cosmos(Card):
     def play(self, player, game, index, bonus):
         amt = 1
-        for act in game.story:
+        for act in game.story.acts:
             if act.owner == player:
                 amt += 1
         return super().play(player, game, index, bonus) + self.inspire(amt, game, player)
@@ -323,7 +343,7 @@ cosmos = Cosmos(name="Cosmos", cost=2, text="2: Inspire 1 + 1 for each card you 
 class Roots(Card):
     def play(self, player, game, index, bonus):
         your_last_card_cost = self.cost
-        for act in game.story:
+        for act in game.story.acts:
             if act.owner == player:
                 your_last_card_cost = act.card.cost
 
@@ -419,7 +439,7 @@ class Dig(Card):
 dig = Dig(name="Dig", cost=2, points=2, text="2:2, Oust the top 2 cards of your discard pile")
 class Gnaw(Card):
     def play(self, player, game, index, bonus):
-        for act in game.story:
+        for act in game.story.acts:
             if act.card is broken_bone:
                 bonus += 3
                 break
@@ -492,7 +512,7 @@ angler = Angler(name="Angler", cost=4, points=4, qualities=[Quality.VISIBLE], te
 class SchoolOfFish(FlowCard):
     def get_cost(self, player, game):
         amt = 0
-        for act in game.story:
+        for act in game.story.acts:
             if act.owner == player and act.card.cost == 1:
                 amt += 1
 
@@ -602,7 +622,7 @@ full_catalog = [
     flying_fish, perch, angler, school_of_fish,
     figurehead, fishing_boat, drakkar, ship_wreck, trireme,
     hurricane, raise_dead, lock, spectre, spy,
-    snake_spiral, portal
+    snake_spiral, portal, swamp, snake_eye
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
