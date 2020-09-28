@@ -12,6 +12,7 @@ thread_counter = 0
 deck1 = None
 # Model should be started once both decks are received
 game = None
+game_over = False
 class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
     """
     It is instantiated once per connection to the server, and must
@@ -82,25 +83,31 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
                     self.wfile.write(INVALID_CHOICE.encode())
         except ConnectionResetError as e:
             print(e)
-            self.finish()
+
+            global game_over
+            game_over = True
+
+            # print(self.server.shutdown())
+            # self.finish()
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
 
 
 def main():
-    server = ThreadedTCPServer((LOCAL, PORT), ThreadedTCPRequestHandler)
+    with ThreadedTCPServer((LOCAL, PORT), ThreadedTCPRequestHandler) as server:
+        # Start a thread with the server -- that thread will then start one
+        # more thread for each request
+        server_thread = threading.Thread(target=server.serve_forever)
 
-    # Start a thread with the server -- that thread will then start one
-    # more thread for each request
-    server_thread = threading.Thread(target=server.serve_forever(poll_interval=1))
+        # Exit the server thread when the main thread terminates
+        server_thread.daemon = True
+        server_thread.start()
 
-    # Exit the server thread when the main thread terminates
-    # server_thread.daemon = True
-    server_thread.start()
-    print("Server loop running in thread:", server_thread.name)
+        while not game_over:
+            time.sleep(1)
 
-        # server.shutdown()
+        server.shutdown()
 
 
 if __name__ == '__main__':

@@ -68,8 +68,6 @@ class Swift(Card):
 
         return super().play(player, game, index, bonus)
 swift = Swift(name="Swift", cost=2, points=2, qualities=[Quality.VISIBLE], text="2:2, visible, if the next card costs 1, +1")
-
-phoenix = FlockCard(name="Phoenix", amt=1, cost=5, points=5, qualities=[Quality.VISIBLE], text="5:5, visible, flock 1")
 class Pelican(Card):
     def play(self, player, game, index, bonus):
         amt = 0
@@ -82,6 +80,7 @@ class Pelican(Card):
 
         return recap
 pelican = Pelican(name="Pelican", cost=4, points=4, text="4:4, oust 0/1s in hand, +1 for each")
+phoenix = FlockCard(name="Phoenix", amt=1, cost=5, points=5, qualities=[Quality.VISIBLE], text="5:5, visible, flock 1")
 class Ostrich(Card):
     def get_cost(self, player, game):
         amt = 0
