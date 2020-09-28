@@ -55,7 +55,7 @@ nest = FlockCard(name="Nest", amt=3, cost=2, points=1, text="2:1, flock 3")
 class Peace(Card):
     def play(self, player, game, index, bonus):
         for act in game.story.acts:
-            if card is dove:
+            if act.card is dove:
                 return super().play(player, game, index, bonus) + self.reset(game)
 
         return super().play(player, game, index, bonus)
@@ -418,7 +418,6 @@ class Oak(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.gentle(game, player)
 oak = Oak(name="Oak", cost=8, points=8, text="8:8, gentle (If you win this round, convert to nourish any extra points)")
-roots, sprout, fruiting, pine, bulb, lotus, leaf_swirl, pollen, oak
 
 
 """Earth"""
