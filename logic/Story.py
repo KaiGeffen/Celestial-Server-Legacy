@@ -55,6 +55,9 @@ class Story:
     def get_length(self):
         return len(self.acts)
 
+    def is_empty(self):
+        return len(self.acts) == 0
+
     def counter(self, index):
         if self.get_length() > index:
             self.acts[index].countered = True

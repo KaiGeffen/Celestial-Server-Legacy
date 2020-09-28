@@ -60,6 +60,15 @@ class Peace(Card):
 
         return super().play(player, game, index, bonus)
 peace = Peace(name="Peace", cost=3, text="3: reset if a dove is later this round")
+class Swift(Card):
+    def play(self, player, game, index, bonus):
+        if not game.story.is_empty():
+            if game.story.acts[0].card.cost is 1:
+                bonus += 1
+
+        return super().play(player, game, index, bonus)
+swift = Swift(name="Swift", cost=2, points=2, qualities=[Quality.VISIBLE], text="2:2, visible, if the next card costs 1, +1")
+
 phoenix = FlockCard(name="Phoenix", amt=1, cost=5, points=5, qualities=[Quality.VISIBLE], text="5:5, visible, flock 1")
 class Pelican(Card):
     def play(self, player, game, index, bonus):
@@ -642,7 +651,7 @@ full_catalog = [
     flying_fish, perch, angler, school_of_fish,
     figurehead, fishing_boat, drakkar, ship_wreck, trireme,
     hurricane, raise_dead, lock, spectre, spy,
-    snake_spiral, portal, swamp, snake_eye, temptation, wave
+    snake_spiral, portal, swamp, snake_eye, temptation, wave, swift
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
