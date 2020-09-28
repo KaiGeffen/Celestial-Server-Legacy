@@ -67,7 +67,7 @@ class BaseView(cocos.layer.ColorLayer):
         self.cards.append(sprite)
         self.add(sprite)
 
-checking = 0
+
 # A card as a sprite object
 class CardSprite(cocos.sprite.Sprite):
     def __init__(self, card):
@@ -77,11 +77,8 @@ class CardSprite(cocos.sprite.Sprite):
 
     # The existing 'contains' method for Sprites seems to not be working
     def contains_point(self, x, y):
-        global checking
-        checking += 1
-        print(checking)
-        if x < self.x - CELL_WIDTH / 2 or x > self.x + CELL_WIDTH / 2:
+        if x < self.x - CELL_WIDTH_HALF or x > self.x + CELL_WIDTH_HALF:
             return False
-        if y < self.y - CELL_HEIGHT / 2 or y > self.y + CELL_HEIGHT / 2:
+        if y < self.y - CELL_HEIGHT_HALF or y > self.y + CELL_HEIGHT_HALF:
             return False
         return True

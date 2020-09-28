@@ -90,7 +90,20 @@ class Ostrich(Card):
 
         return 8 - amt
 ostrich = Ostrich(name="Ostrich", cost=8, points=6, text="8:6, costs 1 less for each 0/1 in hand")
+class Icarus(Card):
+    def get_cost(self, player, game):
+        amt = 0
 
+        if not game.story.is_empty():
+            for act in game.story.acts:
+                if act.owner is player:
+                    amt += 1
+
+        if amt is 5:
+            return 0
+        else:
+            return self.cost
+icarus = Icarus(name="Icarus", cost=7, points=7, text="7:7, costs 0 if you have 5 cards in story")
 
 """SNAKE"""
 class Swamp(Card):
@@ -650,7 +663,7 @@ full_catalog = [
     flying_fish, perch, angler, school_of_fish,
     figurehead, fishing_boat, drakkar, ship_wreck, trireme,
     hurricane, raise_dead, lock, spectre, spy,
-    snake_spiral, portal, swamp, snake_eye, temptation, wave, swift
+    snake_spiral, portal, swamp, snake_eye, temptation, wave, swift, icarus
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
