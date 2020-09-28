@@ -36,6 +36,11 @@ class GameController(Layer):
         # Autoplay, which enables an ai to take all actions for the player. Toggle with A key
         self.autoplay = False
 
+        # Hide all of the reminder text about cards, mostly to prevent overuse of cpu
+        # Because each frame when mouse moves, each card in the environment must be checked
+        # to see if there is an overlap (In the case where there isn't)
+        self.disable_reminder_text = False
+
         _thread.start_new_thread(self.start_network_thread, ())
 
         def refresh_display(*args):
@@ -85,12 +90,16 @@ class GameController(Layer):
             self.autoplay = not self.autoplay
             self.on_choice(AI.get_action(self.model))
             return
+        if symbol is pyglet.window.key.R:
+            self.disable_reminder_text = not self.disable_reminder_text
+            return
 
         card_num = get_choice(symbol)
         self.on_choice(card_num)
 
     def on_mouse_motion(self, x, y, buttons, modifiers):
-        self.view.on_mouse_motion(x, y)
+        if not self.disable_reminder_text:
+            self.view.on_mouse_motion(x, y)
 
     # If left-click, select a card, if right-click, pass turn
     def on_mouse_press(self, x, y, buttons, modifiers):
