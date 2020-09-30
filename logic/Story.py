@@ -23,7 +23,6 @@ class Story:
         # Reset the recap so that it now recaps this run
         self.recap.reset()
 
-        # TODO remove index and bonus from play signature
         index = 0
         while self.acts:
             act = self.acts.pop(0)
@@ -35,12 +34,12 @@ class Story:
                     result = act.card.play(player=act.owner,
                                            game=game,
                                            index=index,
-                                           bonus=0)
+                                           bonus=act.bonus)
                 elif act.source is Source.SPRING:
                     result = act.card.play_spring(player=act.owner,
                                            game=game,
                                            index=index,
-                                           bonus=0)
+                                           bonus=act.bonus)
 
             if Quality.FLEETING not in act.card.qualities:
                 game.pile[act.owner].append(act.card)
@@ -78,4 +77,6 @@ class Act:
         self.card = card
         self.owner = owner
         self.source = source
+
         self.countered = False
+        self.bonus = 0

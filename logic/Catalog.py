@@ -61,6 +61,15 @@ class FireRing(Card):
 
         return recap
 fire_ring = FireRing(name="Fire Ring", cost=5, text="5: counter the next 2 cards this round")
+class Ifrit(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus) + '\nOppress'
+
+        for act in game.story.acts:
+            act.bonus -= 1
+
+        return recap
+ifrit = Ifrit(name="Ifrit", cost=8, points=7, text="8:7, each later card this round is worth -1 points")
 
 
 """BIRD"""
@@ -142,7 +151,6 @@ class Swamp(Card):
 
         return super().play(player, game, index, bonus)
 swamp = Swamp(name="Swamp", cost=0, text="0:0, swamp copies the effect of your first sprung card in the story.")
-
 class Snake_Egg(Card):
     def play_spring(self, player, game, index, bonus):
         recap = super().play_spring(player, game, index, bonus)
@@ -151,7 +159,6 @@ class Snake_Egg(Card):
 
         return recap
 snake_egg = Snake_Egg(name="Snake Egg", cost=1, points=1, text="1:1, spring: 1 point, draw 1", spring=True)
-
 class Ouroboros(Card):
     def play_spring(self, player, game, index, bonus):
         recap = super().play_spring(player, game, index, bonus - self.points)
@@ -161,7 +168,6 @@ class Ouroboros(Card):
 
         return recap
 ouroboros = Ouroboros(name="Ouroboros", cost=2, points=2, text="2:2, spring: oust 2, draw 2", spring=True)
-
 class SnakeEye(SightCard):
     def play(self, player, game, index, bonus):
         amt = 0
@@ -172,7 +178,6 @@ class SnakeEye(SightCard):
         return super().play(player, game, index, bonus + amt)
 snake_eye = SnakeEye(name="Snake Eye", cost=2, points=0, qualities=[Quality.VISIBLE],
                      text="2:0, visible, sight, +3 if the final card this round is yours (Not counting this)")
-
 class Serpent(Card):
     def play_spring(self, player, game, index, bonus):
         recap = super().play_spring(player, game, index, bonus - self.points)
@@ -181,24 +186,20 @@ class Serpent(Card):
 
         return recap
 serpent = Serpent(name="Serpent", cost=3, points=3, text="3:3, spring: opponent discards 1", spring=True)
-
 class SnakeSpiral(Card):
     def on_play(self, player, game):
         if game.hand[player]:
             first_card = game.hand[player].pop(0)
             game.hand[player].append(first_card)
 snake_spiral = SnakeSpiral(name="Snake Spiral", cost=3, points=3, text="3:3. When played, move the first card in your hand to the last position.")
-
 class Salamander(FireCard):
     def play_spring(self, player, game, index, bonus):
         return self.play(player, game, index, bonus)
 salamander = Salamander(name="Salamander", cost=4, points=4, text="4:4, flare, spring: 4 points", spring=True)
-
 class Temptation(Card):
     def play_spring(self, player, game, index, bonus):
         return self.play(player, game, index, bonus - self.points) + self.nourish(1, game, player)
 temptation = Temptation(name="Temptation", cost=5, points=5, text="5:5, spring: nourish 1", spring=True)
-
 class FrogPrince(Card):
     def play_spring(self, player, game, index, bonus):
         recap = super().play_spring(player, game, index, bonus - self.points)
@@ -207,7 +208,6 @@ class FrogPrince(Card):
 
         return recap
 frog_prince = FrogPrince(name="Frog Prince", cost=6, points=6, text="6:6, spring: inspire 1", spring=True)
-
 class Wyvern(Card):
     def play_spring(self, player, game, index, bonus):
         recap = super().play_spring(player, game, index, bonus - self.points)
@@ -216,7 +216,6 @@ class Wyvern(Card):
 
         return recap
 wyvern = Wyvern(name="Wyvern", cost=7, points=7, text="7:7, spring: flock 3", spring=True)
-
 class Cobra(Card):
     def play_spring(self, player, game, index, bonus):
         recap = super().play_spring(player, game, index, bonus - self.points)
@@ -700,7 +699,7 @@ full_catalog = [
     figurehead, fishing_boat, drakkar, ship_wreck, trireme,
     hurricane, raise_dead, lock, spectre, spy,
     snake_spiral, portal, swamp, snake_eye, temptation, wave, swift, icarus,
-    piranha, haze, fire_ring
+    piranha, haze, fire_ring, ifrit
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
