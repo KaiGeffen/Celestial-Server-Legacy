@@ -155,9 +155,9 @@ class Card:
 
         return recap
 
-    # Counter the next card this round
-    def counter(self, game):
-        card = game.counter()
+    # Counter the nth card this round
+    def counter(self, game, index=0):
+        card = game.counter(index)
         if card:
             return f'\nCounter: {card.name}'
         else:

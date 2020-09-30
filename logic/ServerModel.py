@@ -138,8 +138,8 @@ class ServerModel(pyglet.event.EventDispatcher):
         return None
 
     # Counter the next card on the stack
-    def counter(self):
-        card = self.story.counter(0)
+    def counter(self, index):
+        card = self.story.counter(index)
         return card
 
     # Shuffle the player's pile into their deck

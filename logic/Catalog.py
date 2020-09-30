@@ -24,6 +24,24 @@ class Charcoal(Card):
         recap += self.oust(1, game, player)
         return  recap
 charcoal = Charcoal(name="Charcoal", cost=3, points=4, text="3:4, oust the lowest card in your hand")
+class Haze(Card):
+    def play(self, player, game, index, bonus):
+        countered_card_index = None
+
+        i = 0
+        for act in game.story.acts:
+            if act.card.cost is 3:
+                countered_card_index = i
+                break
+
+            i += 1
+
+        recap = super().play(player, game, index, bonus)
+        if countered_card_index is not None:
+            recap += self.counter(game, countered_card_index)
+
+        return recap
+haze = Haze(name="Haze", cost=3, points=3, qualities=[Quality.VISIBLE], text="3:3, visible, counter the next 3-cost card this round")
 class Kindle(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -34,6 +52,15 @@ class Kindle(Card):
         return recap
 kindle = Kindle(name="Kindle", cost=3, points=3, text="3:3, both players discard 1")
 force = FireCard(name="Force", cost=5, points=6, text="5:6, flare")
+class FireRing(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        recap += self.counter(game)
+        recap += self.counter(game, 1)
+
+        return recap
+fire_ring = FireRing(name="Fire Ring", cost=5, text="5: counter the next 2 cards this round")
 
 
 """BIRD"""
@@ -105,6 +132,7 @@ class Icarus(Card):
             return self.cost
 icarus = Icarus(name="Icarus", cost=7, points=7, text="7:7, costs 0 if you have 5 cards in story")
 
+
 """SNAKE"""
 class Swamp(Card):
     def play(self, player, game, index, bonus):
@@ -139,11 +167,11 @@ class SnakeEye(SightCard):
         amt = 0
         if game.story.get_length() > 0:
             if player is game.story.acts[-1].owner:
-                amt += 2
+                amt += 3
 
         return super().play(player, game, index, bonus + amt)
-snake_eye = SnakeEye(name="Snake Eye", cost=2, points=1, qualities=[Quality.VISIBLE],
-                     text="2:1, visible, sight, +2 if the final card this round is yours (Not counting this)")
+snake_eye = SnakeEye(name="Snake Eye", cost=2, points=0, qualities=[Quality.VISIBLE],
+                     text="2:0, visible, sight, +3 if the final card this round is yours (Not counting this)")
 
 class Serpent(Card):
     def play_spring(self, player, game, index, bonus):
@@ -534,6 +562,13 @@ class Angler(FlowCard):
 
         return recap
 angler = Angler(name="Angler", cost=4, points=4, qualities=[Quality.VISIBLE], text="4:4, flow, visible, tutor 1")
+class Piranha(FlowCard):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+        recap += self.counter(game)
+
+        return recap
+piranha = Piranha(name="Piranha", cost=4, points=1, text="4:1 flow, counter the next card")
 class SchoolOfFish(FlowCard):
     def get_cost(self, player, game):
         amt = 0
@@ -647,6 +682,7 @@ camera = Camera(name="Camera", cost=2, qualities=[Quality.FLEETING],
 broken_bone = Card(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], text="1:0, fleeting")
 robot = Card(name='Robot', qualities=[Quality.FLEETING], text=f'0:X, fleeting')
 
+
 tokens = [haunt, camera, broken_bone, robot]
 
 
@@ -663,7 +699,8 @@ full_catalog = [
     flying_fish, perch, angler, school_of_fish,
     figurehead, fishing_boat, drakkar, ship_wreck, trireme,
     hurricane, raise_dead, lock, spectre, spy,
-    snake_spiral, portal, swamp, snake_eye, temptation, wave, swift, icarus
+    snake_spiral, portal, swamp, snake_eye, temptation, wave, swift, icarus,
+    piranha, haze, fire_ring
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
