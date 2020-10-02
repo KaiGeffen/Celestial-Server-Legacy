@@ -70,7 +70,7 @@ class GameController(Layer):
                 valid = self.net.send_action(self.queued_act)
 
                 if not valid:
-                    print("Invalid action")
+                    self.view.alert()
                     self.queued_act = None
                 else:
                     self.queued_act = None

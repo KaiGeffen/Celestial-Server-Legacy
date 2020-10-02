@@ -102,6 +102,10 @@ class GameView(BaseView):
         if self.inventory_layer.visible:
             self.toggle_piles()
 
+    # Alert player they did something invalid
+    def alert(self):
+        self.hud.alert()
+
 
 # Layer for showing my (player 1) hand, and handling any interaction with it
 class HandLayer(BaseView):
