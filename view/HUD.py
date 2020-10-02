@@ -115,7 +115,7 @@ class PriorityLayer(Layer):
         super().__init__()
         w, h = director.get_window_size()
 
-        self.add(ColorLayer(200, 200, 100, 200, width=w, height=HAND_HEIGHT), z=-1)
+        self.add(ColorLayer(180, 180, 180, 200, width=w, height=HAND_HEIGHT))
 
         self.p1_pos = (0, 0)
         self.p2_pos = (0, h - HAND_HEIGHT)
@@ -144,7 +144,7 @@ class HUD(BaseView):
         self.add(self.status_layer)
 
         self.priority_layer = PriorityLayer()
-        self.add(self.priority_layer, z=-1)
+        self.add(self.priority_layer, z=1)
 
     def display(self, model):
         self.mana_layer.display(model)
