@@ -470,7 +470,7 @@ class CrossedBones(Card):
 
         return super().play(player, game, index, bonus)
 crossed_bones = CrossedBones(name="Crossed Bones", cost=1, points=2, qualities=[Quality.FLEETING],
-                             text="1:2, becomes 2x 1:0 fleeting bones after resolving")
+                             text="1:2, becomes 2x 1:0 fleeting bone after resolving")
 class Dig(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -511,7 +511,12 @@ class DinosaurBones(Card):
 
         return super().play(player, game, index, bonus)
 dinosaur_bones = DinosaurBones(name="Dinosaur Bones", cost=4, points=6, qualities=[Quality.FLEETING],
-                             text="4:6, becomes 6x 1:0 fleeting bones after resolving")
+                             text="4:6, becomes 6x 1:0 fleeting bone after resolving")
+class Wolf(Card):
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus) + self.create(broken_bone, game, player^1)
+wolf = Wolf(name="Wolf", cost=4, points=4, text="4:4, create a 1:0 fleeting bone in opponent's hand")
+
 class StoneGolem(Card):
     def __init__(self, points):
         text = f"5:{points}, permanently grows by +1 after playing"
@@ -616,25 +621,18 @@ warship = EbbCard(name="Warship", cost=7, points=7, text="7:7, ebb")
 
 
 """Pile"""
+class Graveyard(Card):
+    def play(self, player, game, index, bonus):
+        for p in (player, player ^ 1):
+            if len(game.pile[p]) >= 6:
+                bonus += 1
+
+        return super().play(player, game, index, bonus)
+graveyard = Graveyard(name="Graveyard", cost=0, points=0, text="0:0, +1 for each player with 6 or more cards in pile")
 class Drown(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.mill(3, game, player)
 drown = Drown(name="Drown", cost=1, points=1, text="1:1, mill yourself 3 (Top 3 cards of deck go to pile)")
-class Graveyard(Card):
-    def play(self, player, game, index, bonus):
-        for p in (player, player ^ 1):
-            if len(game.pile[p]) >= 8:
-                bonus += 1
-
-        return super().play(player, game, index, bonus)
-graveyard = Graveyard(name="Graveyard", cost=0, points=0, text="0:0, +1 for each player with 8 or more cards in pile")
-
-
-"""Other"""
-class Hurricane(Card):
-    def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.reset(game)
-hurricane = Hurricane(name="Hurricane", cost=4, text="4: Reset")
 class RaiseDead(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -647,14 +645,24 @@ class RaiseDead(Card):
 
         return recap
 raise_dead = RaiseDead(name="Raise Dead", cost=2, points=2, text="2:2 put the top card of your pile on top of deck")
+class Anubis(Card):
+    def get_cost(self, player, game):
+        if len(game.pile[player]) >= 10:
+            return 0
+        else:
+            return self.cost
+anubis = Anubis(name="Anubis", cost=7, points=7, text="7:7, costs 0 if you have at least 10 cards in your pile")
+
+
+"""Other"""
+class Hurricane(Card):
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus) + self.reset(game)
+hurricane = Hurricane(name="Hurricane", cost=4, text="4: Reset")
 class Lock(Card):
     def on_play(self, player, game):
         game.priority ^= 1
 lock = Lock(name="Lock", cost=3, points=3, text="3:3, keep priority")
-class Spectre(Card):
-    def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.create(haunt, game, player^1)
-spectre = Spectre(name="Spectre", cost=4, points=4, text="4:4, create a 1:0 in opponent's hand")
 class Spy(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.create(camera, game, player ^ 1)
@@ -697,7 +705,7 @@ wave = Wave(name="Wave", cost=7, points=7,
 
 
 """Tokens"""
-haunt = Card(name="Haunt", cost=1, qualities=[Quality.VISIBLE, Quality.FLEETING], text="1:0, fleeting")
+# haunt = Card(name="Haunt", cost=1, qualities=[Quality.VISIBLE, Quality.FLEETING], text="1:0, fleeting")
 class Camera(Card):
     def on_upkeep(self, player, game):
         game.vision[player^1] = True
@@ -707,7 +715,7 @@ broken_bone = Card(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], tex
 robot = Card(name='Robot', qualities=[Quality.FLEETING], text=f'0:X, fleeting')
 
 
-tokens = [haunt, camera, broken_bone, robot]
+tokens = [camera, broken_bone, robot]
 
 
 """Lists"""
@@ -719,10 +727,10 @@ full_catalog = [
     bone_knife, mute, robe, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
     cog, drone, gears, factory, anvil, cogsplosion, ai, sine, foundry,
     stars, cosmos, roots, sprout, fruiting, pine, bulb, lotus, leaf_swirl, pollen, oak,
-    crossed_bones, dig, mine, gnaw, dinosaur_bones, stone_golem, atlas, uluru,
+    crossed_bones, dig, mine, gnaw, dinosaur_bones, wolf, stone_golem, atlas, uluru,
     star_fish, flying_fish, perch, angler, piranha, school_of_fish, whale,
     figurehead, fishing_boat, drakkar, ship_wreck, trireme, warship,
-    hurricane, raise_dead, lock, spectre, spy, wave, drown, graveyard
+    hurricane, raise_dead, lock, spy, wave, drown, graveyard, anubis
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
