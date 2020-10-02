@@ -155,6 +155,17 @@ class Card:
 
         return recap
 
+    # Put the top X cards from player's deck on top of their pile
+    def mill(self, amt, game, player):
+        recap = ''
+
+        for _ in range(amt):
+            card = game.mill(player)
+            if card:
+                recap += f'\nMill: {card.name}'
+
+        return recap
+
     # Counter the next act this round for which function returns True
     def counter(self, game, function=None):
         if function is None:

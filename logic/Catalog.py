@@ -535,6 +535,11 @@ uluru = Card(name="Uluru", cost=10, points=15, text="10:15")
 
 
 """Fish"""
+class StarFish(FlowCard):
+    def on_flow(self, player, game):
+        game.mana[player] += 1
+        return super().on_flow(player, game)
+star_fish = StarFish(name="Star Fish", cost=1, text="1:0, flow: Gain 1 mana")
 flying_fish = FlowCard(name="Flying Fish", cost=1, points=1, text="1:1, flow (As soon as you ebb, cycle this)")
 class Perch(FlowCard):
     def play(self, player, game, index, bonus):
@@ -572,6 +577,15 @@ class SchoolOfFish(FlowCard):
 
         return self.cost - amt
 school_of_fish = SchoolOfFish(name="School of Fish", cost=5, points=5, text="5:5, flow, costs 1 less for each 1-cost you have in story")
+class Whale(FlowCard):
+    def get_cost(self, player, game):
+        amt = 0
+        for card in game.hand[player]:
+            if card.cost is 1:
+                amt += 1
+
+        return self.cost - amt
+whale = Whale(name="Whale", cost=8, points=8, text="8:8, flow, costs 1 less for each 1-cost in your hand")
 
 
 """Ships"""
@@ -598,6 +612,22 @@ class ShipWreck(EbbCard):
 ship_wreck = ShipWreck(name="Ship Wreck", cost=4, points=3,
                        text="4:3, ebb, costs 1 less for each round-win you are behind by (Cost more if you are ahead)")
 trireme = EbbCard(name="Trireme", cost=5, points=5, text="5:5, ebb")
+warship = EbbCard(name="Warship", cost=7, points=7, text="7:7, ebb")
+
+
+"""Pile"""
+class Drown(Card):
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus) + self.mill(3, game, player)
+drown = Drown(name="Drown", cost=1, points=1, text="1:1, mill yourself 3 (Top 3 cards of deck go to pile)")
+class Graveyard(Card):
+    def play(self, player, game, index, bonus):
+        for p in (player, player ^ 1):
+            if len(game.pile[p]) >= 8:
+                bonus += 1
+
+        return super().play(player, game, index, bonus)
+graveyard = Graveyard(name="Graveyard", cost=0, points=0, text="0:0, +1 for each player with 8 or more cards in pile")
 
 
 """Other"""
@@ -643,7 +673,7 @@ class Portal(Card):
 
         if index_final_owned_card > 0:
             act = game.story.move_act(index_final_owned_card, 0)
-            result += f'\n{act.card.name} move {index_final_owned_card - 1}'
+            result += f'\n{act.card.name} move {index_final_owned_card}'
 
         return result
 portal = Portal(name="Portal", cost=2, points=2, text="2:2, your last card this round moves to immediately after Portal in the story.")
@@ -683,18 +713,16 @@ tokens = [haunt, camera, broken_bone, robot]
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?")
 full_catalog = [
-    ember, dash, firewall, charcoal, kindle, force,
-    dove, twitter, owl, nest, peace, phoenix, pelican, ostrich,
-    snake_egg, ouroboros, serpent, salamander, frog_prince, wyvern, cobra,
+    ember, dash, firewall, portal, charcoal, kindle, haze, force, fire_ring, ifrit,
+    dove, twitter, owl, nest, swift, peace, phoenix, pelican, icarus, ostrich,
+    swamp, snake_egg, ouroboros, snake_eye, serpent, snake_spiral, salamander, temptation, frog_prince, wyvern, cobra,
     bone_knife, mute, robe, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
     cog, drone, gears, factory, anvil, cogsplosion, ai, sine, foundry,
     stars, cosmos, roots, sprout, fruiting, pine, bulb, lotus, leaf_swirl, pollen, oak,
     crossed_bones, dig, mine, gnaw, dinosaur_bones, stone_golem, atlas, uluru,
-    flying_fish, perch, angler, school_of_fish,
-    figurehead, fishing_boat, drakkar, ship_wreck, trireme,
-    hurricane, raise_dead, lock, spectre, spy,
-    snake_spiral, portal, swamp, snake_eye, temptation, wave, swift, icarus,
-    piranha, haze, fire_ring, ifrit
+    star_fish, flying_fish, perch, angler, piranha, school_of_fish, whale,
+    figurehead, fishing_boat, drakkar, ship_wreck, trireme, warship,
+    hurricane, raise_dead, lock, spectre, spy, wave, drown, graveyard
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles

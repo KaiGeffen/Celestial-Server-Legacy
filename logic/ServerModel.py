@@ -137,6 +137,15 @@ class ServerModel(pyglet.event.EventDispatcher):
 
         return None
 
+    # Move the top card of player's deck to the top of their pile
+    def mill(self, player):
+        if len(self.deck[player]) > 0:
+            card = self.deck[player].pop()
+            self.pile[player].append(card)
+            return card
+
+        return None
+
     # Counter the next card on the stack for which function returns true
     def counter(self, function):
         card = self.story.counter(function)
