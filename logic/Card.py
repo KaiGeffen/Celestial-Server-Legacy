@@ -155,9 +155,12 @@ class Card:
 
         return recap
 
-    # Counter the nth card this round
-    def counter(self, game, index=0):
-        card = game.counter(index)
+    # Counter the next act this round for which function returns True
+    def counter(self, game, function=None):
+        if function is None:
+            function = (lambda act: act.countered is False)
+
+        card = game.counter(function)
         if card:
             return f'\nCounter: {card.name}'
         else:

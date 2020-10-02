@@ -14,6 +14,7 @@ dash = FireCard(name="Dash", cost=2, points=3, text="2:3, flare (Worth 1 less fo
 class Firewall(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
+
         recap += self.counter(game)
 
         return recap
@@ -26,19 +27,12 @@ class Charcoal(Card):
 charcoal = Charcoal(name="Charcoal", cost=3, points=4, text="3:4, oust the lowest card in your hand")
 class Haze(Card):
     def play(self, player, game, index, bonus):
-        countered_card_index = None
-
-        i = 0
-        for act in game.story.acts:
-            if act.card.cost is 3:
-                countered_card_index = i
-                break
-
-            i += 1
+        def is_cost_3(act):
+            return act.card.cost is 3
 
         recap = super().play(player, game, index, bonus)
-        if countered_card_index is not None:
-            recap += self.counter(game, countered_card_index)
+
+        recap += self.counter(game, is_cost_3)
 
         return recap
 haze = Haze(name="Haze", cost=3, points=3, qualities=[Quality.VISIBLE], text="3:3, visible, counter the next 3-cost card this round")
@@ -57,7 +51,7 @@ class FireRing(Card):
         recap = super().play(player, game, index, bonus)
 
         recap += self.counter(game)
-        recap += self.counter(game, 1)
+        recap += self.counter(game)
 
         return recap
 fire_ring = FireRing(name="Fire Ring", cost=5, text="5: counter the next 2 cards this round")
@@ -564,6 +558,7 @@ angler = Angler(name="Angler", cost=4, points=4, qualities=[Quality.VISIBLE], te
 class Piranha(FlowCard):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
+
         recap += self.counter(game)
 
         return recap
@@ -666,8 +661,8 @@ class Wave(Card):
                 high_score = current_score
 
         return self.cost - high_score
-wave = Wave(name="Wave", cost=8, points=7,
-            text="7:8, costs X less where X is the length of your longest chain in the story (Chain is cards in sequence)")
+wave = Wave(name="Wave", cost=7, points=7,
+            text="7:7, costs X less where X is the length of your longest chain in the story (Chain is cards in sequence)")
 
 
 

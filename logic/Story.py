@@ -57,13 +57,20 @@ class Story:
     def is_empty(self):
         return len(self.acts) == 0
 
-    def counter(self, index):
-        if self.get_length() > index:
-            self.acts[index].countered = True
+    def counter(self, function):
+        for act in self.acts:
+            if function(act):
+                act.countered = True
 
-            return self.acts[index].card
-        else:
-            return None
+                return act.card
+
+        return None
+        # if self.get_length() > index:
+        #     self.acts[index].countered = True
+        #
+        #     return self.acts[index].card
+        # else:
+        #     return None
 
     def move_act(self, index_origin, index_dest):
         act = self.acts.pop(index_origin)
