@@ -35,7 +35,9 @@ class BuilderView(BaseView):
         # Clicked card was in catalog, add it to deck
         card = self.catalog_layer.get_card_at_pos(x, y)
         if card:
-            self.deck_layer.add_card(card)
+            added = self.deck_layer.add_card(card)
+            if not added:
+                self.alert()
 
         self.on_screen_change()
 
@@ -137,6 +139,10 @@ class DeckView(BaseView):
         if len(self.cards) < MAX_DECK_SIZE:
             super().add_card(card)
             self.display()
+
+            return True
+        else:
+            return False
 
     def remove_card(self, x, y):
         # This gets the sprite, instead of the associated card, thus get_card_at_pos isn't called

@@ -1,6 +1,7 @@
 import cocos
-
 from cocos.text import Label
+import time
+
 from view.Settings import *
 
 
@@ -11,6 +12,8 @@ class BaseView(cocos.layer.ColorLayer):
             super().__init__(*BACKGROUND_COLOR)
         else:
             super().__init__(*NO_COLOR)
+
+        self.original_opacity = self.opacity
 
         # List of all card sprites currently displayed
         self.cards = []
@@ -66,6 +69,13 @@ class BaseView(cocos.layer.ColorLayer):
 
         self.cards.append(sprite)
         self.add(sprite)
+
+    # Alert player they've done something wrong
+    def alert(self):
+        self.do(
+            cocos.actions.FadeTo(0, .07) + cocos.actions.FadeTo(self.original_opacity, .07)
+        )
+            # cocos.actions.Waves(grid=(16, 12), duration=4) + cocos.actions.Liquid(grid=(16, 12), duration=5))
 
 
 # A card as a sprite object
