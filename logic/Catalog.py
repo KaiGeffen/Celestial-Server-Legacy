@@ -675,6 +675,20 @@ class Tumulus(Card):
 tumulus = Tumulus(name="Tumulus", cost=5, points=4, text="5:4, +2 if your pile has at least 8 cards in it")
 class Prayer(Card):
     def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+        recap += self.reset(game)
+        recap += self.inspire(1, game, player)
+
+        return recap
+
+    def pile_upkeep(self, player, game, index):
+        game.mana[player] += 1
+        game.status[player].append(Status.STARVE)
+prayer = Prayer(name="Prayer", cost=5,
+                text="5: reset. On upkeep while in pile, +1 mana and Starve 1 (Your next card -1 point)")
+
+class Sarcophagus(Card):
+    def play(self, player, game, index, bonus):
         recap = ''
 
         highest_cost = -1
@@ -695,7 +709,7 @@ class Prayer(Card):
             return super().play(player, game, index, bonus) + f"\nTop: {card.name}"
         else:
             return super().play(player, game, index, bonus)
-prayer = Prayer(name="Prayer", cost=6,
+sarcophagus = Sarcophagus(name="Sarcophagus", cost=6,
                 text="6:X, put the highest cost card from your pile on top of your deck, X is its cost")
 class Reaper(Card):
     def get_cost(self, player, game):
@@ -785,15 +799,14 @@ full_catalog = [
     ember, dash, firewall, portal, charcoal, kindle, haze, force, fire_ring, ifrit,
     dove, twitter, owl, nest, swift, peace, pelican, phoenix, icarus,
     swamp, snake_egg, ouroboros, snake_eye, serpent, snake_spiral, salamander, temptation, frog_prince, wyvern, cobra,
-    bone_knife, mute, robe, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
+    bone_knife, mute, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
     cog, drone, gears, factory, anvil, cogsplosion, ai, sine, foundry,
     stars, cosmos, roots, sprout, fruiting, pine, bulb, lotus, leaf_swirl, pollen, oak,
     crossed_bones, dig, mine, gnaw, dinosaur_bones, wolf, stone_golem, atlas, uluru,
     star_fish, flying_fish, perch, angler, piranha, school_of_fish, whale,
     figurehead, fishing_boat, drakkar, ship_wreck, trireme, warship,
-    hurricane, raise_dead, lock, spy, wave, drown, graveyard, anubis, prayer,
-    vulture, tumulus, reaper,
-    zombie, haunt, spectre
+    graveyard, drown, zombie, raise_dead, haunt, spectre, prayer, tumulus, sarcophagus, reaper, anubis,
+    hurricane, lock, spy, wave
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
