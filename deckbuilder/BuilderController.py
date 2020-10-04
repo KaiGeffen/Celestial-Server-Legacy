@@ -48,6 +48,8 @@ class BuilderController(Layer):
 
                 new_deck = self.saved_decks[self.remembered_deck_id]
                 self.view.set_deck(new_deck)
+            else:
+                self.view.alert()
 
         if symbol is pyglet.window.key.DOWN:
             if self.remembered_deck_id < len(self.saved_decks) - 1:
@@ -55,6 +57,8 @@ class BuilderController(Layer):
 
                 new_deck = self.saved_decks[self.remembered_deck_id]
                 self.view.set_deck(new_deck)
+            else:
+                self.view.alert()
 
         def save_deck(deck):
             with open(DECK_FILE, 'a') as writer:
