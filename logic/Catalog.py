@@ -634,7 +634,7 @@ class Undead(Card):
             if self.discard(1, game, player):
                 # Play this card for its cost
                 game.mana[player] -= cost
-                game.story.add_act(self, player)
+                game.story.add_act(self, player, Source.PILE)
 
                 # Remove this card from the pile
                 game.pile[player].pop(index)
@@ -666,7 +666,13 @@ class RaiseDead(Card):
 raise_dead = RaiseDead(name="Raise Dead", cost=2, points=2, text="2:2 put the top card of your pile on top of deck")
 haunt = Undead(name="Haunt", cost=3, points=3, qualities=[Quality.VISIBLE], text="3:3, visible, undead (on upkeep, if this is in pile and you have the mana, discard 1 to play this card)")
 spectre = Undead(name="Spectre", cost=5, points=5, qualities=[Quality.VISIBLE], text="5:5, visible, undead (on upkeep, if this is in pile and you have the mana, discard 1 to play this card)")
+class Tumulus(Card):
+    def play(self, player, game, index, bonus):
+        if len(game.pile[player]) >= 8:
+            bonus += 2
 
+        return super().play(player, game, index, bonus)
+tumulus = Tumulus(name="Tumulus", cost=5, points=4, text="5:4, +2 if your pile has at least 8 cards in it")
 class Prayer(Card):
     def play(self, player, game, index, bonus):
         recap = ''
@@ -691,6 +697,16 @@ class Prayer(Card):
             return super().play(player, game, index, bonus)
 prayer = Prayer(name="Prayer", cost=6,
                 text="6:X, put the highest cost card from your pile on top of your deck, X is its cost")
+class Reaper(Card):
+    def get_cost(self, player, game):
+        amt = 0
+
+        for act in game.story.acts:
+            if act.owner is player and act.source is Source.PILE:
+                amt += 1
+
+        return self.cost - amt
+reaper = Reaper(name="Reaper", cost=6, points=6, text="6:6, costs 1 less for each card you played from pile this round")
 class Anubis(Card):
     def get_cost(self, player, game):
         if len(game.pile[player]) >= 12:
@@ -745,8 +761,8 @@ class Wave(Card):
                 high_score = current_score
 
         return self.cost - high_score
-wave = Wave(name="Wave", cost=7, points=7,
-            text="7:7, costs X less where X is the length of your longest chain in the story (Chain is cards in sequence)")
+wave = Wave(name="Wave", cost=7, points=6,
+            text="7:6, costs X less where X is the length of your longest chain in the story (Chain is cards in sequence)")
 
 
 
@@ -767,7 +783,7 @@ tokens = [camera, broken_bone, robot]
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?")
 full_catalog = [
     ember, dash, firewall, portal, charcoal, kindle, haze, force, fire_ring, ifrit,
-    dove, twitter, owl, nest, swift, peace, phoenix, pelican, icarus, ostrich,
+    dove, twitter, owl, nest, swift, peace, pelican, phoenix, icarus,
     swamp, snake_egg, ouroboros, snake_eye, serpent, snake_spiral, salamander, temptation, frog_prince, wyvern, cobra,
     bone_knife, mute, robe, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
     cog, drone, gears, factory, anvil, cogsplosion, ai, sine, foundry,
@@ -776,7 +792,8 @@ full_catalog = [
     star_fish, flying_fish, perch, angler, piranha, school_of_fish, whale,
     figurehead, fishing_boat, drakkar, ship_wreck, trireme, warship,
     hurricane, raise_dead, lock, spy, wave, drown, graveyard, anubis, prayer,
-    vulture, zombie, haunt, spectre
+    vulture, tumulus, reaper,
+    zombie, haunt, spectre
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles

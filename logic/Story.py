@@ -3,11 +3,13 @@ from enum import Enum
 from logic.Recap import Recap
 from logic.Effects import Quality
 
+
 # How an act was added to the story
 # Played from hand, sprung from hand, etc
 class Source(Enum):
     HAND = 0
     SPRING = 1
+    PILE = 2
 
 
 class Story:
@@ -15,7 +17,7 @@ class Story:
         self.acts = []
         self.recap = Recap()
 
-    def add_act(self, card, owner, source=Source.HAND):
+    def add_act(self, card, owner, source):
         act = Act(card, owner, source)
         self.acts.append(act)
 
@@ -30,7 +32,7 @@ class Story:
             if act.countered:
                 result = 'Countered'
             else:
-                if act.source is Source.HAND:
+                if act.source is Source.HAND or act.source is Source.PILE:
                     result = act.card.play(player=act.owner,
                                            game=game,
                                            index=index,
