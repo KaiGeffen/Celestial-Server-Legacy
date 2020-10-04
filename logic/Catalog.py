@@ -647,7 +647,7 @@ class Graveyard(Card):
 
         return super().play(player, game, index, bonus)
 graveyard = Graveyard(name="Graveyard", cost=0, points=0, text="0:0, +1 for each player with 6 or more cards in pile")
-zombie = Undead(name="Zombie", cost=0, points=1, qualities=[Quality.VISIBLE], text="0:1, visible, on upkeep, if this is in pile and you have the mana, discard 1 to play this card")
+zombie = Undead(name="Zombie", cost=0, points=1, qualities=[Quality.VISIBLE], text="0:1, visible, undead (on upkeep, if this is in pile and you have the mana, discard 1 to play this card)")
 class Drown(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.mill(3, game, player)
@@ -664,7 +664,9 @@ class RaiseDead(Card):
 
         return recap
 raise_dead = RaiseDead(name="Raise Dead", cost=2, points=2, text="2:2 put the top card of your pile on top of deck")
-haunt = Undead(name="Haunt", cost=3, points=3, qualities=[Quality.VISIBLE], text="3:3, visible, on upkeep, if this is in pile and you have the mana, discard 1 to play this card")
+haunt = Undead(name="Haunt", cost=3, points=3, qualities=[Quality.VISIBLE], text="3:3, visible, undead (on upkeep, if this is in pile and you have the mana, discard 1 to play this card)")
+spectre = Undead(name="Spectre", cost=5, points=5, qualities=[Quality.VISIBLE], text="5:5, visible, undead (on upkeep, if this is in pile and you have the mana, discard 1 to play this card)")
+
 class Prayer(Card):
     def play(self, player, game, index, bonus):
         recap = ''
@@ -749,7 +751,6 @@ wave = Wave(name="Wave", cost=7, points=7,
 
 
 """Tokens"""
-# haunt = Card(name="Haunt", cost=1, qualities=[Quality.VISIBLE, Quality.FLEETING], text="1:0, fleeting")
 class Camera(Card):
     def on_upkeep(self, player, game):
         game.vision[player^1] = True
@@ -774,8 +775,8 @@ full_catalog = [
     crossed_bones, dig, mine, gnaw, dinosaur_bones, wolf, stone_golem, atlas, uluru,
     star_fish, flying_fish, perch, angler, piranha, school_of_fish, whale,
     figurehead, fishing_boat, drakkar, ship_wreck, trireme, warship,
-    hurricane, raise_dead, lock, spy, wave, drown, graveyard, anubis, prayer, haunt,
-    vulture, zombie
+    hurricane, raise_dead, lock, spy, wave, drown, graveyard, anubis, prayer,
+    vulture, zombie, haunt, spectre
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
