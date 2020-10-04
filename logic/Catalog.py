@@ -82,14 +82,6 @@ class Owl(SightCard):
         return super().play(player, game, index, bonus) + self.flock(1, game, player)
 owl = Owl(name="Owl", cost=1, text="1: flock, sight (This round the story is visible to you)")
 nest = FlockCard(name="Nest", amt=3, cost=2, points=1, text="2:1, flock 3")
-class Peace(Card):
-    def play(self, player, game, index, bonus):
-        for act in game.story.acts:
-            if act.card is dove:
-                return super().play(player, game, index, bonus) + self.reset(game)
-
-        return super().play(player, game, index, bonus)
-peace = Peace(name="Peace", cost=3, text="3: reset if a dove is later this round")
 class Swift(Card):
     def play(self, player, game, index, bonus):
         if not game.story.is_empty():
@@ -98,6 +90,23 @@ class Swift(Card):
 
         return super().play(player, game, index, bonus)
 swift = Swift(name="Swift", cost=2, points=2, qualities=[Quality.VISIBLE], text="2:2, visible, if the next card costs 1, +1")
+class Peace(Card):
+    def play(self, player, game, index, bonus):
+        for act in game.story.acts:
+            if act.card is dove:
+                return super().play(player, game, index, bonus) + self.reset(game)
+
+        return super().play(player, game, index, bonus)
+peace = Peace(name="Peace", cost=3, text="3: reset if a dove is later this round")
+class Vulture(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        recap += self.dig(1, game, player)
+        recap += self.flock(1, game, player)
+
+        return  recap
+vulture = Vulture(name="Vulture", cost=3, points=3, text="3:3, flock 1, oust the top card of your pile")
 class Pelican(Card):
     def play(self, player, game, index, bonus):
         amt = 0
@@ -475,11 +484,7 @@ class Dig(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
 
-        recap += '\nRemove:'
-        for i in range(2):
-            if game.pile[player]:
-                card = game.pile[player].pop()
-                recap += f'\n{card.name}'
+        recap += self.dig(2, game, player)
 
         return recap
 dig = Dig(name="Dig", cost=2, points=2, text="2:2, Oust the top 2 cards of your discard pile")
@@ -496,11 +501,7 @@ class Mine(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
 
-        recap += '\nRemove:'
-        for i in range(4):
-            if game.pile[player]:
-                card = game.pile[player].pop()
-                recap += f'\n{card.name}'
+        recap += self.dig(4, game, player)
 
         return recap
 mine = Mine(name="Mine", cost=4, points=4, text="4:4, Oust the top 4 cards of your discard pile")
@@ -624,6 +625,20 @@ warship = EbbCard(name="Warship", cost=7, points=7, text="7:7, ebb")
 
 
 """Death"""
+class Undead(Card):
+    def pile_upkeep(self, player, game, index):
+        cost = self.get_cost(player, game)
+        if game.mana[player] >= cost:
+
+            # Attempt to discard a card, if you can, play this card
+            if self.discard(1, game, player):
+                # Play this card for its cost
+                game.mana[player] -= cost
+                game.story.add_act(self, player)
+
+                # Remove this card from the pile
+                game.pile[player].pop(index)
+
 class Graveyard(Card):
     def play(self, player, game, index, bonus):
         for p in (player, player ^ 1):
@@ -632,6 +647,7 @@ class Graveyard(Card):
 
         return super().play(player, game, index, bonus)
 graveyard = Graveyard(name="Graveyard", cost=0, points=0, text="0:0, +1 for each player with 6 or more cards in pile")
+zombie = Undead(name="Zombie", cost=0, points=1, qualities=[Quality.VISIBLE], text="0:1, visible, on upkeep, if this is in pile and you have the mana, discard 1 to play this card")
 class Drown(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.mill(3, game, player)
@@ -648,16 +664,7 @@ class RaiseDead(Card):
 
         return recap
 raise_dead = RaiseDead(name="Raise Dead", cost=2, points=2, text="2:2 put the top card of your pile on top of deck")
-class Haunt(Card):
-    def pile_upkeep(self, player, game):
-        cost = self.get_cost(player, game)
-        if game.mana[player] >= cost:
-            # Attempt to discard a card, if you can, play this card
-            if self.discard(1, game, player):
-                game.mana[player] -= cost
-                game.story.add_act(self, player)
-haunt = Haunt(name="Haunt", cost=3, points=3, qualities=[Quality.VISIBLE], text="3:3, visible, on upkeep, if this is in pile and you have the mana, discard 1 to play this card")
-
+haunt = Undead(name="Haunt", cost=3, points=3, qualities=[Quality.VISIBLE], text="3:3, visible, on upkeep, if this is in pile and you have the mana, discard 1 to play this card")
 class Prayer(Card):
     def play(self, player, game, index, bonus):
         recap = ''
@@ -680,10 +687,8 @@ class Prayer(Card):
             return super().play(player, game, index, bonus) + f"\nTop: {card.name}"
         else:
             return super().play(player, game, index, bonus)
-prayer = Prayer(name="Prayer", cost=0,
+prayer = Prayer(name="Prayer", cost=6,
                 text="6:X, put the highest cost card from your pile on top of your deck, X is its cost")
-
-
 class Anubis(Card):
     def get_cost(self, player, game):
         if len(game.pile[player]) >= 12:
@@ -769,7 +774,8 @@ full_catalog = [
     crossed_bones, dig, mine, gnaw, dinosaur_bones, wolf, stone_golem, atlas, uluru,
     star_fish, flying_fish, perch, angler, piranha, school_of_fish, whale,
     figurehead, fishing_boat, drakkar, ship_wreck, trireme, warship,
-    hurricane, raise_dead, lock, spy, wave, drown, graveyard, anubis, prayer, haunt
+    hurricane, raise_dead, lock, spy, wave, drown, graveyard, anubis, prayer, haunt,
+    vulture, zombie
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles

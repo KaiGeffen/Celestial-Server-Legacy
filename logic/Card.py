@@ -52,7 +52,7 @@ class Card:
         pass
 
     # Handle any effects that happen during the upkeep if this card is in pile
-    def pile_upkeep(self, player, game):
+    def pile_upkeep(self, player, game, index):
         pass
 
     # Handle any effects that happen immediately when the card is player
@@ -169,6 +169,16 @@ class Card:
                 recap += f'\nMill: {card.name}'
 
         return recap
+
+    # Oust the top X cards from the player's pile
+    def dig(self, amt, game, player):
+        result = '\nRemove:'
+        for i in range(amt):
+            if game.pile[player]:
+                card = game.pile[player].pop()
+                result += f'\n{card.name}'
+
+        return result
 
     # Counter the next act this round for which function returns True
     def counter(self, game, function=None):
