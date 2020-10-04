@@ -506,17 +506,20 @@ class Mine(Card):
 mine = Mine(name="Mine", cost=4, points=4, text="4:4, Oust the top 4 cards of your discard pile")
 class DinosaurBones(Card):
     def play(self, player, game, index, bonus):
-        for _ in range(6):
+        for _ in range(3):
             game.pile[player].append(broken_bone)
 
         return super().play(player, game, index, bonus)
-dinosaur_bones = DinosaurBones(name="Dinosaur Bones", cost=4, points=6, qualities=[Quality.FLEETING],
-                             text="4:6, becomes 6x 1:0 fleeting bone after resolving")
+dinosaur_bones = DinosaurBones(name="Dinosaur Bones", cost=4, points=5, qualities=[Quality.FLEETING],
+                             text="4:5, becomes 3x 1:0 fleeting bone after resolving")
 class Wolf(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.create(broken_bone, game, player^1)
 wolf = Wolf(name="Wolf", cost=4, points=4, text="4:4, create a 1:0 fleeting bone in opponent's hand")
-
+class Carrion(Card):
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus) + self.create(broken_bone, game, player^1)
+carrion = Carrion(name="Carrion", cost=5, points=5, text="5:5, create a 1:0 fleeting bone in opponent's pile")
 class StoneGolem(Card):
     def __init__(self, points):
         text = f"5:{points}, permanently grows by +1 after playing"
@@ -590,7 +593,7 @@ class Whale(FlowCard):
                 amt += 1
 
         return self.cost - amt
-whale = Whale(name="Whale", cost=8, points=8, text="8:8, flow, costs 1 less for each 1-cost in your hand")
+whale = Whale(name="Whale", cost=8, points=7, text="8:7, flow, costs 1 less for each 1-cost in your hand")
 
 
 """Ships"""
@@ -620,7 +623,7 @@ trireme = EbbCard(name="Trireme", cost=5, points=5, text="5:5, ebb")
 warship = EbbCard(name="Warship", cost=7, points=7, text="7:7, ebb")
 
 
-"""Pile"""
+"""Death"""
 class Graveyard(Card):
     def play(self, player, game, index, bonus):
         for p in (player, player ^ 1):
@@ -645,13 +648,49 @@ class RaiseDead(Card):
 
         return recap
 raise_dead = RaiseDead(name="Raise Dead", cost=2, points=2, text="2:2 put the top card of your pile on top of deck")
+class Haunt(Card):
+    def pile_upkeep(self, player, game):
+        cost = self.get_cost(player, game)
+        if game.mana[player] >= cost:
+            # Attempt to discard a card, if you can, play this card
+            if self.discard(1, game, player):
+                game.mana[player] -= cost
+                game.story.add_act(self, player)
+haunt = Haunt(name="Haunt", cost=3, points=3, qualities=[Quality.VISIBLE], text="3:3, visible, on upkeep, if this is in pile and you have the mana, discard 1 to play this card")
+
+class Prayer(Card):
+    def play(self, player, game, index, bonus):
+        recap = ''
+
+        highest_cost = -1
+        highest_index = None
+        for pile_index in range(len(game.pile[player])):
+            card = game.pile[player][pile_index]
+
+            if card.cost > highest_cost:
+                highest_cost = card.cost
+                highest_index = pile_index
+
+        if highest_index is not None:
+            card = game.pile[player].pop(highest_index)
+            game.deck[player].append(card)
+
+            bonus += highest_cost
+
+            return super().play(player, game, index, bonus) + f"\nTop: {card.name}"
+        else:
+            return super().play(player, game, index, bonus)
+prayer = Prayer(name="Prayer", cost=0,
+                text="6:X, put the highest cost card from your pile on top of your deck, X is its cost")
+
+
 class Anubis(Card):
     def get_cost(self, player, game):
-        if len(game.pile[player]) >= 10:
+        if len(game.pile[player]) >= 12:
             return 0
         else:
             return self.cost
-anubis = Anubis(name="Anubis", cost=7, points=7, text="7:7, costs 0 if you have at least 10 cards in your pile")
+anubis = Anubis(name="Anubis", cost=7, points=7, text="7:7, costs 0 if you have at least 12 cards in your pile")
 
 
 """Other"""
@@ -730,7 +769,7 @@ full_catalog = [
     crossed_bones, dig, mine, gnaw, dinosaur_bones, wolf, stone_golem, atlas, uluru,
     star_fish, flying_fish, perch, angler, piranha, school_of_fish, whale,
     figurehead, fishing_boat, drakkar, ship_wreck, trireme, warship,
-    hurricane, raise_dead, lock, spy, wave, drown, graveyard, anubis
+    hurricane, raise_dead, lock, spy, wave, drown, graveyard, anubis, prayer, haunt
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles

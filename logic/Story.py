@@ -15,7 +15,7 @@ class Story:
         self.acts = []
         self.recap = Recap()
 
-    def add_act(self, card, owner, source):
+    def add_act(self, card, owner, source=Source.HAND):
         act = Act(card, owner, source)
         self.acts.append(act)
 

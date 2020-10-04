@@ -51,6 +51,10 @@ class Card:
     def on_upkeep(self, player, game):
         pass
 
+    # Handle any effects that happen during the upkeep if this card is in pile
+    def pile_upkeep(self, player, game):
+        pass
+
     # Handle any effects that happen immediately when the card is player
     def on_play(self, player, game):
         pass

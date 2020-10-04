@@ -95,6 +95,7 @@ class ServerController():
         elif self.model.wins[1] > self.model.wins[0]:
             self.model.priority = 1
         else:
+            # TODO make deterministic?
             self.model.priority = random.choice([0, 1])
 
         # Each player draws, resets their mana, performs upkeep statuses, and card effects
@@ -111,6 +112,10 @@ class ServerController():
             # Each card in hand has a chance to do an upkeep effect
             for card in self.model.hand[player]:
                 card.on_upkeep(player, self.model)
+
+            # Each card in pile has a chance to do an upkeep effect
+            for card in self.model.pile[player]:
+                card.pile_upkeep(player, self.model)
 
     # Perform the takedown phase
     def do_takedown(self):
