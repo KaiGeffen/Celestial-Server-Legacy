@@ -102,8 +102,9 @@ class StatusLayer(Layer):
             for status_type in Status:
                 count = statuses.count(status_type)
                 if count:
-                    result += f'{status_type.value} {count}\n'
+                    result += f'{status_type.value} {count}, '
 
+            result = result.rstrip(', ')
             return result
 
         self.status1.element.text = get_status_text(model.status)
