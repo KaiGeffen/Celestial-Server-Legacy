@@ -46,6 +46,7 @@ class BuilderView(BaseView):
         self.catalog_layer.scroll(right)
 
         self.hover_text.element.text = ''
+        self.hover_background.visible = False
 
     # Set deck to the given deck
     def set_deck(self, new_deck):
