@@ -80,6 +80,12 @@ class Card:
 
         return recap
 
+    # Add X mana this turn
+    def add_mana(self, amt, game, player):
+        game.mana[player] += amt
+        for _ in range(amt):
+            game.status[player].append(Status.INSPIRED)
+
     # Next card +x points
     def nourish(self, amt, game, player):
         recap = '\nNourish'

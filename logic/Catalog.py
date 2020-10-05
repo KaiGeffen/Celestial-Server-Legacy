@@ -546,7 +546,7 @@ uluru = Card(name="Uluru", cost=10, points=15, text="10:15")
 """Fish"""
 class StarFish(FlowCard):
     def on_flow(self, player, game):
-        game.mana[player] += 1
+        self.add_mana(1, game, player)
         return super().on_flow(player, game)
 star_fish = StarFish(name="Star Fish", cost=1, text="1:0, flow: Gain 1 mana")
 flying_fish = FlowCard(name="Flying Fish", cost=1, points=1, text="1:1, flow (As soon as you ebb, cycle this)")
@@ -682,7 +682,7 @@ class Prayer(Card):
         return recap
 
     def pile_upkeep(self, player, game, index):
-        game.mana[player] += 1
+        self.add_mana(1, game, player)
         game.status[player].append(Status.STARVE)
 prayer = Prayer(name="Prayer", cost=5,
                 text="5: reset. On upkeep while in pile, +1 mana and Starve 1 (Your next card -1 point)")
