@@ -12,7 +12,7 @@ CARDS_PER_COL = 4
 CARDS_PER_PAGE = CARDS_PER_ROW * CARDS_PER_COL
 
 BAR_HEIGHT = 10
-BAR_COLOR = 200, 20, 20, 200
+BAR_COLOR = 200, 20, 20, 100
 
 STACK_HEIGHT = WINDOW_HEIGHT / 2
 # The offset of cards up/down from middle based on which player played them
