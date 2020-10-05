@@ -1,4 +1,5 @@
 from cocos.text import Label
+from cocos.layer import ColorLayer
 
 from logic.Catalog import hidden_card
 
@@ -164,6 +165,13 @@ class OppHandLayer(BaseView):
 
 # Current stack for this round
 class StackLayer(BaseView):
+    def __init__(self):
+        super().__init__()
+
+        red_bar = ColorLayer(*BAR_COLOR, width=WINDOW_WIDTH, height=BAR_HEIGHT)
+        red_bar.y = WINDOW_HEIGHT / 2 - BAR_HEIGHT / 2
+        self.add(red_bar, z=-1)
+
     def display(self, model):
         # Remove all cards
         for card in self.cards:
@@ -194,6 +202,10 @@ class RecapLayer(BaseView):
         super().__init__()
 
         self.recap_labels = []
+
+        red_bar = ColorLayer(*BAR_COLOR, width=WINDOW_WIDTH, height=BAR_HEIGHT)
+        red_bar.y = WINDOW_HEIGHT / 2 - BAR_HEIGHT / 2
+        self.add(red_bar, z=-1)
 
     def display(self, model):
         # Remove all cards
