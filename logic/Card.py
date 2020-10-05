@@ -76,7 +76,7 @@ class Card:
             recap += f' {amt}'
 
         for _ in range(amt):
-            game.status[player].append(Status.BOOST)
+            game.status[player].append(Status.INSPIRE)
 
         return recap
 

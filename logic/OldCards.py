@@ -20,7 +20,7 @@ memorial = Card(name="Memorial", cost=6, points=3, qualities=[Quality.TRIBUTE], 
 
 
 # Carryover
-diamond = Card(name="Diamond", cost=0, supports=[Support.BOOST], text="0: +1 mana next turn")
+diamond = Card(name="Diamond", cost=0, supports=[Support.INSPIRE], text="0: +1 mana next turn")
 strawberry = Card(name="Strawberry", cost=3, supports=[Support.NOURISH, Support.NOURISH], text="3: Your next card has +2")
 alternating_platform = Card(name="Alternating Platforms", cost=2, points=4, supports=[Support.STARVE, Support.STARVE, Support.STARVE], text="4 for 2: Your next card -3")
 

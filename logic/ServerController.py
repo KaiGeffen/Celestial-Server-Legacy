@@ -184,6 +184,7 @@ class ServerController():
 
         # Clear Restricted first, so any added for this round aren't removed below
         self.model.status[player] = list(filter(Status.RESTRICTED.__ne__, self.model.status[player]))
+        self.model.status[player] = list(filter(Status.INSPIRED.__ne__, self.model.status[player]))
 
         for stat in self.model.status[player]:
 
@@ -191,15 +192,16 @@ class ServerController():
             if stat is Status.FLOCK:
                 self.model.create_card(player, Catalog.dove)
 
-            # Boost : Gain 1 temporary mana
-            if stat is Status.BOOST:
+            # Inspire : Gain 1 temporary mana
+            if stat is Status.INSPIRE:
                 self.model.mana[player] += 1
+                self.model.status[player].append(Status.INSPIRED)
 
             # Restrict : Disallow played your leftmost card this round
             if stat is Status.RESTRICT:
                 self.model.status[player].append(Status.RESTRICTED)
 
-        cleared_statuses = [Status.BOOST,
+        cleared_statuses = [Status.INSPIRE,
                             Status.FLOCK,
                             Status.GENTLE,
                             Status.RESTRICT]

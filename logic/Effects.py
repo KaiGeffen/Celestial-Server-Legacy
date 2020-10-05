@@ -8,7 +8,8 @@ class Quality(Enum):
 
 class Status(Enum):
     FLOCK = "Flock"
-    BOOST = "Boost"
+    INSPIRE = "Inspire"
+    INSPIRED = "Inspired"
     NOURISH = "Nourish"
     STARVE = "Starve"
     GENTLE = "Gentle"
