@@ -316,6 +316,25 @@ class DeckLayer(BaseView):
 
 # Layer for both discard piles, showing the top card of pile if applicable
 class PileLayer(BaseView):
+    def __init__(self):
+        super().__init__()
+
+        self.label1 = Label('0',
+                            font_size=TEXT_SIZE * 2,
+                            color=(255, 0, 255, 255),
+                            anchor_x='center',
+                            anchor_y='center')
+        self.label1.position = PILE_POS
+        self.add(self.label1, 2)
+
+        self.label2 = Label('0',
+                            font_size=TEXT_SIZE * 2,
+                            color=(255, 0, 255, 255),
+                            anchor_x='center',
+                            anchor_y='center')
+        self.label2.position = OPP_PILE_POS
+        self.add(self.label2, 2)
+
     def display(self, model):
         # Remove all cards
         for card in self.cards:
@@ -326,10 +345,16 @@ class PileLayer(BaseView):
         if model.pile[0]:
             card = model.pile[0][-1]
             self.add_card(card, PILE_POS)
+            self.label1.element.text = f'{len(model.pile[0])}'
+        else:
+            self.label1.element.text = ''
 
         if model.pile[1]:
             card = model.pile[1][-1]
             self.add_card(card, OPP_PILE_POS)
+            self.label2.element.text = f'{len(model.pile[1])}'
+        else:
+            self.label2.element.text = ''
 
 
 # Your remaining deck, your and opponent's discard piles
