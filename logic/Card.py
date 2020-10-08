@@ -130,45 +130,66 @@ class Card:
     def discard(self, amt, game, player, index=0):
         recap = '\nDiscard:'
 
+        any_seen = False
         for _ in range(amt):
             card = game.discard(player, index=index)
             if card:
+                any_seen = True
                 recap += f'\n{card.name}'
 
-        return recap
+        if any_seen:
+            return recap
+        else:
+            return ''
 
     # Remove from the game the lowest X cards from your hand
     def oust(self, amt, game, player):
         recap = '\nOust:'
 
+        any_seen = True
         for _ in range(amt):
             card = game.oust(player)
             if card:
+                any_seen
                 recap += f'\n{card.name}'
 
-        return recap
+        if any_seen:
+            return recap
+        else:
+            return ''
 
     # Put the top X cards from player's deck on top of their pile
     def mill(self, amt, game, player):
-        recap = '\nMill'
+        recap = '\nMill:'
 
+        any_seen = False
         for _ in range(amt):
             card = game.mill(player)
             if card:
+                any_seen = True
                 recap += f'\n{card.name}'
 
-        return recap
+        if any_seen:
+            return recap
+        else:
+            return ''
 
     # Oust the top X cards from the player's pile
     def dig(self, amt, game, player):
         recap = '\nRemove:'
 
-        for i in range(amt):
+        any_seen = False
+        for _ in range(amt):
             if game.pile[player]:
+                any_seen = True
+
                 card = game.pile[player].pop()
                 recap += f'\n{card.name}'
 
-        return recap
+        if any_seen:
+            return recap
+        else:
+            return ''
 
     # Counter the next act this round for which function returns True
     def counter(self, game, function=None):

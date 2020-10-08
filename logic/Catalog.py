@@ -757,7 +757,7 @@ lock = Lock(name="Lock", cost=3, points=3, text="3:3, keep priority")
 class Spy(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.create(camera, game, player ^ 1)
-spy = Spy(name="Spy", cost=1, text="1: create a 2:0 camera in opponent's hand which gives you vision each upkeep")
+spy = Spy(name="Spy", cost=1, text="1: create a 2:0 camera in opponent's hand which gives you sight each upkeep")
 class Wave(Card):
     def get_cost(self, player, game):
         high_score = 0
@@ -782,7 +782,7 @@ class Camera(Card):
     def on_upkeep(self, player, game):
         game.vision[player^1] = True
 camera = Camera(name="Camera", cost=2, qualities=[Quality.FLEETING],
-                text="2:0, fleeting, gives vision to the opponent during your upkeep")
+                text="2:0, fleeting, gives sight to your opponent during your upkeep")
 broken_bone = Card(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], text="1:0, fleeting")
 robot = Card(name='Robot', qualities=[Quality.FLEETING], text="0:X, fleeting")
 
