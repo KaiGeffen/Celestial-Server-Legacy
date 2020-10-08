@@ -19,6 +19,24 @@ class Firewall(Card):
 
         return recap
 firewall = Firewall(name="Firewall", cost=2, text="2: counter the next card this round")
+class Portal(Card):
+    def play(self, player, game, index, bonus):
+        result = super().play(player, game, index, bonus)
+
+        index_final_owned_card = -1
+        index = 0
+        for act in game.story.acts:
+            if act.owner == player:
+                index_final_owned_card = index
+
+            index += 1
+
+        if index_final_owned_card > 0:
+            act = game.story.move_act(index_final_owned_card, 0)
+            result += f'\n{act.card.name} move {index_final_owned_card}'
+
+        return result
+portal = Portal(name="Portal", cost=2, points=2, text="2:2, your last card this round moves to immediately after Portal in the story.")
 class Charcoal(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -80,8 +98,8 @@ twitter = Twitter(name="Twitter", cost=1, qualities=[Quality.VISIBLE], text="1:X
 class Owl(SightCard):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.flock(1, game, player)
-owl = Owl(name="Owl", cost=1, text="1: flock, sight (This round the story is visible to you)")
-nest = FlockCard(name="Nest", amt=3, cost=2, points=1, text="2:1, flock 3")
+owl = Owl(name="Owl", cost=1, text="1: flock 1, sight (This round the story is visible to you)")
+nest = FlockCard(name="Nest", amt=3, cost=2, points=1, text="2:1, flock 3 (After your next draw step, add 3 Doves to your hand.)")
 class Swift(Card):
     def play(self, player, game, index, bonus):
         if not game.story.is_empty():
@@ -153,7 +171,7 @@ class Swamp(Card):
                 return act.card.play_spring(player, game, index, bonus)
 
         return super().play(player, game, index, bonus)
-swamp = Swamp(name="Swamp", cost=0, text="0:0, copy the effect of your first sprung card in the story.")
+swamp = Swamp(name="Swamp", cost=0, text="0:0, copy the effect of your first sprung card in the story")
 class Snake_Egg(Card):
     def play_spring(self, player, game, index, bonus):
         recap = super().play_spring(player, game, index, bonus)
@@ -740,24 +758,6 @@ class Spy(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.create(camera, game, player ^ 1)
 spy = Spy(name="Spy", cost=1, text="1: create a 2:0 camera in opponent's hand which gives you vision each upkeep")
-class Portal(Card):
-    def play(self, player, game, index, bonus):
-        result = super().play(player, game, index, bonus)
-
-        index_final_owned_card = -1
-        index = 0
-        for act in game.story.acts:
-            if act.owner == player:
-                index_final_owned_card = index
-
-            index += 1
-
-        if index_final_owned_card > 0:
-            act = game.story.move_act(index_final_owned_card, 0)
-            result += f'\n{act.card.name} move {index_final_owned_card}'
-
-        return result
-portal = Portal(name="Portal", cost=2, points=2, text="2:2, your last card this round moves to immediately after Portal in the story.")
 class Wave(Card):
     def get_cost(self, player, game):
         high_score = 0
