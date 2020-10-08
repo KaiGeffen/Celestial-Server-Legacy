@@ -29,19 +29,7 @@ class Card:
             return f"{result}"
 
     def play_spring(self, player, game, index, bonus):
-        result = self.points + bonus
-
-        result += game.status[player].count(Status.NOURISH)
-        game.status[player] = list(filter(Status.NOURISH.__ne__, game.status[player]))
-        result -= game.status[player].count(Status.STARVE)
-        game.status[player] = list(filter(Status.STARVE.__ne__, game.status[player]))
-
-        game.score[player] += result
-
-        if result > 0:
-            return f"+{result}"
-        else:
-            return f"{result}"
+        return self.play(player, game, index, bonus)
 
     # Get the cost of the card for player in this game state
     def get_cost(self, player, game):
@@ -59,8 +47,9 @@ class Card:
     def on_play(self, player, game):
         pass
 
-    # Everything that happens when flow is triggered by another card in your hand
+    # Handle anything that happens when flow is triggered by another card in your hand
     def on_flow(self, player, game):
+        # False signifies that nothing happened for the flow, cards with effects return true in their overriding methods
         return False
 
     """GENERIC THINGS A CARD CAN DO"""
@@ -69,62 +58,56 @@ class Card:
         game.score = [0, 0]
         return '\nReset'
 
-    # Add x mana next turn
-    def inspire(self, amt, game, player):
-        recap = '\nInspire'
-        if amt > 1:
-            recap += f' {amt}'
-
-        for _ in range(amt):
-            game.status[player].append(Status.INSPIRE)
-
-        return recap
-
     # Add X mana this turn
     def add_mana(self, amt, game, player):
         game.mana[player] += amt
         for _ in range(amt):
             game.status[player].append(Status.INSPIRED)
 
-    # Next card +x points
+    # Add X instances of a given status
+    def add_status(self, amt, game, player, stat):
+        recap = f'\n{stat.value} {amt}'
+
+        if amt <= 0:
+            recap = ''
+
+        for _ in range(amt):
+            game.status[player].append(stat)
+
+        return recap
+
+    # Add X mana next turn
+    def inspire(self, amt, game, player):
+        return self.add_status(amt, game, player, Status.INSPIRE)
+
+    # Next card gives +X points
     def nourish(self, amt, game, player):
-        recap = '\nNourish'
-        if amt > 1:
-            recap += f' {amt}'
+        return self.add_status(amt, game, player, Status.NOURISH)
 
-        for _ in range(amt):
-            game.status[player].append(Status.NOURISH)
-
-        return recap
-
-    # Next card -x points
+    # Next card gives -X points
     def starve(self, amt, game, player):
-        recap = '\nStarve'
-        if amt > 1:
-            recap += f' -{amt}'
-
-        for _ in range(amt):
-            game.status[player].append(Status.STARVE)
-
-        return recap
+        return self.add_status(amt, game, player, Status.STARVE)
 
     # Your x leftmost cards you can't play next round
     def restrict(self, amt, game, player):
-        recap = f'\nRestrict {amt}'
+        return self.add_status(amt, game, player, Status.RESTRICT)
 
-        for _ in range(amt):
-            game.status[player].append(Status.RESTRICT)
+    # At start of next turn, create X doves in hand
+    def flock(self, amt, game, player):
+        return self.add_status(amt, game, player, Status.FLOCK)
 
-        return recap
-
-    # Draw x cards from deck
+    # Draw X cards from deck
     def draw(self, amt, game, player):
         recap = ''
 
+        num_drawn = 0
         for _ in range(amt):
             card = game.draw(player)
             if card:
-                recap += f'\nDraw: {card.name}'
+                num_drawn += 1
+
+        if num_drawn > 0:
+            recap = f'\nDraw {num_drawn}'
 
         return recap
 
@@ -139,52 +122,53 @@ class Card:
     def tutor(self, cost, game, player):
         card = game.tutor(player, cost)
         if card:
-            return f'\nTutor: {card.name}'
+            return f'\nTutor {cost}'
 
         return ''
 
-    # Discard x cards from hand (left to right). If index specified, discard from that position instead of left-right
+    # Discard X cards from hand (left to right). If index specified, discard from that position instead of left-right
     def discard(self, amt, game, player, index=0):
-        recap = ''
+        recap = '\nDiscard:'
 
         for _ in range(amt):
             card = game.discard(player, index=index)
             if card:
-                recap += f'\nDiscard: {card.name}'
+                recap += f'\n{card.name}'
 
         return recap
 
-    # Banish the lowest X cards from your hand
+    # Remove from the game the lowest X cards from your hand
     def oust(self, amt, game, player):
-        recap = ''
+        recap = '\nOust:'
 
         for _ in range(amt):
             card = game.oust(player)
             if card:
-                recap += f'\nOust: {card.name}'
+                recap += f'\n{card.name}'
 
         return recap
 
     # Put the top X cards from player's deck on top of their pile
     def mill(self, amt, game, player):
-        recap = ''
+        recap = '\nMill'
 
         for _ in range(amt):
             card = game.mill(player)
             if card:
-                recap += f'\nMill: {card.name}'
+                recap += f'\n{card.name}'
 
         return recap
 
     # Oust the top X cards from the player's pile
     def dig(self, amt, game, player):
-        result = '\nRemove:'
+        recap = '\nRemove:'
+
         for i in range(amt):
             if game.pile[player]:
                 card = game.pile[player].pop()
-                result += f'\n{card.name}'
+                recap += f'\n{card.name}'
 
-        return result
+        return recap
 
     # Counter the next act this round for which function returns True
     def counter(self, game, function=None):
@@ -196,18 +180,6 @@ class Card:
             return f'\nCounter: {card.name}'
         else:
             return ''
-
-    # At start of next turn, create x doves
-    def flock(self, amt, game, player):
-        recap = '\nFlock'
-
-        if amt > 1:
-            recap += f' {amt}'
-
-        for _ in range(amt):
-            game.status[player].append(Status.FLOCK)
-
-        return recap
 
     # At the end of this round, if you win, convert points to nourish such that you win by 1
     def gentle(self, game, player):
@@ -272,11 +244,4 @@ class FlockCard(Card):
         super().__init__(name, **args)
 
     def play(self, player, game, index, bonus):
-        recap = '\nFlock'
-        if self.amt > 1:
-            recap += f' x{self.amt}'
-
-        for _ in range(self.amt):
-            game.status[player].append(Status.FLOCK)
-
-        return super().play(player, game, index, bonus) + recap
+        return super().play(player, game, index, bonus) + self.flock(self.amt, game, player)
