@@ -150,7 +150,7 @@ class Card:
         for _ in range(amt):
             card = game.oust(player)
             if card:
-                any_seen
+                any_seen = True
                 recap += f'\n{card.name}'
 
         if any_seen:
