@@ -226,10 +226,9 @@ class RecapLayer(BaseView):
             pos = self.get_card_pos(index, owner)
             self.add_card(card, pos)
 
-            y = 0
             if owner == 0:
                 label = Label(play_text,
-                              font_size=14,
+                              font_size=12,
                               color=(0, 255, 0, 255),
                               anchor_x='center',
                               anchor_y='top',
@@ -249,7 +248,6 @@ class RecapLayer(BaseView):
                 y = pos[1] + CELL_HEIGHT / 2
 
             label.position = (pos[0], y)
-            # label.opacity = 0
 
             self.recap_labels.append(label)
             self.add(label)
