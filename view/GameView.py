@@ -34,13 +34,17 @@ class GameView(BaseView):
         self.inventory_layer = InventoryLayer()
         self.add(self.inventory_layer)
 
+        self.mulligan_layer = MulliganLayer()
+        self.add(self.mulligan_layer)
+
         self.all_layers = [self.hand_layer,
                            self.opp_hand_layer,
                            self.stack_layer,
                            self.recap_layer,
                            self.deck_layer,
                            self.pile_layer,
-                           self.inventory_layer]
+                           self.inventory_layer,
+                           self.mulligan_layer]
         self.described_layers = [self.hand_layer,
                                  self.stack_layer,
                                  self.pile_layer,
@@ -401,6 +405,24 @@ class InventoryLayer(BaseView):
         else:
             y = WINDOW_HEIGHT / 2 + CELL_HEIGHT + HEIGHT_BETWEEN
         return x, y
+
+
+# Show whether the opponent is still taking their initial mulligan
+class MulliganLayer(BaseView):
+    def __init__(self):
+        super().__init__()
+
+        self.label = Label('Mulligan',
+                           font_size=TEXT_SIZE * 2,
+                           color=MULLIGAN_COLOR,
+                           anchor_x='center',
+                           anchor_y='center')
+        self.label.position = OPP_MULLIGAN_POSITION
+        self.add(self.label)
+
+    def display(self, model):
+        if model.mulligans_complete[1]:
+            self.label.visible = False
 
 
 """

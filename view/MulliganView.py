@@ -13,7 +13,7 @@ class MulliganView(BaseView):
 
         self.label = Label('Mulligan',
                            font_size=TEXT_SIZE * 2,
-                           color=(255, 0, 255, 255),
+                           color=MULLIGAN_COLOR,
                            anchor_x='center',
                            anchor_y='center')
         self.label.position = MULLIGAN_POSITION
