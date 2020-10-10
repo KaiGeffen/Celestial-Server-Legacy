@@ -130,3 +130,26 @@ def decode_statuses(s):
 
     def decode_status(stat: str): return Status(stat)
     return list(map(decode_status, s.split(DELIM1)))
+
+
+def encode_mulligans(mulligans):
+    result = ''
+    for mulligan in mulligans:
+        if mulligan:
+            result += '1'
+        else:
+            result += '0'
+
+    return result
+
+def decode_mulligans(s):
+    mulligans = []
+    for c in s:
+        if c is '1':
+            mulligans.append(True)
+        elif c is '0':
+            mulligans.append(False)
+        else:
+            raise Exception(f'Invalid mulligans: {s}')
+
+    return mulligans

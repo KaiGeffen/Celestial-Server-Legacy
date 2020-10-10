@@ -49,7 +49,7 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
                         game = ServerController(deck1, deck)
                         game.start()
 
-                    self.request.send("fooo boo whoo".encode())
+                    self.request.send("Deck received".encode())
 
                     deck_received = True
 
@@ -74,11 +74,17 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
                     # Whether the choice was valid
                     valid = game.on_player_input(player, action)
 
-                    # TODO care about if valid
                     if valid:
                         self.wfile.write(VALID_CHOICE.encode())
                     else:
                         self.wfile.write(INVALID_CHOICE.encode())
+
+                elif msg.startswith(MULLIGAN_MSG):
+                    mulligans = CardCodec.decode_mulligans(msg.split(':', 1)[1])
+
+                    # Whether the mulligan was valid
+                    game.mulligan(player, mulligans)
+
                 else:
                     self.wfile.write(INVALID_CHOICE.encode())
         except ConnectionResetError as e:

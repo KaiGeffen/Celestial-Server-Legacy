@@ -23,6 +23,7 @@ PASS = 10
 class ServerController():
     def __init__(self, deck1, deck2):
         self.model = ServerModel(deck1, deck2)
+        self.mulligans_complete = [False, False]
 
     # Return True if a play/pass occurred (False if play couldn't be completed)
     def on_player_input(self, player, choice):
@@ -73,6 +74,18 @@ class ServerController():
 
         self.model.story.add_act(card, owner=player, source=Source.HAND)
 
+    # The given player is redrawing the cards specified by mulligans
+    def do_mulligan(self, player, mulligans):
+        # Draw as many cards as were mulliganed
+        self.model.draw(player, mulligans.count(True))
+
+        # Discard each card that player is mulliganing
+        for i in range(3)[::-1]:
+            if mulligans[i]:
+                self.model.shuffle_into_deck(player, index=i)
+
+        self.mulligans_complete[player] = True
+
     """PHASES"""
     # Begin the game
     def start(self):
@@ -119,6 +132,7 @@ class ServerController():
                 card.pile_upkeep(player, self.model, index)
 
                 index += 1
+
 
     # Perform the takedown phase
     def do_takedown(self):
@@ -237,6 +251,10 @@ class ServerController():
     """UTILITY CHECKS"""
     # Check if the given player can play the given card
     def can_play(self, player, card_num):
+        # Mulligans are still being performed
+        if False in self.mulligans_complete:
+            return False
+
         # Choice isn't in the player's hand
         if card_num >= len(self.model.hand[player]):
             return False

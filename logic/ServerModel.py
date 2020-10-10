@@ -84,6 +84,19 @@ class ServerModel(pyglet.event.EventDispatcher):
 
         return card
 
+    # Shuffle X cards from player's hand into their deck
+    def shuffle_into_deck(self, player, amt=1, index=0):
+        card = None
+        while amt > 0 and len(self.hand[player]) > index:
+            card = self.hand[player].pop(index)
+            self.deck[player].append(card)
+
+            amt -= 1
+
+        self.shuffle(player)
+
+        return card
+
     # Search through your deck, then your discard pile for a card with cost x. Draw that card
     def tutor(self, player, cost):
         if len(self.hand[player]) < HAND_CAP:

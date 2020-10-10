@@ -13,6 +13,7 @@ CLIENT_WAIT = 0.1
 GET_STATE = 'Get'
 DO_ACTION = 'Do'
 INIT_MSG = 'Init'
+MULLIGAN_MSG = 'Mull'
 
 # Responses
 NO_UPDATE = 'No update'
