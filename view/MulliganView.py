@@ -22,13 +22,13 @@ class MulliganView(BaseView):
         self.highlights = []
         for i in range(3):
             highlight = ColorLayer(*HIGHLIGHT_COLOR, width=HIGHLIGHT_WIDTH, height=HIGHLIGHT_HEIGHT)
-            highlight.position = HandLayer.get_card_pos(i)
+            highlight.x = HandLayer.get_card_pos(i)[0] - HIGHLIGHT_WIDTH / 2
+            highlight.y = 0
             highlight.visible = False
 
             self.add(highlight, z=-1)
 
             self.highlights.append(highlight)
 
-    def display(self, mulligans):
-        for i in range(len(mulligans)):
-            self.highlights[i].visible = mulligans[i]
+    def toggle(self, card_num):
+        self.highlights[card_num].visible = not self.highlights[card_num].visible

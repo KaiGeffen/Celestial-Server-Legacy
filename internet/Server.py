@@ -83,7 +83,7 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
                     mulligans = CardCodec.decode_mulligans(msg.split(':', 1)[1])
 
                     # Whether the mulligan was valid
-                    game.mulligan(player, mulligans)
+                    game.do_mulligan(player, mulligans)
 
                 else:
                     self.wfile.write(INVALID_CHOICE.encode())

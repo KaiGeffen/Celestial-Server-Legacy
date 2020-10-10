@@ -118,7 +118,18 @@ class GameController(Layer):
         if card_num is None:
             return
 
-        self.queued_act = card_num
+        # If still in the mulligan phase, either toggle a mulligan or send the choices
+        if not self.model.mulligans_complete[0]:
+            if card_num is PASS:
+                self.net.send_mulligans(self.mulligan_choices)
+            elif card_num > 2:
+                self.view.alert()
+            else:
+                self.mulligan_choices[card_num] = not self.mulligan_choices[card_num]
+                self.mulligan_view.toggle(card_num)
+
+        else:
+            self.queued_act = card_num
 
 
 def get_new_game(start_deck):
