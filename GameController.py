@@ -66,6 +66,12 @@ class GameController(Layer):
                 # Since the state in which we decided on the action wasn't current, forget our choice
                 self.queued_act = None
 
+                # If the mulligan phase is now over, remove that scene
+                if self.mulligan_view and new_state.mulligans_complete[0]:
+                    self.mulligan_view.end()
+                    # TODO The view still exists, try to remove it from the scene to handle cleanly, or make it toggleable to use elsewhere
+                    self.mulligan_view = None
+
                 # State changed and we now have priority, queue up a play
                 if self.autoplay and new_state.priority == 0:
                     self.on_choice(AI.get_action(self.model))

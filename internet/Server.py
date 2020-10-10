@@ -82,7 +82,6 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
                 elif msg.startswith(MULLIGAN_MSG):
                     mulligans = CardCodec.decode_mulligans(msg.split(':', 1)[1])
 
-                    # Whether the mulligan was valid
                     game.do_mulligan(player, mulligans)
 
                 else:

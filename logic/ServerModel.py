@@ -216,7 +216,7 @@ class ServerModel(pyglet.event.EventDispatcher):
             'stack': self.get_relative_stack(player),
             'priority': self.priority ^ player,
             'recap': CardCodec.encode_recap(relative_recap),
-            'mulligans_complete': self.mulligans_complete,
+            'mulligans_complete': self.mulligans_complete[::slice_step],
             'version_num': self.version_no
         }
 
@@ -248,17 +248,3 @@ class ServerModel(pyglet.event.EventDispatcher):
     """UTILITY CHECKS"""
     def get_winner(self):
         return None
-
-    def can_play(self, player, card_num):
-        # Choice isn't in the player's hand
-        if (card_num >= len(self.hand[player])):
-            return False
-
-        card = self.hand[player][card_num]
-
-        # Player doesn't have enough mana
-        if (card.cost > self.mana[player]):
-            return False
-
-        return True
-

@@ -84,6 +84,8 @@ class ServerController():
                 self.model.shuffle_into_deck(player, index=i)
 
         self.model.mulligans_complete[player] = True
+        # TODO Lock are necessary to do this right, since everywhere else only 1 player has control at a time, but not here
+        self.model.version_no += 1
 
     """PHASES"""
     # Begin the game

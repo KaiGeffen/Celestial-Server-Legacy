@@ -32,3 +32,8 @@ class MulliganView(BaseView):
 
     def toggle(self, card_num):
         self.highlights[card_num].visible = not self.highlights[card_num].visible
+
+    def end(self):
+        self.label.visible = False
+        for highlight in self.highlights:
+            highlight.visible = False
