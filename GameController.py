@@ -151,8 +151,8 @@ def get_new_game(start_deck):
 
     scene.add(controller, z=1, name="controller")
     scene.add(hud, z=-2, name="hud")
+    scene.add(mulligan_view, z=3, name='mulligan_view')
     scene.add(view, z=4, name="view")
-    scene.add(mulligan_view, z=6, name='mulligan_view')
 
     return scene
 
