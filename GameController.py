@@ -30,6 +30,8 @@ class GameController(Layer):
         self.model = None
         self.queued_act = None
 
+        self.mulligan_choices = [False, False, False]
+
         # Whether a redraw had been queued, set by the thread that listens for state changes from the server
         self.redraw_queued = False
 

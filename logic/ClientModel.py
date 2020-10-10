@@ -31,6 +31,8 @@ class ClientModel(pyglet.event.EventDispatcher):
 
         self.recap = CardCodec.decode_recap(state['recap'])
 
+        self.mulligans_complete = state['mulligans_complete']
+
         self.version_num = state['version_num']
 
     # Return if the player can play the card

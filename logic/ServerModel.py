@@ -48,6 +48,9 @@ class ServerModel(pyglet.event.EventDispatcher):
         # Recap of the last round's resolution (Revealed stack + points awarded from each card)
         self.recap = Recap()
 
+        # Whether each player has completed the mulligan phase at the start of the game
+        self.mulligans_complete = [False, False]
+
         # The number of times an action has occcured, used for syncing with clients
         self.version_no = 0
 
@@ -213,6 +216,7 @@ class ServerModel(pyglet.event.EventDispatcher):
             'stack': self.get_relative_stack(player),
             'priority': self.priority ^ player,
             'recap': CardCodec.encode_recap(relative_recap),
+            'mulligans_complete': self.mulligans_complete,
             'version_num': self.version_no
         }
 

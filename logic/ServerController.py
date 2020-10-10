@@ -23,7 +23,6 @@ PASS = 10
 class ServerController():
     def __init__(self, deck1, deck2):
         self.model = ServerModel(deck1, deck2)
-        self.mulligans_complete = [False, False]
 
     # Return True if a play/pass occurred (False if play couldn't be completed)
     def on_player_input(self, player, choice):
@@ -84,7 +83,7 @@ class ServerController():
             if mulligans[i]:
                 self.model.shuffle_into_deck(player, index=i)
 
-        self.mulligans_complete[player] = True
+        self.model.mulligans_complete[player] = True
 
     """PHASES"""
     # Begin the game
@@ -252,7 +251,7 @@ class ServerController():
     # Check if the given player can play the given card
     def can_play(self, player, card_num):
         # Mulligans are still being performed
-        if False in self.mulligans_complete:
+        if False in self.model.mulligans_complete:
             return False
 
         # Choice isn't in the player's hand

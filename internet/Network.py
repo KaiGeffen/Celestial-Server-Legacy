@@ -27,6 +27,12 @@ class Network:
         # One would send actions
         # The other would listen for state
 
+    # Send the player's choice of mulliganed cards
+    def send_mulligans(self, mulligans):
+        msg = f'{MULLIGAN_MSG}:{CardCodec.encode_mulligans(mulligans)}\n'
+
+        self.conn.send(msg.encode())
+
     # Ask the server for state
     # Include the version num of the state we have
     # So that if nothing has changed, we don't update
