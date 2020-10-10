@@ -403,7 +403,6 @@ class InventoryLayer(BaseView):
         return x, y
 
 
-
 """
 class GameView(BaseView):
     def __init__(self, hud):

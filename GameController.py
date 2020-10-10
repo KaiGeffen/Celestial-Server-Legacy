@@ -6,6 +6,7 @@ import _thread
 import time
 
 from view.GameView import GameView
+from view.MulliganView import MulliganView
 from view.HUD import HUD
 
 from internet.Network import Network
@@ -20,10 +21,11 @@ REFRESH_INTERVAL = 0.1
 class GameController(Layer):
     is_event_handler = True  #: enable pyglet's events
 
-    def __init__(self, net, view):
+    def __init__(self, net, view, mulligan_view):
         super().__init__()
 
         self.view = view
+        self.mulligan_view = mulligan_view
         self.net = net
 
         # Model is set and updated from the network thread
@@ -127,11 +129,13 @@ def get_new_game(start_deck):
     # Get the model from Server
     hud = HUD()
     view = GameView(hud)
-    controller = GameController(net, view)
+    mulligan_view = MulliganView()
+    controller = GameController(net, view, mulligan_view)
 
     scene.add(controller, z=1, name="controller")
     scene.add(hud, z=-2, name="hud")
     scene.add(view, z=4, name="view")
+    scene.add(mulligan_view, z=6, name='mulligan_view')
 
     return scene
 
