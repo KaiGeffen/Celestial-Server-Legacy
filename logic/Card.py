@@ -41,7 +41,7 @@ class Card:
 
     # Handle any effects that happen during the upkeep if this card is in pile
     def pile_upkeep(self, player, game, index):
-        pass
+        return False
 
     # Handle any effects that happen immediately when the card is player
     def on_play(self, player, game):

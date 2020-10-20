@@ -129,11 +129,13 @@ class ServerController():
 
             # Each card in pile has a chance to do an upkeep effect
             index = 0
-            for card in self.model.pile[player]:
-                card.pile_upkeep(player, self.model, index)
+            while index < len(self.model.pile[player]):
+                card = self.model.pile[player][index]
 
-                index += 1
+                card_was_removed = card.pile_upkeep(player, self.model, index)
 
+                if not card_was_removed:
+                    index += 1
 
     # Perform the takedown phase
     def do_takedown(self):

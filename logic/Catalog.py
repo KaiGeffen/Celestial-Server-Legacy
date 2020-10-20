@@ -46,7 +46,7 @@ charcoal = Charcoal(name="Charcoal", cost=3, points=4, text="3:4, oust the lowes
 class Haze(Card):
     def play(self, player, game, index, bonus):
         def is_cost_3(act):
-            return act.card.cost is 3
+            return act.card.cost == 3
 
         recap = super().play(player, game, index, bonus)
 
@@ -88,13 +88,13 @@ ifrit = Ifrit(name="Ifrit", cost=8, points=7, text="8:7, later cards this round 
 dove = Card(name="Dove", cost=1, points=1, qualities=[Quality.VISIBLE, Quality.FLEETING], text="1:1, fleeting (After resolving, this card is removed from the game instead of moving to your discard pile), visible")
 class Twitter(Card):
     def play(self, player, game, index, bonus):
-        amt = 0
-        for act in game.story.acts:
-            if act.card is dove:
-                amt += 1
+        recap = super().play(player, game, index, bonus) + '\nInspirit'
 
-        return super().play(player, game, index, bonus + amt)
-twitter = Twitter(name="Twitter", cost=1, qualities=[Quality.VISIBLE], text="1:X, visible, X is later doves this round")
+        for act in game.story.acts:
+            act.bonus += 1
+
+        return recap
+twitter = Twitter(name="Twitter", cost=1, qualities=[Quality.VISIBLE], text="1:0, later cards this round are worth +1")
 class Owl(SightCard):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.flock(1, game, player)
@@ -103,7 +103,7 @@ nest = FlockCard(name="Nest", amt=3, cost=2, points=1, text="2:1, flock 3 (After
 class Swift(Card):
     def play(self, player, game, index, bonus):
         if not game.story.is_empty():
-            if game.story.acts[0].card.cost is 1:
+            if game.story.acts[0].card.cost == 1:
                 bonus += 1
 
         return super().play(player, game, index, bonus)
@@ -115,7 +115,7 @@ class Peace(Card):
                 return super().play(player, game, index, bonus) + self.reset(game)
 
         return super().play(player, game, index, bonus)
-peace = Peace(name="Peace", cost=3, text="3: reset if a dove is later this round")
+peace = Peace(name="Peace", cost=3, points=3, qualities=[Quality.VISIBLE], text="3:3, visible, reset if a dove is later this round")
 class Vulture(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -153,10 +153,10 @@ class Icarus(Card):
 
         if not game.story.is_empty():
             for act in game.story.acts:
-                if act.owner is player:
+                if act.owner == player:
                     amt += 1
 
-        if amt is 5:
+        if amt == 5:
             return 0
         else:
             return self.cost
@@ -167,7 +167,7 @@ icarus = Icarus(name="Icarus", cost=7, points=7, text="7:7, costs 0 if you have 
 class Swamp(Card):
     def play(self, player, game, index, bonus):
         for act in game.story.acts:
-            if act.owner is player and act.source is Source.SPRING:
+            if act.owner == player and act.source is Source.SPRING:
                 return act.card.play_spring(player, game, index, bonus)
 
         return super().play(player, game, index, bonus)
@@ -193,7 +193,7 @@ class SnakeEye(SightCard):
     def play(self, player, game, index, bonus):
         amt = 0
         if game.story.get_length() > 0:
-            if player is game.story.acts[-1].owner:
+            if player == game.story.acts[-1].owner:
                 amt += 3
 
         return super().play(player, game, index, bonus + amt)
@@ -392,7 +392,7 @@ class Sine(Card):
 sine = Sine(name="Sine", cost=2, points=4, text="2:4, starve 4 (Your next card gives -4 points)")
 class Foundry(Card):
     def play(self, player, game, index, bonus):
-        amt = min(index, self.points)
+        amt = index
         bonus -= amt
 
         recap = super().play(player, game, index, bonus)
@@ -605,7 +605,7 @@ class Whale(FlowCard):
     def get_cost(self, player, game):
         amt = 0
         for card in game.hand[player]:
-            if card.cost is 1:
+            if card.cost == 1:
                 amt += 1
 
         return self.cost - amt
@@ -654,6 +654,11 @@ class Undead(Card):
                 # Remove this card from the pile
                 game.pile[player].pop(index)
 
+                # Return that a card left the pile
+                return True
+
+        return False
+
 class Graveyard(Card):
     def play(self, player, game, index, bonus):
         for p in (player, player ^ 1):
@@ -699,6 +704,8 @@ class Prayer(Card):
     def pile_upkeep(self, player, game, index):
         self.add_mana(1, game, player)
         game.status[player].append(Status.STARVE)
+
+        return False
 prayer = Prayer(name="Prayer", cost=5,
                 text="5: reset. On upkeep while in pile, +1 mana and starve 1 (Your next card gives -1 point)")
 
@@ -731,7 +738,7 @@ class Reaper(Card):
         amt = 0
 
         for act in game.story.acts:
-            if act.owner is player and act.source is Source.PILE:
+            if act.owner == player and act.source == Source.PILE:
                 amt += 1
 
         return self.cost - amt
