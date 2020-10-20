@@ -25,6 +25,8 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
         global deck1
         global game
 
+        print(game)
+
         player = thread_counter
         thread_counter += 1
 
@@ -33,6 +35,7 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
             while not deck_received:
                 # The first message received is in bytes because it contains the player's deck
                 msg = self.rfile.readline().strip().decode()
+                print(f'Received msg: "{msg}"')
 
                 if msg.startswith(INIT_MSG):
                     deck = CardCodec.decode_deck(msg.split(':', 1)[1])
@@ -86,14 +89,12 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
 
                 else:
                     self.wfile.write(INVALID_CHOICE.encode())
-        except ConnectionResetError as e:
+        except Exception as e:
             print(e)
 
             global game_over
             game_over = True
 
-            # print(self.server.shutdown())
-            # self.finish()
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
