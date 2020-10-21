@@ -830,6 +830,27 @@ full_catalog = [
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
 
-# List of decks that
+
+
+import random
+
+# Get a random deck for the computer opponent
 def get_computer_deck():
-    return [ember, ember, ember, ember, ember]
+    possible_cards = [
+        [crossed_bones],
+        [swift, ouroboros],
+        [kindle, gift, gnaw],
+        [pelican, angler, wolf],
+        [phoenix, stone_golem, school_of_fish, tumulus],
+        [frog_prince, boar],
+        [wyvern],
+        [cobra, ifrit, nightmare]
+    ]
+    distribution = [3, 3, 3, 2, 2, 1, 0, 1]
+    deck = []
+    for i in range(len(possible_cards)):
+        for _ in range(distribution[i]):
+            deck.append(random.choice(possible_cards[i]))
+    print(deck)
+
+    return deck
