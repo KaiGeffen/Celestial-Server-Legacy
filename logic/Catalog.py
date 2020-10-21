@@ -498,7 +498,7 @@ class CrossedBones(Card):
 
         return super().play(player, game, index, bonus)
 crossed_bones = CrossedBones(name="Crossed Bones", cost=1, points=2, qualities=[Quality.FLEETING],
-                             text="1:2, becomes 2x 1:0 fleeting bones after resolving")
+                             text="1:2, becomes 2x 1:0 fleeting broken bones after resolving")
 class Dig(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -515,7 +515,7 @@ class Gnaw(Card):
                 break
 
         return super().play(player, game, index, bonus)
-gnaw = Gnaw(name="Gnaw", cost=3, points=3, text="3:3, +3 if there is a broken bone in story")
+gnaw = Gnaw(name="Gnaw", cost=3, points=3, qualities=[Quality.VISIBLE], text="3:3, visible, +3 if there is a broken bone in story")
 class Mine(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -535,7 +535,7 @@ dinosaur_bones = DinosaurBones(name="Dinosaur Bones", cost=4, points=5, qualitie
 class Wolf(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.create(broken_bone, game, player^1)
-wolf = Wolf(name="Wolf", cost=4, points=4, text="4:4, create a 1:0 fleeting bone in opponent's hand")
+wolf = Wolf(name="Wolf", cost=4, points=4, text="4:4, create a 1:0 fleeting broken bone in opponent's hand")
 class StoneGolem(Card):
     def __init__(self, points):
         text = f"5:{points}, permanently grows by +1 after playing"
@@ -548,6 +548,16 @@ class StoneGolem(Card):
 
         return super().play(player, game, index, bonus)
 stone_golem = StoneGolem(5)
+class Boar(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        for card in game.hand[player^1]:
+            if card is broken_bone:
+                recap += self.tutor(6, game, player)
+
+        return recap
+boar = Boar(name="Boar", cost=6, points=6, qualities=[Quality.VISIBLE], text="6:6, visible, tutor 6 once for each broken bone in opponent's hand")
 class Atlas(Card):
     def get_cost(self, player, game):
         if not game.pile[player] and not game.deck[player]:
@@ -610,13 +620,18 @@ class Whale(FlowCard):
 
         return self.cost - amt
 whale = Whale(name="Whale", cost=8, points=7, text="8:7, flow, costs 1 less for each 1-cost in your hand")
+class Wave(FlowCard):
+    def on_flow(self, player, game):
+        self.nourish(1, game, player)
+        return super().on_flow(player, game)
+wave = Wave(name="Wave", cost=9, points=9, text="9:9, flow: Nourish 1")
 
 
 """Ships"""
 class Figurehead(EbbCard):
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.inspire(2, game, player)
-figurehead = Figurehead(name="Figurehead", cost=1, text="1: ebb, inspire 2")
+        return super().play(player, game, index, bonus) + self.inspire(1, game, player)
+figurehead = Figurehead(name="Figurehead", cost=1, text="1: ebb, inspire 1")
 class FishingBoat(EbbCard):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -765,22 +780,22 @@ class Spy(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.create(camera, game, player ^ 1)
 spy = Spy(name="Spy", cost=1, text="1: create a 2:0 camera in opponent's hand which gives you sight each upkeep")
-class Wave(Card):
-    def get_cost(self, player, game):
-        high_score = 0
-        current_score = 0
-        for act in game.story.acts:
-            if act.owner == player:
-                current_score += 1
-            else:
-                current_score = 0
-
-            if current_score > high_score:
-                high_score = current_score
-
-        return self.cost - high_score
-wave = Wave(name="Wave", cost=7, points=6,
-            text="7:6, costs X less where X is the length of your longest chain in the story (Chain is cards in sequence)")
+# class Wave(Card):
+#     def get_cost(self, player, game):
+#         high_score = 0
+#         current_score = 0
+#         for act in game.story.acts:
+#             if act.owner == player:
+#                 current_score += 1
+#             else:
+#                 current_score = 0
+#
+#             if current_score > high_score:
+#                 high_score = current_score
+#
+#         return self.cost - high_score
+# wave = Wave(name="Wave", cost=7, points=6,
+#             text="7:6, costs X less where X is the length of your longest chain in the story (Chain is cards in sequence)")
 
 
 
@@ -810,7 +825,11 @@ full_catalog = [
     flying_fish, star_fish, perch, angler, piranha, school_of_fish, whale,
     figurehead, fishing_boat, drakkar, ship_wreck, trireme, warship,
     graveyard, drown, zombie, raise_dead, haunt, spectre, prayer, tumulus, sarcophagus, reaper, anubis,
-    hurricane, lock, spy, wave
+    hurricane, lock, spy, wave, boar
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
+
+# List of decks that
+def get_computer_deck():
+    return [ember, ember, ember, ember, ember]

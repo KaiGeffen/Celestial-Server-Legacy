@@ -9,7 +9,6 @@ from view.GameView import GameView
 from view.MulliganView import MulliganView
 from view.HUD import HUD
 
-from internet.Network import Network
 import internet.Settings
 import AI
 
@@ -138,10 +137,18 @@ class GameController(Layer):
             self.queued_act = card_num
 
 
-def get_new_game(start_deck):
+def get_new_game(start_deck, single_player=False):
     scene = Scene()
 
-    net = Network(start_deck)
+    net = None
+    if single_player:
+        from internet.MockNetwork import MockNetwork
+
+        net = MockNetwork(start_deck)
+    else:
+        from internet.Network import Network
+
+        net = Network(start_deck)
 
     # Get the model from Server
     hud = HUD()

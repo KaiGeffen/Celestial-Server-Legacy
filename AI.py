@@ -12,7 +12,7 @@ def powerset(l):
 
 # For a given game state, decide what action to take (Card to play, or pass)
 def get_action(model) -> int:
-    time.sleep(.4)
+    # time.sleep(.4)
 
     # Don't consider any of the restricted cards, which is the first X cards
     amt_restricted = model.status.count(Status.RESTRICTED)
