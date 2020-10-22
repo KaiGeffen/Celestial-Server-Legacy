@@ -135,7 +135,12 @@ class HandLayer(BaseView):
         # Add all the cards in hand
         i = 0
         for card in model.hand:
-            self.add_card(card, self.get_card_pos(i))
+            sprite = self.add_card(card, self.get_card_pos(i))
+
+            # Shake the first card if it has spring
+            if i == 0 and card.spring:
+                sprite.shake()
+
             i += 1
 
     # Get the number (Index in hand) of the card clicked on

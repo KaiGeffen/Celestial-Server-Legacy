@@ -1,6 +1,6 @@
 import cocos
-from cocos.text import Label, PygletRichLabel, RichLabel
-import time
+from cocos.text import RichLabel
+from cocos.actions import RotateBy
 
 from view.Settings import *
 
@@ -88,6 +88,8 @@ class BaseView(cocos.layer.ColorLayer):
         self.cards.append(sprite)
         self.add(sprite)
 
+        return sprite
+
     # Alert player they've done something wrong
     def alert(self):
         self.do(
@@ -110,3 +112,8 @@ class CardSprite(cocos.sprite.Sprite):
         if y < self.y - CELL_HEIGHT_HALF or y > self.y + CELL_HEIGHT_HALF:
             return False
         return True
+
+    # Visually shake the card
+    def shake(self):
+        action = RotateBy(3, .1) + (RotateBy(-6, .2) + RotateBy(6, .2)) * 3 + RotateBy(-3, .1)
+        self.do(action)
