@@ -215,6 +215,7 @@ class ServerModel(pyglet.event.EventDispatcher):
             'opp_status': CardCodec.encode_statuses(self.status[player ^ 1]),
             'stack': self.get_relative_stack(player),
             'priority': self.priority ^ player,
+            'passes': self.passes,
             'recap': CardCodec.encode_recap(relative_recap),
             'mulligans_complete': self.mulligans_complete[::slice_step],
             'version_num': self.version_no

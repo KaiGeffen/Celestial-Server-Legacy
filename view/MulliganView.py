@@ -11,14 +11,6 @@ class MulliganView(BaseView):
     def __init__(self):
         super().__init__()
 
-        self.label = Label('Mulligan',
-                           font_size=TEXT_SIZE * 2,
-                           color=MULLIGAN_COLOR,
-                           anchor_x='center',
-                           anchor_y='center')
-        self.label.position = MULLIGAN_POSITION
-        self.add(self.label)
-
         self.highlights = []
         for i in range(3):
             highlight = ColorLayer(*HIGHLIGHT_COLOR, width=HIGHLIGHT_WIDTH, height=HIGHLIGHT_HEIGHT)
@@ -34,6 +26,5 @@ class MulliganView(BaseView):
         self.highlights[card_num].visible = not self.highlights[card_num].visible
 
     def end(self):
-        self.label.visible = False
         for highlight in self.highlights:
             highlight.visible = False

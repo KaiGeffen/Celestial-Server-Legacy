@@ -37,6 +37,9 @@ class GameView(BaseView):
         self.mulligan_layer = MulliganLayer()
         self.add(self.mulligan_layer)
 
+        self.passes_layer = PassesLayer()
+        self.add(self.passes_layer)
+
         self.all_layers = [self.hand_layer,
                            self.opp_hand_layer,
                            self.stack_layer,
@@ -44,7 +47,8 @@ class GameView(BaseView):
                            self.deck_layer,
                            self.pile_layer,
                            self.inventory_layer,
-                           self.mulligan_layer]
+                           self.mulligan_layer,
+                           self.passes_layer]
         self.described_layers = [self.hand_layer,
                                  self.stack_layer,
                                  self.pile_layer,
@@ -73,12 +77,16 @@ class GameView(BaseView):
             self.deck_layer.visible = True
             self.pile_layer.visible = True
             self.inventory_layer.visible = False
+            self.mulligan_layer.visible = True
+            self.passes_layer.visible = True
         else:
             self.recap_layer.visible = True
             self.stack_layer.visible = False
             self.deck_layer.visible = True
             self.pile_layer.visible = True
             self.inventory_layer.visible = False
+            self.mulligan_layer.visible = False
+            self.passes_layer.visible = False
 
     def toggle_piles(self):
         if self.inventory_layer.visible:
@@ -87,12 +95,16 @@ class GameView(BaseView):
             self.deck_layer.visible = True
             self.pile_layer.visible = True
             self.inventory_layer.visible = False
+            self.mulligan_layer.visible = True
+            self.passes_layer.visible = True
         else:
             self.recap_layer.visible = False
             self.stack_layer.visible = False
             self.deck_layer.visible = False
             self.pile_layer.visible = False
             self.inventory_layer.visible = True
+            self.mulligan_layer.visible = False
+            self.passes_layer.visible = False
 
     # Display the current game-state as described by model
     def display(self, model):
@@ -407,22 +419,69 @@ class InventoryLayer(BaseView):
         return x, y
 
 
-# Show whether the opponent is still taking their initial mulligan
+# Show whether players are still taking their initial mulligans
 class MulliganLayer(BaseView):
     def __init__(self):
         super().__init__()
 
-        self.label = Label('Mulligan',
+        self.label_p1 = Label('Mulligan',
                            font_size=TEXT_SIZE * 2,
-                           color=MULLIGAN_COLOR,
+                           color=PLAYER_TEXT_COLOR,
                            anchor_x='center',
                            anchor_y='center')
-        self.label.position = OPP_MULLIGAN_POSITION
-        self.add(self.label)
+        self.label_p1.position = PLAYER_SIDE_POSITION
+        self.add(self.label_p1)
+
+        self.label_p2 = Label('Mulligan',
+                              font_size=TEXT_SIZE * 2,
+                              color=PLAYER_TEXT_COLOR,
+                              anchor_x='center',
+                              anchor_y='center')
+        self.label_p2.position = OPPONENT_SIDE_POSITION
+        self.add(self.label_p2)
 
     def display(self, model):
+        if model.mulligans_complete[0]:
+            self.label_p1.visible = False
         if model.mulligans_complete[1]:
-            self.label.visible = False
+            self.label_p2.visible = False
+
+
+# Show whether each player has passed since last card played
+class PassesLayer(BaseView):
+    def __init__(self):
+        super().__init__()
+
+        self.label_p1 = Label('Passed',
+                              font_size=TEXT_SIZE * 2,
+                              color=PLAYER_TEXT_COLOR,
+                              anchor_x='center',
+                              anchor_y='center')
+        self.label_p1.position = PLAYER_SIDE_POSITION
+        self.label_p1.visible = False
+        self.add(self.label_p1)
+
+        self.label_p2 = Label('Passed',
+                              font_size=TEXT_SIZE * 2,
+                              color=PLAYER_TEXT_COLOR,
+                              anchor_x='center',
+                              anchor_y='center')
+        self.label_p2.position = OPPONENT_SIDE_POSITION
+        self.label_p2.visible = False
+        self.add(self.label_p2)
+
+    def display(self, model):
+        if model.passes == 0:
+            self.label_p1.visible = False
+            self.label_p2.visible = False
+
+        elif model.passes == 1:
+            if model.priority == 0:
+                self.label_p1.visible = False
+                self.label_p2.visible = True
+            else:
+                self.label_p1 = True
+                self.label_p2 = False
 
 
 """

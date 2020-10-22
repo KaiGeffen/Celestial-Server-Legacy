@@ -29,6 +29,8 @@ class ClientModel(pyglet.event.EventDispatcher):
         # NOTE(kgeffen) Priority is relative: 0 means I have it, regardless of the id of my connection
         self.priority = state['priority']
 
+        self.passes = state['passes']
+
         self.recap = CardCodec.decode_recap(state['recap'])
 
         self.mulligans_complete = state['mulligans_complete']

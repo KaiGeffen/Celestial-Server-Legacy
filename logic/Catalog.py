@@ -851,6 +851,5 @@ def get_computer_deck():
     for i in range(len(possible_cards)):
         for _ in range(distribution[i]):
             deck.append(random.choice(possible_cards[i]))
-    print(deck)
 
     return deck
