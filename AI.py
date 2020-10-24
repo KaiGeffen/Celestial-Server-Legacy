@@ -14,13 +14,18 @@ def powerset(l):
 def get_action(model) -> int:
     # time.sleep(.4)
 
-    # If we've played a card and opponent hasn't, don't play more
-    # # TODO rename stack to story
-    # if len(model.stack) > 0:
-    #     def opp_played_act(act):
-    #         return act.owner == 1
-    #     if list(filter(opp_played_act, model.stack.acts)) == []:
-    #         return 10
+    # If we've played points this round and opponent hasn't, don't play more
+    we_played_points = False
+    opponent_has_played = False
+    for act in model.story.acts:
+        if act.owner == 0:
+            if act.card.points > 0:
+                we_played_points = True
+        else:
+            opponent_has_played = True
+
+    if we_played_points and not opponent_has_played:
+        return 10
 
     # Don't consider any of the restricted cards, which is the first X cards
     amt_restricted = model.status.count(Status.RESTRICTED)
