@@ -146,7 +146,7 @@ class Card:
     def oust(self, amt, game, player):
         recap = '\nOust:'
 
-        any_seen = True
+        any_seen = False
         for _ in range(amt):
             card = game.oust(player)
             if card:

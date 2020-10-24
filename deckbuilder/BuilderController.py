@@ -70,7 +70,7 @@ class BuilderController(Layer):
                 deck = self.view.get_deck()
                 save_deck(deck)
 
-                game_scene = GameController.get_new_game(deck, single_player=False)
+                game_scene = GameController.get_new_game(deck, single_player=True)
                 director.run(game_scene)
 
         if symbol is pyglet.window.key.S:

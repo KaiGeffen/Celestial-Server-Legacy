@@ -818,14 +818,14 @@ full_catalog = [
     ember, dash, firewall, portal, charcoal, kindle, haze, force, fire_ring, ifrit,
     dove, twitter, owl, nest, swift, peace, pelican, phoenix, icarus,
     swamp, snake_egg, ouroboros, snake_eye, serpent, snake_spiral, salamander, temptation, frog_prince, wyvern, cobra,
-    bone_knife, mute, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
-    cog, drone, gears, factory, anvil, cogsplosion, ai, sine, foundry,
     stars, cosmos, roots, sprout, fruiting, pine, bulb, lotus, leaf_swirl, pollen, oak,
-    crossed_bones, dig, mine, gnaw, dinosaur_bones, wolf, stone_golem, atlas, uluru,
-    flying_fish, star_fish, perch, angler, piranha, school_of_fish, whale,
+    bone_knife, mute, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
+    flying_fish, star_fish, perch, angler, piranha, school_of_fish, whale, wave,
     figurehead, fishing_boat, drakkar, ship_wreck, trireme, warship,
-    graveyard, drown, zombie, raise_dead, haunt, spectre, prayer, tumulus, sarcophagus, reaper, anubis,
-    hurricane, lock, spy, wave, boar
+    cog, drone, gears, factory, anvil, cogsplosion, ai, sine, foundry,
+    crossed_bones, dig, gnaw, mine, dinosaur_bones, wolf, stone_golem, boar, atlas, uluru,
+    graveyard, zombie, drown, raise_dead, haunt, spectre, prayer, tumulus, sarcophagus, anubis,
+    hurricane, lock, spy
 ]
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
@@ -846,7 +846,7 @@ def get_computer_deck():
         [wyvern],
         [cobra, ifrit, nightmare]
     ]
-    distribution = [3, 3, 3, 2, 2, 1, 0, 1]
+    distribution = [3, 2, 3, 3, 2, 1, 0, 1]
     deck = []
     for i in range(len(possible_cards)):
         for _ in range(distribution[i]):
