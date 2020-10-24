@@ -3,6 +3,7 @@ import copy
 from logic.Catalog import all_cards
 from logic.Recap import Recap
 from logic.Effects import Status
+from logic.Story import Story, Source
 
 # DELIM1 separates the elements of the largest data structure (ex: Recap)
 # DELIM2 separates the individual entries of the lower level data struct (ex: List of cards)
@@ -49,31 +50,31 @@ def decode_deck(deck_codes):
         return []
 
 
-def encode_stack(stack):
-    def encode_play(play):
+def encode_story(stack):
+    def encode_act(play):
         card_id, owner = play
         return f'{encode_card(card_id)}{DELIM2}{owner}'
 
-    result = DELIM1.join(list(map(encode_play, stack)))
+    result = DELIM1.join(list(map(encode_act, stack)))
     return result
 
 
-def decode_stack(s):
-    # If the stack is empty, return empty list
+def decode_story(s):
+    # If the story is empty, return empty list
+    story = Story()
     if not s:
-        return []
+        return story
 
-    plays = s.split(DELIM1)
-
-    def decode_play(play: str):
-        l = play.split(DELIM2)
+    for act in s.split(DELIM1):
+        l = act.split(DELIM2)
 
         card = decode_card(l[0])
         owner = int(l[1])
 
-        return card, owner
+        # TODO If source ever matters (to client), send and decode that as well
+        story.add_act(card, owner, Source.HAND)
 
-    return list(map(decode_play, plays))
+    return story
 
 
 def encode_recap(recap):
@@ -145,9 +146,9 @@ def encode_mulligans(mulligans):
 def decode_mulligans(s):
     mulligans = []
     for c in s:
-        if c is '1':
+        if c == '1':
             mulligans.append(True)
-        elif c is '0':
+        elif c == '0':
             mulligans.append(False)
         else:
             raise Exception(f'Invalid mulligans: {s}')

@@ -213,7 +213,7 @@ class ServerModel(pyglet.event.EventDispatcher):
             'mana': self.mana[player],
             'status': CardCodec.encode_statuses(self.status[player]),
             'opp_status': CardCodec.encode_statuses(self.status[player ^ 1]),
-            'stack': self.get_relative_stack(player),
+            'story': self.get_relative_story(player),
             'priority': self.priority ^ player,
             'passes': self.passes,
             'recap': CardCodec.encode_recap(relative_recap),
@@ -221,8 +221,8 @@ class ServerModel(pyglet.event.EventDispatcher):
             'version_num': self.version_no
         }
 
-    # Get a view of the stack that the given player can see
-    def get_relative_stack(self, player):
+    # Get a view of the story that the given player can see
+    def get_relative_story(self, player):
         def hide_opponents_cards(live_card):
             card, owner = live_card
             if owner != player and Quality.VISIBLE not in card.qualities:
@@ -244,7 +244,7 @@ class ServerModel(pyglet.event.EventDispatcher):
         if player == 1:
             result = list(map(switch_owners, result))
 
-        return CardCodec.encode_stack(result)
+        return CardCodec.encode_story(result)
 
     """UTILITY CHECKS"""
     def get_winner(self):

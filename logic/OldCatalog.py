@@ -20,7 +20,7 @@ stars = Stars(name="Stars", text="Inspire (Next turn gain 1 temporary mana)")
 class Cosmos(Card):
     def play(self, player, game, index, bonus):
         amt = 1
-        for (card, owner) in game.stack:
+        for (card, owner) in game.story:
             if owner == player:
                 amt += 1
         return super().play(player, game, index, bonus) + self.inspire(amt, game, player)
@@ -105,7 +105,7 @@ owl = Owl(name="Owl", cost=1, text="1: flock, this round stack is visible to you
 class Twitter(Card):
     def play(self, player, game, index, bonus):
         amt = 0
-        for (card, owner) in game.stack:
+        for (card, owner) in game.story:
             if card is dove:
                 amt += 1
 
@@ -122,7 +122,7 @@ class Vulture(Card):
 vulture = Vulture(name="Vulture", cost=3, points=3, text="3:3, oust 1 flock 2")
 class Peace(Card):
     def play(self, player, game, index, bonus):
-        for (card, owner) in game.stack:
+        for (card, owner) in game.story:
             if card is dove:
                 return super().play(player, game, index, bonus) + self.reset(game)
 
@@ -168,7 +168,7 @@ stump = Stump(name="Stump", text="0: Create a Pine in your hand")
 class Roots(Card):
     def play(self, player, game, index, bonus):
         your_last_card_cost = self.cost
-        for (card, owner) in game.stack:
+        for (card, owner) in game.story:
             if owner == player:
                 your_last_card_cost = card.cost
 
@@ -349,7 +349,7 @@ piranha = Piranha(name="Piranha", cost=4, points=1, text="4:1 flow, counter the 
 class SchoolOfFish(FlowCard):
     def get_cost(self, player, game):
         amt = 0
-        for (card, owner) in game.stack:
+        for (card, owner) in game.story:
             if owner == player and card.cost == 1:
                 amt += 1
 
@@ -425,7 +425,7 @@ class Maat(Card):
         opp = (player + 1) % 2
 
         amt = 0
-        for (card, owner) in game.stack:
+        for (card, owner) in game.story:
             if owner == opp:
                 amt += 1
 
@@ -529,7 +529,7 @@ class Gears(Card):
 gears = Gears(name="Gears", cost=2, text="2: build 2")
 class Factory(Card):
     def play(self, player, game, index, bonus):
-        amt = len(game.stack)
+        amt = len(game.story)
         return super().play(player, game, index, bonus) + self.build(amt, game, player)
 factory = Factory(name="Factory", cost=3, text="3: build X, where X is number of later cards on stack")
 class Anvil(Card):
@@ -611,7 +611,7 @@ class Dig(Card):
 dig = Dig(name="Dig", cost=2, points=2, text="2:2, Oust the top 2 cards of your discard pile")
 class Gnaw(Card):
     def play(self, player, game, index, bonus):
-        for (card, owner) in game.stack:
+        for (card, owner) in game.story:
             if card is broken_bone:
                 bonus += 3
 

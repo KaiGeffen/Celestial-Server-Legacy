@@ -201,8 +201,8 @@ class StackLayer(BaseView):
 
         # Add all the cards in hand
         i = 0
-        for (card, owner) in model.stack:
-            self.add_card(card, self.get_card_pos(i, owner))
+        for act in model.story.acts:
+            self.add_card(act.card, self.get_card_pos(i, act.owner))
             i += 1
 
     # Get the position of the nth card given its owner

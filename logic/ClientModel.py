@@ -25,7 +25,7 @@ class ClientModel(pyglet.event.EventDispatcher):
         self.status = CardCodec.decode_statuses(state['status'])
         self.opp_status = CardCodec.decode_statuses(state['opp_status'])
 
-        self.stack = CardCodec.decode_stack(state['stack'])
+        self.story = CardCodec.decode_story(state['story'])
         # NOTE(kgeffen) Priority is relative: 0 means I have it, regardless of the id of my connection
         self.priority = state['priority']
 
