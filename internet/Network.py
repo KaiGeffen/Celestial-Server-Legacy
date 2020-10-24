@@ -20,6 +20,7 @@ class Network:
         try:
             self.conn.send(msg.encode())
             response = self.conn.recv(BUFSIZE).decode()
+            print(response)
         except:
             print("Problem sending the starting deck")
 

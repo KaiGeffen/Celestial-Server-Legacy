@@ -14,6 +14,14 @@ def powerset(l):
 def get_action(model) -> int:
     # time.sleep(.4)
 
+    # If we've played a card and opponent hasn't, don't play more
+    # # TODO rename stack to story
+    # if len(model.stack) > 0:
+    #     def opp_played_act(act):
+    #         return act.owner == 1
+    #     if list(filter(opp_played_act, model.stack.acts)) == []:
+    #         return 10
+
     # Don't consider any of the restricted cards, which is the first X cards
     amt_restricted = model.status.count(Status.RESTRICTED)
 

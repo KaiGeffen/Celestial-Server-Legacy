@@ -115,5 +115,12 @@ class CardSprite(cocos.sprite.Sprite):
 
     # Visually shake the card
     def shake(self):
-        action = RotateBy(3, .1) + (RotateBy(-6, .2) + RotateBy(6, .2)) * 3 + RotateBy(-3, .1)
-        self.do(action)
+        pass
+        # action = RotateBy(3, .1) + (RotateBy(-6, .2) + RotateBy(6, .2)) * 3 + RotateBy(-3, .1)
+        # self.do(action)
+
+    # Visually shake the card
+    def shake(self):
+        pass
+        # action = RotateBy(3, .1) + (RotateBy(-6, .2) + RotateBy(6, .2)) * 3 + RotateBy(-3, .1)
+        # self.do(action)

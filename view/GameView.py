@@ -485,8 +485,8 @@ class PassesLayer(BaseView):
                 self.label_p1.visible = False
                 self.label_p2.visible = True
             else:
-                self.label_p1 = True
-                self.label_p2 = False
+                self.label_p1.visible = True
+                self.label_p2.visible = False
 
 
 """
