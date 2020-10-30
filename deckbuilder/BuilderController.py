@@ -9,6 +9,8 @@ import GameController
 import CardCodec
 from logic import Catalog
 
+from internet.Settings import SINGLE_PLAYER
+
 DECK_FILE = 'saved_decks.txt'
 
 UNFILTER = -1
@@ -70,7 +72,7 @@ class BuilderController(Layer):
                 deck = self.view.get_deck()
                 save_deck(deck)
 
-                game_scene = GameController.get_new_game(deck, single_player=True)
+                game_scene = GameController.get_new_game(deck, single_player=SINGLE_PLAYER)
                 director.run(game_scene)
 
         if symbol is pyglet.window.key.S:

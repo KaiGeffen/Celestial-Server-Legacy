@@ -5,6 +5,7 @@ PORT = 5555
 # The ipv4 address of the host machine. Run ipconfig from cmd to get this
 HOST = "127.0.0.1"
 LOCAL = "127.0.0.1"
+SINGLE_PLAYER = True
 
 # Time client waits between sending requests for changed state
 CLIENT_WAIT = 0.1

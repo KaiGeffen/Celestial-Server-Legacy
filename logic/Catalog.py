@@ -827,6 +827,15 @@ full_catalog = [
     graveyard, zombie, drown, raise_dead, haunt, spectre, prayer, tumulus, sarcophagus, anubis,
     hurricane, lock, spy
 ]
+# A list of simple cards, so that new players aren't overwhelmed
+vanilla_catalog = [
+    ember, dash, firewall, portal, charcoal, kindle, haze, force, fire_ring, ifrit,
+    dove, twitter, owl, nest, swift, peace, pelican, phoenix, icarus,
+    crossed_bones, dig, gnaw, mine, dinosaur_bones, wolf, stone_golem, boar, atlas, uluru,
+    bone_knife, hurricane, pollen
+]
+# full_catalog = vanilla_catalog
+
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
 
