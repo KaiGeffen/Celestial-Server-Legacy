@@ -789,6 +789,29 @@ class SolarExplosion(Card):
 
         return recap
 solar_explosion = SolarExplosion(name="Solar Explosion", cost=2, points=2, text="2:2, gain 1 mana this turn")
+class Sunlight(SightCard):
+    def play(self, player, game, index, bonus):
+        bonus += game.status[player].count(Status.INSPIRED)
+
+        return super().play(player, game, index, bonus)
+sunlight = Sunlight(name="Sunlight", cost=2, points=0,
+                     text="2:X, sight, X is how much you are inspired (How much mana you've gained this turn)")
+class SolarSystem(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        amt = game.mana[player]
+        for act in game.story.acts:
+            if act.card.cost == amt:
+                act.bonus += amt
+
+                recap += f'\n<{act.card.name}>'
+
+                break
+
+        return recap
+solar_system = SolarSystem(name="Solar System", cost=3, points=3, qualities=[Quality.VISIBLE],
+                           text="3:3, visible, X is your unspent mana. The next card this round that costs X is worth +X")
 class SolarPower(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -806,6 +829,28 @@ class SunCloud(Card):
 
         return recap
 sun_cloud = SunCloud(name="Sun Cloud", cost=4, points=4, text="4:4, reset if you have unspent mana")
+class StarSkull(Card):
+    def play(self, player, game, index, bonus):
+        amt = game.mana[player]
+        def cost_equals_amt(act):
+            return act.card.cost == amt
+
+        recap = super().play(player, game, index, bonus)
+
+        recap += self.counter(game, cost_equals_amt)
+
+        return recap
+star_skull = StarSkull(name="Star Skull", cost=5, points=5, qualities=[Quality.VISIBLE],
+                       text="5:5, visible, counter the next card with cost equal to your unspent mana")
+class Wisdom(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        if game.mana[player] > 0:
+            recap += self.draw(1, game, player)
+
+        return recap
+wisdom = Wisdom(name="Wisdom", cost=5, points=4, text="5:4, draw a card if you have unspent mana")
 class Eclipse(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -881,7 +926,8 @@ full_catalog = [
     crossed_bones, dig, gnaw, mine, dinosaur_bones, wolf, stone_golem, boar, atlas, uluru,
     graveyard, zombie, drown, raise_dead, haunt, spectre, prayer, tumulus, sarcophagus, anubis,
     hurricane, lock, spy,
-    sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun
+    sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun, sunlight,
+    solar_system
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
