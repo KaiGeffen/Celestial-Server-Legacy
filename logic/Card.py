@@ -64,6 +64,11 @@ class Card:
         for _ in range(amt):
             game.status[player].append(Status.INSPIRED)
 
+        if amt > 0:
+            return f'\n+{amt} mana'
+        else:
+            return ''
+
     # Add X instances of a given status
     def add_status(self, amt, game, player, stat):
         recap = f'\n{stat.value} {amt}'

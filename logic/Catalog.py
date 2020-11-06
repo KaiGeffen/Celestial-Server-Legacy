@@ -712,7 +712,7 @@ class Prayer(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
         recap += self.reset(game)
-        recap += self.inspire(1, game, player)
+        # recap += self.inspire(1, game, player)
 
         return recap
 
@@ -766,6 +766,61 @@ class Anubis(Card):
             return self.cost
 anubis = Anubis(name="Anubis", cost=7, points=7, text="7:7, costs 0 if you have at least 12 cards in your pile")
 
+
+"""Sun"""
+class Sunflower(Card):
+    def play(self, player, game, index, bonus):
+        bonus += game.mana[player]
+        game.mana[player] = 0
+
+        return  super().play(player, game, index, bonus)
+sunflower = Sunflower(name="Sunflower", cost=1, points=0, text="1:0, spend all your unspent mana to gain that many points")
+class SunPriest(Card):
+    def play(self, player, game, index, bonus):
+        if game.mana[player] > 0:
+            bonus += 1
+
+        return  super().play(player, game, index, bonus)
+sun_priest = SunPriest(name="Sun Priest", cost=1, points=1, text="1:1, +1 if you have unspent mana")
+class SolarExplosion(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+        recap += self.add_mana(1, game, player)
+
+        return recap
+solar_explosion = SolarExplosion(name="Solar Explosion", cost=2, points=2, text="2:2, gain 1 mana this turn")
+class SolarPower(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        if Status.INSPIRED in game.status[player]:
+            recap += self.inspire(2, game, player)
+
+        return recap
+solar_power = SolarPower(name="Solar Power", cost=3, points=2, text="3:2, inspire 2 if you are inspired (If you've gained mana this turn)")
+class SunCloud(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+        if game.mana[player] > 0:
+            recap += self.reset(game)
+
+        return recap
+sun_cloud = SunCloud(name="Sun Cloud", cost=4, points=4, text="4:4, reset if you have unspent mana")
+class Eclipse(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+        if game.mana[player] > 0:
+            recap += self.restrict(1, game, player ^ 1)
+
+        return recap
+eclipse = Eclipse(name="Eclipse", cost=6, points=6, text="6:6, restrict 1 (opponent) if you have unspent mana")
+class Sun(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+        recap += self.inspire(5, game, player)
+
+        return recap
+sun = Sun(name="Sun", cost=8, points=6, text="8:6, inspire 5")
 
 """Other"""
 class Hurricane(Card):
@@ -825,7 +880,8 @@ full_catalog = [
     cog, drone, gears, factory, anvil, cogsplosion, ai, sine, foundry,
     crossed_bones, dig, gnaw, mine, dinosaur_bones, wolf, stone_golem, boar, atlas, uluru,
     graveyard, zombie, drown, raise_dead, haunt, spectre, prayer, tumulus, sarcophagus, anubis,
-    hurricane, lock, spy
+    hurricane, lock, spy,
+    sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
