@@ -867,6 +867,7 @@ class Sun(Card):
         return recap
 sun = Sun(name="Sun", cost=8, points=6, text="8:6, inspire 5")
 
+
 """Other"""
 class Hurricane(Card):
     def play(self, player, game, index, bonus):
@@ -948,16 +949,16 @@ import random
 # Get a random deck for the computer opponent
 def get_computer_deck():
     possible_cards = [
-        [crossed_bones],
-        [swift, ouroboros],
+        [crossed_bones, sun_priest],
+        [swift, ouroboros, solar_explosion],
         [kindle, gift, gnaw],
         [pelican, angler, wolf],
         [phoenix, stone_golem, school_of_fish, tumulus],
-        [frog_prince, boar],
+        [frog_prince, boar, eclipse],
         [wyvern],
         [cobra, ifrit, nightmare]
     ]
-    distribution = [3, 2, 3, 3, 2, 1, 0, 1]
+    distribution = [3, 3, 3, 2, 1, 2, 1, 0]
     deck = []
     for i in range(len(possible_cards)):
         for _ in range(distribution[i]):
