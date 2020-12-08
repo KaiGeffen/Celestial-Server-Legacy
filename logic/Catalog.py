@@ -85,6 +85,17 @@ ifrit = Ifrit(name="Ifrit", cost=8, points=7, text="8:7, later cards this round 
 
 
 """BIRD"""
+class Distraction(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        amt = game.mana[player]
+        recap += self.flock(amt, game, player)
+
+        game.mana[player] = 0
+
+        return  recap
+distraction = Distraction(name="Distraction", cost=4, points=4, text="4:4, spend all your unspent mana to flock that much")
 dove = Card(name="Dove", cost=1, points=1, qualities=[Quality.VISIBLE, Quality.FLEETING], text="1:1, visible, fleeting (After resolving, this card is removed from the game instead of moving to your discard pile)")
 class Twitter(Card):
     def play(self, player, game, index, bonus):
@@ -120,11 +131,11 @@ class Vulture(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
 
-        recap += self.dig(1, game, player)
-        recap += self.flock(1, game, player)
+        recap += self.oust(1, game, player)
+        recap += self.draw(1, game, player)
 
         return  recap
-vulture = Vulture(name="Vulture", cost=3, points=3, text="3:3, flock 1, oust the top card of your pile")
+vulture = Vulture(name="Vulture", cost=3, points=3, text="3:3, oust 1, draw 1")
 class Pelican(Card):
     def play(self, player, game, index, bonus):
         amt = 0
@@ -881,6 +892,7 @@ class Spy(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.create(camera, game, player ^ 1)
 spy = Spy(name="Spy", cost=1, text="1:0, create a 2:0 camera in opponent's hand which gives you sight each upkeep")
+
 # class Wave(Card):
 #     def get_cost(self, player, game):
 #         high_score = 0
@@ -928,7 +940,8 @@ full_catalog = [
     graveyard, zombie, drown, raise_dead, haunt, spectre, prayer, tumulus, sarcophagus, anubis,
     hurricane, lock, spy,
     sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun, sunlight,
-    solar_system
+    solar_system,
+    vulture, distraction
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
