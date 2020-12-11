@@ -78,7 +78,7 @@ def decode_story(s):
 
 
 def encode_recap(recap):
-    result = f'{recap.sums[0]}{DELIM2}{recap.sums[1]}{DELIM1}{recap.wins[0]}{DELIM2}{recap.wins[1]}'
+    result = f'{recap.sums[0]}{DELIM2}{recap.sums[1]}{DELIM1}{recap.wins[0]}{DELIM2}{recap.wins[1]}{DELIM1}{recap.safety[0]}{DELIM2}{recap.safety[1]}'
 
     # If no plays happened, just return the sums and wins
     # Otherwise, add a semicolon before the recap
@@ -97,15 +97,16 @@ def encode_recap(recap):
 
 
 def decode_recap(s):
-    recap = s.split(DELIM1, maxsplit=2)
+    recap = s.split(DELIM1, maxsplit=3)
     sums = list(map(int, recap[0].split(DELIM2)))
     wins = list(map(int, recap[1].split(DELIM2)))
+    safety = list(map(int, recap[2].split(DELIM2)))
 
-    # If no plays happened, just return sums and wins recap
-    if len(recap) == 2:
-        return Recap(sums=sums, wins=wins)
+    # If no plays happened, just return sums, wins, and safety recap
+    if len(recap) == 3:
+        return Recap(sums=sums, wins=wins, safety=safety)
 
-    plays = recap[2].split(DELIM1)
+    plays = recap[3].split(DELIM1)
 
     def decode_play(play: str):
         l = play.split(DELIM2)
@@ -117,7 +118,7 @@ def decode_recap(s):
         return card, owner, text
 
     story = list(map(decode_play, plays))
-    return Recap(story=story, sums=sums, wins=wins)
+    return Recap(story=story, sums=sums, wins=wins, safety=safety)
 
 
 def encode_statuses(statuses):

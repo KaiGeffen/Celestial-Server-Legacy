@@ -238,7 +238,7 @@ class ServerController():
             hand = self.model.hand[player]
             restricted = Status.RESTRICTED in self.model.status[player]
 
-            if not restricted and len(hand) is not 0:
+            if not restricted and len(hand) != 0:
                 if hand[0].spring:
                     self.model.story.add_act(hand[0], player, Source.SPRING)
 

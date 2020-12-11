@@ -278,6 +278,10 @@ class RecapLayer(BaseView):
         # Add the final scores - use the existing index to tell distance
         for player in (0, 1):
             text = f"{recap.sums[player]}"
+
+            if recap.safety[player] > 0:
+                text += f"[{recap.safety[player] + recap.sums[player]}]"
+
             text += "*" * recap.wins[player]
 
             sum_label = Label(text,
