@@ -662,6 +662,7 @@ class Crab(FlowCard):
         return recap
 crab = Crab(name="Crab", cost=2, text="2:0, flow, safe 3 (If you would lose the round by 3 or fewer points, instead the round is a draw)")
 
+
 """Ships"""
 class Figurehead(EbbCard):
     def play(self, player, game, index, bonus):
@@ -919,6 +920,15 @@ class Spy(Card):
         return super().play(player, game, index, bonus) + self.create(camera, game, player ^ 1)
 spy = Spy(name="Spy", cost=1, text="1:0, create a 2:0 camera in opponent's hand which gives you sight each upkeep")
 
+class Armadillo(FlowCard):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        recap += self.safe(2, game, player)
+
+        return recap
+armadillo = Armadillo(name="Armadillo", cost=1, text="1:0, safe 2 (If you would lose the round by 2 or fewer points, instead the round is a draw)")
+
 # class Wave(Card):
 #     def get_cost(self, player, game):
 #         high_score = 0
@@ -967,7 +977,7 @@ full_catalog = [
     hurricane, lock, spy,
     sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun, sunlight,
     solar_system,
-    vulture, distraction, bastet, crab
+    vulture, distraction, bastet, crab, armadillo
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
