@@ -851,7 +851,12 @@ class Crypt(Card):
         return result
 crypt = Crypt(name="Crypt", cost=2, points=2,
                text="2:2, your last unsprung card this round transforms into the first card in your pile with the same cost as it")
+class Carrion(Card):
+    def pile_upkeep(self, player, game, index):
+        game.pile[player].append(broken_bone)
 
+        return False
+carrion = Carrion(name="Carrion", cost=3, points=3, text="3:3. On upkeep while in pile, create a 1:0 fleeting broken bone")
 
 """Sun"""
 class Sunflower(Card):
@@ -977,6 +982,8 @@ class Armadillo(FlowCard):
         return recap
 armadillo = Armadillo(name="Armadillo", cost=1, text="1:0, safe 2 (If you would lose the round by 2 or fewer points, instead the round is a draw)")
 
+
+
 # class Wave(Card):
 #     def get_cost(self, player, game):
 #         high_score = 0
@@ -1025,7 +1032,7 @@ full_catalog = [
     hurricane, lock, spy,
     sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun, sunlight,
     solar_system,
-    vulture, distraction, bastet, crab, armadillo, crypt, turtle
+    vulture, distraction, bastet, crab, armadillo, crypt, turtle, carrion
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
