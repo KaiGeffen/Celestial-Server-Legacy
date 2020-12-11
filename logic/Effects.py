@@ -15,3 +15,4 @@ class Status(Enum):
     GENTLE = "Gentle"
     RESTRICT = "Restrict"
     RESTRICTED = "Restricted"
+    SAFE = "Safe"

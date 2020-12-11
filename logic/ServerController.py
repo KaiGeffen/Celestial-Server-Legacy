@@ -174,9 +174,9 @@ class ServerController():
         #     index += 1
 
         # Add to wins here
-        if self.model.score[0] > self.model.score[1]:
+        if self.model.score[0] > self.model.score[1] + self.model.status[1].count(Status.SAFE):
             wins[0] += 1
-        elif self.model.score[0] < self.model.score[1]:
+        elif self.model.score[1] > self.model.score[0] + self.model.status[0].count(Status.SAFE):
             wins[1] += 1
         else:
             pass
@@ -244,12 +244,17 @@ class ServerController():
 
     # If the winning player has gentle, award carryover equal to how much extra they won by
     def do_gentle(self):
-        score_dif = self.model.score[0] - self.model.score[1]
+        # Consider p1 winning and consider p2 winning
+        for (p1, p2) in [(0, 1), (1, 0)]:
+            score_dif = self.model.score[p1] - self.model.score[p2]
 
-        if score_dif > 0 and Status.GENTLE in self.model.status[0]:
-            self.model.status[0].extend((score_dif - 1) * [Status.NOURISH])
-        elif score_dif < 0 and Status.GENTLE in self.model.status[1]:
-            self.model.status[1].extend((abs(score_dif) - 1) * [Status.NOURISH])
+            # Subtract the safety of the losing player
+            score_above_winning = score_dif - self.model.status[p2].count([Status.SAFE])
+            # Subtract 1 because that much is needed to take the round
+            score_above_winning -= 1
+
+            if score_above_winning > 0 and Status.GENTLE in self.model.status[p1]:
+                self.model.status[p1].extend(score_above_winning * [Status.NOURISH])
 
     """UTILITY CHECKS"""
     # Check if the given player can play the given card
