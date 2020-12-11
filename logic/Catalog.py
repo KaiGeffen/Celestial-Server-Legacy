@@ -258,6 +258,19 @@ class Cobra(Card):
         return recap
 cobra = Cobra(name="Cobra", cost=8, points=9, text="8:9, spring: tutor a 2", spring=True)
 
+class Turtle(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        recap += self.safe(2, game, player)
+
+        return recap
+
+    def play_spring(self, player, game, index, bonus):
+        recap = super().play_spring(player, game, index, bonus - self.points)
+
+        return recap
+turtle = Turtle(name="Turtle", cost=4, points=2, text="4:2, safe 2, spring: safe 2", spring=True)
 
 """Discard"""
 class BoneKnife(Card):
@@ -1012,7 +1025,7 @@ full_catalog = [
     hurricane, lock, spy,
     sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun, sunlight,
     solar_system,
-    vulture, distraction, bastet, crab, armadillo, crypt
+    vulture, distraction, bastet, crab, armadillo, crypt, turtle
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
