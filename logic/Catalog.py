@@ -593,7 +593,7 @@ class Bastet(Card):
         game.pile[player].append(bastet)
 
         return super().play(player, game, index, bonus)
-bastet = Bastet(2)
+bastet = Bastet(1)
 
 """Fish"""
 flying_fish = FlowCard(name="Flying Fish", cost=1, points=1, text="1:1, flow (As soon as you ebb, cycle this)")
