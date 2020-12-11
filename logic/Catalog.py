@@ -578,6 +578,22 @@ class Atlas(Card):
 atlas = Atlas(name="Atlas", cost=7, points=7, text="7:7, costs 0 if your deck and pile are empty")
 uluru = Card(name="Uluru", cost=10, points=15, text="10:15")
 
+class Bastet(Card):
+    def __init__(self, points):
+        text = f"2:{points}, this card retains all changes to points as it resolves (Nourish, starve, boost, oppress)"
+        super().__init__("Bastet", cost=2, points=points, qualities=[Quality.FLEETING],
+                         text=text, dynamic_text=text)
+
+    def play(self, player, game, index, bonus):
+        points = self.points + bonus
+        points += game.status[player].count(Status.NOURISH)
+        points -= game.status[player].count(Status.STARVE)
+
+        bastet = Bastet(points)
+        game.pile[player].append(bastet)
+
+        return super().play(player, game, index, bonus)
+bastet = Bastet(2)
 
 """Fish"""
 flying_fish = FlowCard(name="Flying Fish", cost=1, points=1, text="1:1, flow (As soon as you ebb, cycle this)")
@@ -778,6 +794,8 @@ class Anubis(Card):
 anubis = Anubis(name="Anubis", cost=7, points=7, text="7:7, costs 0 if you have at least 12 cards in your pile")
 
 
+
+
 """Sun"""
 class Sunflower(Card):
     def play(self, player, game, index, bonus):
@@ -941,7 +959,7 @@ full_catalog = [
     hurricane, lock, spy,
     sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun, sunlight,
     solar_system,
-    vulture, distraction
+    vulture, distraction, bastet
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
