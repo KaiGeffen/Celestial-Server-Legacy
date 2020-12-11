@@ -857,6 +857,16 @@ class Carrion(Card):
 
         return False
 carrion = Carrion(name="Carrion", cost=3, points=3, text="3:3. On upkeep while in pile, create a 1:0 fleeting broken bone")
+class Maggot(Card):
+    def pile_upkeep(self, player, game, index):
+        if index > 0:
+            game.pile[player].pop(index - 1)
+            return True
+        else:
+            return False
+maggot = Maggot(name="Maggot", cost=0, points=1, text="0:1. On upkeep while in pile, oust the card below Maggot")
+
+
 
 """Sun"""
 class Sunflower(Card):
@@ -1032,7 +1042,7 @@ full_catalog = [
     hurricane, lock, spy,
     sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun, sunlight,
     solar_system,
-    vulture, distraction, bastet, crab, armadillo, crypt, turtle, carrion
+    vulture, distraction, bastet, crab, armadillo, crypt, turtle, carrion, maggot
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
