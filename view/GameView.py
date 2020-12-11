@@ -287,7 +287,7 @@ class RecapLayer(BaseView):
             sum_label = Label(text,
                               font_size=24,
                               color=(255, 255, 0, 255),
-                              anchor_x='center',
+                              anchor_x='left',
                               anchor_y='center',
                               align='center',
                               width=RECAP_TEXT_WIDTH,
