@@ -820,7 +820,7 @@ class Crypt(Card):
             # The card from pile to replace the final card with
             replacement_card = None
 
-            for card in game.pile[player]:
+            for card in game.pile[player][::-1]:
                 if card.cost == final_card.cost:
                     replacement_card = card
                     break
