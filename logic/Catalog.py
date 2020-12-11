@@ -1,6 +1,6 @@
 from logic.Card import *
 from logic.Effects import Status, Quality
-from logic.Story import Source
+from logic.Story import Source,  Act
 
 """FIRE"""
 class Ember(Card):
@@ -802,7 +802,42 @@ class Anubis(Card):
             return self.cost
 anubis = Anubis(name="Anubis", cost=7, points=7, text="7:7, costs 0 if you have at least 12 cards in your pile")
 
+class Crypt(Card):
+    def play(self, player, game, index, bonus):
+        result = super().play(player, game, index, bonus)
 
+        index_final_owned_card = -1
+        final_card = None
+        index = 0
+        for act in game.story.acts:
+            if act.owner == player and act.source != Source.SPRING:
+                index_final_owned_card = index
+                final_card = act.card
+
+            index += 1
+
+        if final_card is not None:
+            # The card from pile to replace the final card with
+            replacement_card = None
+
+            for card in game.pile[player]:
+                if card.cost == final_card.cost:
+                    replacement_card = card
+                    break
+
+            if replacement_card is not None:
+                # The full act with which to replace player's final act
+                replacement_act = Act(card=replacement_card,
+                                      owner=player,
+                                      source=Source.PILE)
+
+                game.story.replace_act(index_final_owned_card, replacement_act)
+
+                result += f'\n{replacement_card.name} replaced {final_card.name}'
+
+        return result
+crypt = Crypt(name="Crypt", cost=2, points=2,
+               text="2:2, your last unsprung card this round transforms into the first card in your pile with the same cost as it")
 
 
 """Sun"""
@@ -977,7 +1012,7 @@ full_catalog = [
     hurricane, lock, spy,
     sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun, sunlight,
     solar_system,
-    vulture, distraction, bastet, crab, armadillo
+    vulture, distraction, bastet, crab, armadillo, crypt
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [

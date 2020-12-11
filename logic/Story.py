@@ -80,6 +80,13 @@ class Story:
 
         return act
 
+    # Replace the act at index with replacement_act
+    def replace_act(self, index, replacement_act):
+        if len(self.acts) < index + 1:
+            raise Exception(f"Tried to replace act {index} in a story with only {len(self.acts)} acts.")
+
+        self.acts[index] = replacement_act
+
 
 class Act:
     def __init__(self, card, owner, source):
