@@ -101,6 +101,10 @@ class Card:
     def flock(self, amt, game, player):
         return self.add_status(amt, game, player, Status.FLOCK)
 
+    # If you would lose this round by X or less, instead the round is a tie
+    def safe(self, amt, game, player):
+        return self.add_status(amt, game, player, Status.SAFE)
+
     # Draw X cards from deck
     def draw(self, amt, game, player):
         recap = ''

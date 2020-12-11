@@ -653,6 +653,14 @@ class Wave(FlowCard):
         return super().on_flow(player, game)
 wave = Wave(name="Wave", cost=9, points=9, text="9:9, flow: Nourish 1")
 
+class Crab(FlowCard):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        recap += self.safe(3, game, player)
+
+        return recap
+crab = Crab(name="Crab", cost=2, text="2:0, flow, safe 3 (If you would lose the round by 3 or fewer points, instead the round is a draw)")
 
 """Ships"""
 class Figurehead(EbbCard):
@@ -959,7 +967,7 @@ full_catalog = [
     hurricane, lock, spy,
     sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun, sunlight,
     solar_system,
-    vulture, distraction, bastet
+    vulture, distraction, bastet, crab
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
