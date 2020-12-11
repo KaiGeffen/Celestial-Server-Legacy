@@ -188,7 +188,9 @@ class ServerController():
 
         # Recap the results
         self.model.recap = self.model.story.recap
-        self.model.recap.add_total(self.model.score, wins)
+        safe_totals = [self.model.status[0].count(Status.SAFE),
+                       self.model.status[1].count(Status.SAFE)]
+        self.model.recap.add_total(self.model.score, wins, safe_totals)
 
         self.model.story.clear()
 
@@ -221,7 +223,8 @@ class ServerController():
         cleared_statuses = [Status.INSPIRE,
                             Status.FLOCK,
                             Status.GENTLE,
-                            Status.RESTRICT]
+                            Status.RESTRICT,
+                            Status.SAFE]
 
         def clear_temp_statuses(stat):
             return stat not in cleared_statuses
