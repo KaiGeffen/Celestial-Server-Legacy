@@ -991,7 +991,20 @@ class Armadillo(FlowCard):
 
         return recap
 armadillo = Armadillo(name="Armadillo", cost=1, text="1:0, safe 2 (If you would lose the round by 2 or fewer points, instead the round is a draw)")
+class Duality(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
 
+        for act in game.story.acts:
+            if act.owner == player:
+                act.owner = act.owner ^ 1
+
+                recap += f"\nSwitch {act.card.name}"
+
+                break
+
+        return recap
+duality = Duality(name="Duality", cost=2, qualities=[Quality.VISIBLE], text="2:0, visible, switch the owner of your next card in the story")
 
 
 # class Wave(Card):
@@ -1042,7 +1055,8 @@ full_catalog = [
     hurricane, lock, spy,
     sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun, sunlight,
     solar_system,
-    vulture, distraction, bastet, crab, armadillo, crypt, turtle, carrion, maggot
+    vulture, distraction, bastet, crab, armadillo, crypt, turtle, carrion, maggot,
+    duality
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
