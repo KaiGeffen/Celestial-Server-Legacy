@@ -1101,11 +1101,6 @@ class Stable(Card):
                 game.pile[player].append(new_stable)
 
                 return super().play(player, game, index, bonus)
-
-    def on_play(self, player, game):
-        if game.hand[player]:
-            first_card = game.hand[player].pop(0)
-            game.hand[player].append(first_card)
 stable = Stable()
 
 
