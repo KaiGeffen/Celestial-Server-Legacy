@@ -52,8 +52,14 @@ def get_action(model) -> int:
     if best_possible == ():
         return 10
     else:
+        # Sort best_possible based on cost, to avoid swift, reset, and encourage playing finals last
+        def get_cost(card):
+            return model.hand[card].cost
+        result = list(best_possible)
+        result.sort(key=get_cost)
+
         # The first card of the best possible turn (In terms of mana wasted)
-        return best_possible[0]
+        return result[0]
     #
     # for index in range(6):
     #     if model.can_play(index):

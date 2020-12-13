@@ -864,7 +864,7 @@ class Maggot(Card):
             return True
         else:
             return False
-maggot = Maggot(name="Maggot", cost=0, points=1, text="0:1. On upkeep while in pile, oust the card below Maggot")
+maggot = Maggot(name="Maggot", cost=0, points=0, text="0:0. On upkeep while in pile, oust the card below Maggot")
 
 
 
@@ -1091,5 +1091,14 @@ def get_computer_deck():
     for i in range(len(possible_cards)):
         for _ in range(distribution[i]):
             deck.append(random.choice(possible_cards[i]))
+
+    # Temporary to see if computer can play this deck
+    deck = [bone_knife, bone_knife,
+            armadillo,
+            crypt, crypt, crypt, crypt,
+            vulture,
+            angler, angler,
+            stone_golem, stone_golem, stone_golem,
+            stalker, pollen]
 
     return deck
