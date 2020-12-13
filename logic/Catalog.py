@@ -5,7 +5,7 @@ from logic.Story import Source,  Act
 # TODO make a separate file for tokens
 """Tokens"""
 class Camera(Card):
-    def on_upkeep(self, player, game):
+    def on_upkeep(self, player, game, index):
         game.vision[player^1] = True
 camera = Camera(name="Camera", cost=2, qualities=[Quality.FLEETING],
                 text="2:0, fleeting, gives sight to your opponent during your upkeep")
