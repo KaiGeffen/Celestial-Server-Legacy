@@ -726,8 +726,8 @@ warship = EbbCard(name="Warship", cost=7, points=7, text="7:7, ebb")
 
 """Death"""
 class Undead(Card):
-    def __init__(self, **kw):
-        super().__init__(pile_highlight=True, **kw)
+    def __init__(self, **kwargs):
+        super().__init__(pile_highlight=True, **kwargs)
 
     def pile_upkeep(self, player, game, index):
         cost = self.get_cost(player, game)
@@ -1057,7 +1057,56 @@ class Sicken(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.create(virus, game, player ^ 1)
 sicken = Sicken(name="Sicken", cost=1, text=f"1:0, create a virus in opponent's hand ({virus.text})")
+class Stable(Card):
+    def __init__(self, stored=None):
+        self.stored = stored
 
+        name = "Stable"
+        cost = 3
+        points = 3
+
+        stats = f"{cost}:{points}"
+        text = f"{stats}, store the top card of your pile in this card. This card's effect becomes to add one of the stored card to your hand."
+
+        if stored:
+            dynamic_text = f"{stats}, create a {stored.name} in hand"
+            if stored.dynamic_text:
+                dynamic_text += f" ({stored.dynamic_text})"
+            else:
+                dynamic_text += f" ({stored.text})"
+            qualities = []
+        else:
+            dynamic_text = ""
+            qualities = [Quality.FLEETING]
+
+        super().__init__(name=name, cost=cost, points=points, qualities=qualities, text=text, dynamic_text=dynamic_text)
+
+    def play(self, player, game, index, bonus):
+        if self.stored:
+            return super().play(player, game, index, bonus) + self.create(self.stored, game, player)
+
+        else:
+            card = None
+            if game.pile[player]:
+                card = game.pile[player].pop()
+
+            if card is not None:
+                new_stable = Stable(stored=card)
+                game.pile[player].append(new_stable)
+
+                return super().play(player, game, index, bonus) + f"\nStored: {card.name}"
+            else:
+                # Need to add it since it's fleeting while not filled
+                new_stable = Stable(stored=None)
+                game.pile[player].append(new_stable)
+
+                return super().play(player, game, index, bonus)
+
+    def on_play(self, player, game):
+        if game.hand[player]:
+            first_card = game.hand[player].pop(0)
+            game.hand[player].append(first_card)
+stable = Stable()
 
 
 """Lists"""
@@ -1077,7 +1126,7 @@ full_catalog = [
     sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun, sunlight,
     solar_system,
     vulture, distraction, bastet, crab, armadillo, crypt, turtle, carrion, maggot,
-    duality, sicken
+    duality, sicken, stable
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
