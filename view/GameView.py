@@ -136,7 +136,8 @@ class HandLayer(BaseView):
         for card in model.hand:
             sprite = self.add_card(card, self.get_card_pos(i))
 
-            if card.get_cost(player=0, game=model) > model.mana:
+            # TODO work with adjustable cost cards
+            if card.cost > model.mana:
                 sprite.color = UNPLAYABLE_CARD_COLOR
 
             # Shake the first card if it has spring
