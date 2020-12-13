@@ -2,6 +2,27 @@ from logic.Card import *
 from logic.Effects import Status, Quality
 from logic.Story import Source,  Act
 
+# TODO make a separate file for tokens
+"""Tokens"""
+class Camera(Card):
+    def on_upkeep(self, player, game):
+        game.vision[player^1] = True
+camera = Camera(name="Camera", cost=2, qualities=[Quality.FLEETING],
+                text="2:0, fleeting, gives sight to your opponent during your upkeep")
+broken_bone = Card(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], text="1:0, fleeting")
+robot = Card(name='Robot', qualities=[Quality.FLEETING], text="0:X, fleeting")
+class Virus(Card):
+    def pile_upkeep(self, player, game, index):
+        game.status[player].append(Status.STARVE)
+
+        return False
+virus = Virus(name="Virus", cost=3, qualities=[Quality.FLEETING], pile_highlight=True,
+              text="3:0, fleeting. On upkeep while in pile starve 1")
+
+
+tokens = [camera, broken_bone, robot, virus]
+
+
 """FIRE"""
 class Ember(Card):
     def play(self, player, game, index, bonus):
@@ -1032,38 +1053,11 @@ class Duality(Card):
 
         return recap
 duality = Duality(name="Duality", cost=2, qualities=[Quality.VISIBLE], text="2:0, visible, switch the owner of your next card in the story")
+class Sicken(Card):
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus) + self.create(virus, game, player ^ 1)
+sicken = Sicken(name="Sicken", cost=1, text=f"1:0, create a virus in opponent's hand ({virus.text})")
 
-
-# class Wave(Card):
-#     def get_cost(self, player, game):
-#         high_score = 0
-#         current_score = 0
-#         for act in game.story.acts:
-#             if act.owner == player:
-#                 current_score += 1
-#             else:
-#                 current_score = 0
-#
-#             if current_score > high_score:
-#                 high_score = current_score
-#
-#         return self.cost - high_score
-# wave = Wave(name="Wave", cost=7, points=6,
-#             text="7:6, costs X less where X is the length of your longest chain in the story (Chain is cards in sequence)")
-
-
-
-"""Tokens"""
-class Camera(Card):
-    def on_upkeep(self, player, game):
-        game.vision[player^1] = True
-camera = Camera(name="Camera", cost=2, qualities=[Quality.FLEETING],
-                text="2:0, fleeting, gives sight to your opponent during your upkeep")
-broken_bone = Card(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], text="1:0, fleeting")
-robot = Card(name='Robot', qualities=[Quality.FLEETING], text="0:X, fleeting")
-
-
-tokens = [camera, broken_bone, robot]
 
 
 """Lists"""
@@ -1083,8 +1077,7 @@ full_catalog = [
     sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun, sunlight,
     solar_system,
     vulture, distraction, bastet, crab, armadillo, crypt, turtle, carrion, maggot,
-    duality,
-    bull
+    duality, sicken
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
