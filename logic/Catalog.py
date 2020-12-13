@@ -969,6 +969,28 @@ class Sun(Card):
 sun = Sun(name="Sun", cost=8, points=6, text="8:6, inspire 5")
 
 
+"""RUSH"""
+# TODO Use a play method in game to standardize. Also obey Restrict!
+class RushCard(Card):
+    def on_upkeep(self, player, game, index):
+        cost = self.get_cost(player, game)
+        if game.mana[player] >= cost:
+
+            # Play this card for its cost
+            game.mana[player] -= cost
+            game.story.add_act(self, player, Source.PILE)
+            del game.hand[player][index]
+
+            # This card was removed from hand
+            return True
+
+        # No card was removed from hand
+        return False
+
+bull = RushCard(name="Bull", cost=1, points=2, qualities=[Quality.VISIBLE],
+                text="1:2, visible, rush (If this card is in your hand during your upkeep and you have enough mana, play it)")
+
+
 """Other"""
 class Hurricane(Card):
     def play(self, player, game, index, bonus):
@@ -1056,7 +1078,8 @@ full_catalog = [
     sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun, sunlight,
     solar_system,
     vulture, distraction, bastet, crab, armadillo, crypt, turtle, carrion, maggot,
-    duality
+    duality,
+    bull
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [

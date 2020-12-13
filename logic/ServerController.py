@@ -124,8 +124,14 @@ class ServerController():
             self.do_upkeep_statuses(player)
 
             # Each card in hand has a chance to do an upkeep effect
-            for card in self.model.hand[player]:
-                card.on_upkeep(player, self.model)
+            index = 0
+            while index < len(self.model.hand[player]):
+                card = self.model.hand[player][index]
+
+                card_was_removed = card.on_upkeep(player, self.model, index)
+
+                if not card_was_removed:
+                    index += 1
 
             # Each card in pile has a chance to do an upkeep effect
             index = 0
