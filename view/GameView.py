@@ -406,10 +406,13 @@ class InventoryLayer(BaseView):
         d = {0: model.deck,
              1: model.pile[0],
              2: model.pile[1]}
+        pile_zones = [1, 2]
         for zone in range(3):
             i = 0
             for card in d[zone]:
-                self.add_card(card, self.get_card_pos(i, zone))
+                sprite = self.add_card(card, self.get_card_pos(i, zone))
+                if zone in pile_zones and card.pile_highlight:
+                    sprite.color = PILE_HIGHLIGHT_COLOR
                 i += 1
 
     # Get the position of the nth card given its zone (deck, your pile, opp pile)

@@ -705,6 +705,9 @@ warship = EbbCard(name="Warship", cost=7, points=7, text="7:7, ebb")
 
 """Death"""
 class Undead(Card):
+    def __init__(self, **kw):
+        super().__init__(pile_highlight=True, **kw)
+
     def pile_upkeep(self, player, game, index):
         cost = self.get_cost(player, game)
         if game.mana[player] >= cost:
@@ -770,7 +773,7 @@ class Prayer(Card):
         game.status[player].append(Status.STARVE)
 
         return False
-prayer = Prayer(name="Prayer", cost=5,
+prayer = Prayer(name="Prayer", cost=5, pile_highlight=True,
                 text="5:0, reset. On upkeep while in pile, +1 mana and starve 1 (Your next card gives -1 point)")
 
 class Sarcophagus(Card):
@@ -856,7 +859,8 @@ class Carrion(Card):
         game.pile[player].append(broken_bone)
 
         return False
-carrion = Carrion(name="Carrion", cost=3, points=3, text="3:3. On upkeep while in pile, create a 1:0 fleeting broken bone")
+carrion = Carrion(name="Carrion", cost=3, points=3, pile_highlight=True,
+                  text="3:3. On upkeep while in pile, create a 1:0 fleeting broken bone")
 class Maggot(Card):
     def pile_upkeep(self, player, game, index):
         if index > 0:
@@ -864,7 +868,8 @@ class Maggot(Card):
             return True
         else:
             return False
-maggot = Maggot(name="Maggot", cost=0, points=0, text="0:0. On upkeep while in pile, oust the card below Maggot")
+maggot = Maggot(name="Maggot", cost=0, points=0, pile_highlight=True,
+                text="0:0. On upkeep while in pile, oust the card below Maggot")
 
 
 
