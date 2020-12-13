@@ -6,7 +6,6 @@ from logic.Catalog import hidden_card
 from view.Settings import *
 from view.Shared import BaseView
 
-
 class GameView(BaseView):
     def __init__(self, hud):
         super().__init__()
@@ -136,6 +135,9 @@ class HandLayer(BaseView):
         i = 0
         for card in model.hand:
             sprite = self.add_card(card, self.get_card_pos(i))
+
+            if card.get_cost(player=0, game=model) > model.mana:
+                sprite.color = UNPLAYABLE_CARD_COLOR
 
             # Shake the first card if it has spring
             if i == 0 and card.spring:
