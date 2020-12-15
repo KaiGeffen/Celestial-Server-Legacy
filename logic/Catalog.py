@@ -533,6 +533,11 @@ class Oak(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.gentle(game, player)
 oak = Oak(name="Oak", cost=8, points=8, text="8:8, gentle (If you win this round, convert to nourish any points not needed to win)")
+# Maybe something while in pile? Cost reduction?
+class Baobab(Card):
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus) + self.gentle(game, player)
+baobab = Baobab(name="Baobab", cost=10, points=8, text="10:10, gentle (If you win this round, convert to nourish any points not needed to win)")
 
 
 """Earth"""
@@ -995,6 +1000,12 @@ class Sun(Card):
 sun = Sun(name="Sun", cost=8, points=6, text="8:6, inspire 5")
 
 
+"""INSECTS"""
+bee = Card(name="Bee", cost=0, points=1, qualities=[Quality.VISIBLE], text="0:1, visible")
+beehive = SwarmCard(name="Beehive", amt=3, cost=2, points=1, text="2:1, swarm 3 (After your next draw step, add 3 Bees to your hand)")
+
+
+
 """RUSH"""
 # TODO Use a play method in game to standardize. Also obey Restrict!
 class RushCard(Card):
@@ -1121,7 +1132,8 @@ full_catalog = [
     sunflower, sun_priest, solar_explosion, solar_power, sun_cloud, eclipse, sun, sunlight,
     solar_system,
     vulture, distraction, bastet, crab, armadillo, crypt, turtle, carrion, maggot,
-    duality, sicken, stable
+    duality, sicken, stable,
+    bee, beehive
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [

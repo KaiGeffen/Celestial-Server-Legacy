@@ -213,21 +213,26 @@ class ServerController():
 
         for stat in self.model.status[player]:
 
-            # Flock : Add a bird to player's hand
+            # Flock : Add a Dove to player's hand
             if stat is Status.FLOCK:
                 self.model.create_card(player, Catalog.dove)
 
+            # Swarm : Add a Bee to player's hand
+            elif stat is Status.SWARM:
+                self.model.create_card(player, Catalog.bee)
+
             # Inspire : Gain 1 temporary mana
-            if stat is Status.INSPIRE:
+            elif stat is Status.INSPIRE:
                 self.model.mana[player] += 1
                 self.model.status[player].append(Status.INSPIRED)
 
             # Restrict : Disallow played your leftmost card this round
-            if stat is Status.RESTRICT:
+            elif stat is Status.RESTRICT:
                 self.model.status[player].append(Status.RESTRICTED)
 
         cleared_statuses = [Status.INSPIRE,
                             Status.FLOCK,
+                            Status.SWARM,
                             Status.GENTLE,
                             Status.RESTRICT,
                             Status.SAFE]

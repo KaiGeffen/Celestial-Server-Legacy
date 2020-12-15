@@ -98,9 +98,13 @@ class Card:
     def restrict(self, amt, game, player):
         return self.add_status(amt, game, player, Status.RESTRICT)
 
-    # At start of next turn, create X doves in hand
+    # At start of next turn, create X Doves in hand
     def flock(self, amt, game, player):
         return self.add_status(amt, game, player, Status.FLOCK)
+
+    # At start of next turn, create X Bees in hand
+    def swarm(self, amt, game, player):
+        return self.add_status(amt, game, player, Status.SWARM)
 
     # If you would lose this round by X or less, instead the round is a tie
     def safe(self, amt, game, player):
@@ -276,3 +280,12 @@ class FlockCard(Card):
 
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.flock(self.amt, game, player)
+
+
+class SwarmCard(Card):
+    def __init__(self, name, amt, **args):
+        self.amt = amt
+        super().__init__(name, **args)
+
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus) + self.swarm(self.amt, game, player)

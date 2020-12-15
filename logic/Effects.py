@@ -8,6 +8,7 @@ class Quality(Enum):
 
 class Status(Enum):
     FLOCK = "Flock"
+    SWARM = "Swarm"
     INSPIRE = "Inspire"
     INSPIRED = "Inspired"
     NOURISH = "Nourish"
