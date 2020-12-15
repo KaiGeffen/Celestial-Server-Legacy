@@ -11,6 +11,8 @@ class Status(Enum):
     SWARM = "Swarm"
     INSPIRE = "Inspire"
     INSPIRED = "Inspired"
+    DULL = "Dull"
+    DULLED = "Dulled"
     NOURISH = "Nourish"
     STARVE = "Starve"
     GENTLE = "Gentle"

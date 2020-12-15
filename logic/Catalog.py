@@ -1003,7 +1003,18 @@ sun = Sun(name="Sun", cost=8, points=6, text="8:6, inspire 5")
 """INSECTS"""
 bee = Card(name="Bee", cost=0, points=1, qualities=[Quality.VISIBLE], text="0:1, visible")
 beehive = SwarmCard(name="Beehive", amt=3, cost=2, points=1, text="2:1, swarm 3 (After your next draw step, add 3 Bees to your hand)")
+class Butterfly(Card):
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus) + self.nourish(1, game, player)
+butterfly = Butterfly(name="Butterfly", cost=0, text="0:0, nourish 1 (Your next card gives +1 points)")
+class Spider(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+        recap += self.dull(2, game, player)
+        recap += self.dull(2, game, player ^ 1)
 
+        return recap
+spider = Spider(name="Spider", cost=0, text="0:0, both players dull 2 (Next turn temporarily lose 2 mana)")
 
 
 """RUSH"""
@@ -1133,7 +1144,7 @@ full_catalog = [
     solar_system,
     vulture, distraction, bastet, crab, armadillo, crypt, turtle, carrion, maggot,
     duality, sicken, stable,
-    bee, beehive
+    bee, beehive, butterfly, spider
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [

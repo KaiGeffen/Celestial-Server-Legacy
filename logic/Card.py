@@ -86,6 +86,10 @@ class Card:
     def inspire(self, amt, game, player):
         return self.add_status(amt, game, player, Status.INSPIRE)
 
+    # Lose X mana next turn
+    def dull(self, amt, game, player):
+        return self.add_status(amt, game, player, Status.DULL)
+
     # Next card gives +X points
     def nourish(self, amt, game, player):
         return self.add_status(amt, game, player, Status.NOURISH)

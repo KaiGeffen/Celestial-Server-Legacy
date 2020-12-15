@@ -143,6 +143,9 @@ class ServerController():
                 if not card_was_removed:
                     index += 1
 
+            # Guarantees - Guarantees about state of the game
+            self.model.mana[player] = max(self.model.mana[player], 0)
+
     # Perform the takedown phase
     def do_takedown(self):
 
@@ -207,9 +210,14 @@ class ServerController():
     """SUB-PHASES"""
     def do_upkeep_statuses(self, player):
 
-        # Clear Restricted first, so any added for this round aren't removed below
-        self.model.status[player] = list(filter(Status.RESTRICTED.__ne__, self.model.status[player]))
-        self.model.status[player] = list(filter(Status.INSPIRED.__ne__, self.model.status[player]))
+        # TODO Not dry, could make this method and the one below the same
+        # Clear statuses that are created by other statuses
+        created_statuses = [Status.RESTRICTED,
+                            Status.INSPIRED,
+                            Status.DULLED]
+        def clear_created_statuses(stat):
+            return stat not in created_statuses
+        self.model.status[player] = list(filter(clear_created_statuses, self.model.status[player]))
 
         for stat in self.model.status[player]:
 
@@ -226,11 +234,17 @@ class ServerController():
                 self.model.mana[player] += 1
                 self.model.status[player].append(Status.INSPIRED)
 
+            # Dull : Lose 1 temporary mana
+            elif stat is Status.DULL:
+                self.model.mana[player] -= 1
+                self.model.status[player].append(Status.DULLED)
+
             # Restrict : Disallow played your leftmost card this round
             elif stat is Status.RESTRICT:
                 self.model.status[player].append(Status.RESTRICTED)
 
         cleared_statuses = [Status.INSPIRE,
+                            Status.DULL,
                             Status.FLOCK,
                             Status.SWARM,
                             Status.GENTLE,

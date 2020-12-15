@@ -49,7 +49,7 @@ def get_action(model) -> int:
                 best_possible = possible_turn
 
     # If nothing can be played, pass
-    if best_possible == ():
+    if best_possible == () or best_possible is None:
         return 10
     else:
         # Sort best_possible based on cost, to avoid swift, reset, and encourage playing finals last
