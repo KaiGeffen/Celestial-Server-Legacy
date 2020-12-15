@@ -377,7 +377,7 @@ class Nightmare(Card):
     def play(self, player, game, index, bonus):
         opp = (player + 1) % 2
         return super().play(player, game, index, bonus) + self.discard(2, game, opp)
-nightmare = Nightmare(name="Nightmare", cost=8, points=5, text="8:5, opponent discards 2")
+nightmare = Nightmare(name="Nightmare", cost=8, points=6, text="8:6, opponent discards 2")
 
 
 """Machines"""
@@ -1052,7 +1052,7 @@ class Duality(Card):
                 break
 
         return recap
-duality = Duality(name="Duality", cost=2, qualities=[Quality.VISIBLE], text="2:0, visible, switch the owner of your next card in the story")
+duality = Duality(name="Duality", cost=2, text="2:0, switch the owner of your next card in the story")
 class Sicken(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.create(virus, game, player ^ 1)
