@@ -86,6 +86,9 @@ class BuilderController(Layer):
             # Point to the new deck entry
             self.remembered_deck_id = len(self.saved_decks) - 2
 
+        if symbol is pyglet.window.key.TAB:
+            self.view.sort_deck()
+
         if symbol is pyglet.window.key.RIGHT:
             self.view.scroll(right=True)
         if symbol is pyglet.window.key.LEFT:

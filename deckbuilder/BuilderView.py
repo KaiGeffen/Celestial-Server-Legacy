@@ -60,6 +60,10 @@ class BuilderView(BaseView):
 
         self.on_screen_change()
 
+    # Sort the active deck by cost
+    def sort_deck(self):
+        self.deck_layer.sort_deck()
+
     """Checks called by BuilderController"""
     # Called by outside method to see if deck is complete and ready to play
     def is_ready(self):
@@ -166,6 +170,18 @@ class DeckView(BaseView):
             self.add_card(card, (0, 0))
 
         self.display()
+
+    # Sort the active deck by cost
+    def sort_deck(self):
+        cards = list(map(lambda sprite: sprite.card,
+                         self.cards))
+
+        def cost_then_alphabet(card):
+            return card.cost + 1 / hash(card.name)
+
+        cards.sort(key=cost_then_alphabet)
+
+        self.set_deck(cards)
 
     # Calculate the position that the nth card should be
     @staticmethod
