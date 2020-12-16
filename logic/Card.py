@@ -70,6 +70,17 @@ class Card:
         else:
             return ''
 
+    # Lose X mana this turn
+    def lose_mana(self, amt, game, player):
+        game.mana[player] -= amt
+        for _ in range(amt):
+            game.status[player].append(Status.DULLED)
+
+        if amt > 0:
+            return f'\n-{amt} mana'
+        else:
+            return ''
+
     # Add X instances of a given status
     def add_status(self, amt, game, player, stat):
         recap = f'\n{stat.value} {amt}'
@@ -135,6 +146,12 @@ class Card:
             return f'\nCreate: {card.name}'
         else:
             return ''
+
+    # Create in pile a copy of the given card
+    def create_in_pile(self, card, game, player):
+        game.create_in_pile(player, card)
+
+        return f'\n{card.name}'
 
     # Tutor a card with cost x
     def tutor(self, cost, game, player):

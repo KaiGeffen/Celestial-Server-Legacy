@@ -132,6 +132,10 @@ class ServerModel(pyglet.event.EventDispatcher):
 
         return None
 
+    # Create a copy of the given card in player's pile
+    def create_in_pile(self, player, card):
+        self.pile[player].append(card)
+
     # Player cycles the given card, won't draw the same card, assumes card is in player's hand
     def cycle(self, player, card):
         self.hand[player].remove(card)

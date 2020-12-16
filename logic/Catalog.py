@@ -1002,7 +1002,7 @@ sun = Sun(name="Sun", cost=8, points=6, text="8:6, inspire 5")
 
 """INSECTS"""
 bee = Card(name="Bee", cost=0, points=1, qualities=[Quality.VISIBLE], text="0:1, visible")
-beehive = SwarmCard(name="Beehive", amt=3, cost=2, points=1, text="2:1, swarm 3 (After your next draw step, add 3 Bees to your hand)")
+beehive = SwarmCard(name="Beehive", amt=3, cost=2, text="2:0, swarm 3 (After your next draw step, add 3 Bees to your hand)")
 class Butterfly(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.nourish(1, game, player)
@@ -1010,12 +1010,97 @@ butterfly = Butterfly(name="Butterfly", cost=0, text="0:0, nourish 1 (Your next 
 class Spider(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
-        recap += self.dull(2, game, player)
-        recap += self.dull(2, game, player ^ 1)
+        recap += self.dull(3, game, player)
+        recap += self.dull(3, game, player ^ 1)
 
         return recap
-spider = Spider(name="Spider", cost=0, text="0:0, both players dull 2 (Next turn temporarily lose 2 mana)")
+spider = Spider(name="Spider", cost=0, text="0:0, both players dull 3 (Next turn temporarily lose 3 mana)")
+class Mantis(Card):
+    def play(self, player, game, index, bonus):
+        if len(game.hand[player]) > 0 and game.hand[player][0].cost == 0:
+            bonus += 3
 
+        recap = super().play(player, game, index, bonus)
+
+        recap += self.discard(1, game, player)
+
+        return recap
+mantis = Mantis(name="Mantis", cost=0, text="0:0, you discard a card. If it costs 0, +3 points")
+class Scorpion(Card):
+    def play(self, player, game, index, bonus):
+        def cost_below_mana(act):
+            return act.card.cost < game.mana[player]
+
+        recap = super().play(player, game, index, bonus)
+
+        recap += self.counter(game, cost_below_mana)
+
+        return recap
+scorpion = Scorpion(name="Scorpion", text="0:0, counter the next card this round which costs less than your unspent mana.")
+
+class Honey(Card):
+    def play(self, player, game, index, bonus):
+        amt = game.wins[player]
+
+        recap = super().play(player, game, index, bonus + amt)
+        recap += self.swarm(amt, game, player)
+
+        return recap
+honey = Honey(name="Honey", cost=4, points=0, text="4:X, swarm X, where X is the number of rounds you have won")
+
+class Beekeep(Card):
+    def __init__(self, stored=None):
+        self.stored = stored
+
+        name = "Beekeep"
+        cost = 5
+        points = 5
+
+        stats = f"{cost}:{points}"
+        text = f"{stats}, store all 0-costs in your pile in this card. This card's effect becomes to add them back to your pile."
+
+        if stored:
+            converted_list = [card.name for card in stored]
+            joined_string = ", ".join(converted_list)
+
+            dynamic_text = f"{stats}, put these cards in your pile:\n{joined_string}"
+            qualities = []
+        else:
+            dynamic_text = ""
+            qualities = [Quality.FLEETING]
+
+        super().__init__(name=name, cost=cost, points=points, qualities=qualities, text=text, dynamic_text=dynamic_text)
+
+    def play(self, player, game, index, bonus):
+        if self.stored:
+            recap = super().play(player, game, index, bonus)
+
+            for card in self.stored:
+                recap += self.create_in_pile(card, game, player)
+
+            return recap
+
+        else:
+            cards = []
+            card_names = []
+            for card in game.pile[player]:
+                if card.cost == 0:
+                    cards.append(card)
+                    card_names.append(card.name)
+
+            # Remove from pile all 0 cost cards
+            game.pile[player] = list(filter(lambda card: card.cost != 0, game.pile[player]))
+
+            new_beekeep = Beekeep(stored=cards)
+            self.create_in_pile(new_beekeep, game, player)
+
+            # Form the recap
+            recap = super().play(player, game, index, bonus)
+            if cards:
+                recap += "\nStored: " + "\n".join(card_names)
+
+            return recap
+beekeep = Beekeep()
 
 """RUSH"""
 # TODO Use a play method in game to standardize. Also obey Restrict!
@@ -1144,7 +1229,7 @@ full_catalog = [
     solar_system,
     vulture, distraction, bastet, crab, armadillo, crypt, turtle, carrion, maggot,
     duality, sicken, stable,
-    bee, beehive, butterfly, spider
+    bee, beehive, butterfly, spider, mantis, scorpion, honey, beekeep
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
