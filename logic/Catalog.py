@@ -1209,7 +1209,10 @@ class Stable(Card):
 
                 return super().play(player, game, index, bonus)
 stable = Stable()
-
+class Uprising(Card):
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus + index)
+uprising = Uprising(name="Uprising", cost=6, points=3, text="6:3, worth 1 more for each card before this in the story")
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?")
@@ -1229,7 +1232,8 @@ full_catalog = [
     solar_system,
     vulture, distraction, bastet, crab, armadillo, crypt, turtle, carrion, maggot,
     duality, sicken, stable,
-    bee, beehive, butterfly, spider, mantis, scorpion, honey, beekeep
+    bee, beehive, butterfly, spider, mantis, scorpion, honey, beekeep,
+    uprising
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
