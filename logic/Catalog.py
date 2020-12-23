@@ -1017,7 +1017,7 @@ class Spider(Card):
 spider = Spider(name="Spider", cost=0, text="0:0, both players dull 3 (Next turn temporarily lose 3 mana)")
 class Mantis(Card):
     def play(self, player, game, index, bonus):
-        if len(game.hand[player]) > 0 and game.hand[player][0].cost == 0:
+        if len(game.hand[player]) > 0:# and game.hand[player][0].cost == 0:
             bonus += 3
 
         recap = super().play(player, game, index, bonus)
@@ -1025,7 +1025,7 @@ class Mantis(Card):
         recap += self.discard(1, game, player)
 
         return recap
-mantis = Mantis(name="Mantis", cost=0, text="0:0, you discard a card. If it costs 0, +3 points")
+mantis = Mantis(name="Mantis", cost=0, text="0:0, you discard a card: +3")
 class Scorpion(Card):
     def play(self, player, game, index, bonus):
         def cost_below_mana(act):
