@@ -533,11 +533,24 @@ class Oak(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.gentle(game, player)
 oak = Oak(name="Oak", cost=8, points=8, text="8:8, gentle (If you win this round, convert to nourish any points not needed to win)")
+
 # Maybe something while in pile? Cost reduction?
 class Baobab(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.gentle(game, player)
 baobab = Baobab(name="Baobab", cost=10, points=8, text="10:10, gentle (If you win this round, convert to nourish any points not needed to win)")
+class Cornucopia(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        if game.story.acts:
+            game.story.acts[0].bonus += 1
+
+            recap += f"\n<{game.story.acts[0].card.name}>"
+
+        return recap
+cornucopia = Cornucopia(name="Cornucopia", cost=2, points=2, qualities=[Quality.VISIBLE],
+                        text="2:2, visible, the next card this round is worth +1")
 
 
 """Earth"""
@@ -1233,7 +1246,7 @@ full_catalog = [
     vulture, distraction, bastet, crab, armadillo, crypt, turtle, carrion, maggot,
     duality, sicken, stable,
     bee, beehive, butterfly, spider, mantis, scorpion, honey, beekeep,
-    uprising
+    uprising, cornucopia
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
