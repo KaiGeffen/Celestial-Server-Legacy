@@ -87,6 +87,16 @@ class ServerModel(pyglet.event.EventDispatcher):
 
         return card
 
+    def bottom(self, player, amt=1, index=0):
+        card = None
+        while amt > 0 and len(self.hand[player]) > index:
+            card = self.hand[player].pop(index)
+            self.deck[player].insert(0, card)
+
+            amt -= 1
+
+        return card
+
     # Shuffle X cards from player's hand into their deck
     def shuffle_into_deck(self, player, amt=1, index=0):
         card = None

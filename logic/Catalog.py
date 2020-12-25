@@ -1226,6 +1226,15 @@ class Uprising(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus + index)
 uprising = Uprising(name="Uprising", cost=6, points=3, text="6:3, worth 1 more for each card before this in the story")
+class Juggle(Card):
+    def on_play(self, player, game):
+        amt = min(3, len(game.hand[player]))
+
+        self.bottom(amt, game, player)
+        self.draw(amt, game, player)
+juggle = Juggle(name="Juggle", cost=1, points=1,
+                           text="1:1. When played, put up to 3 cards from your hand on the bottom of your deck, then draw that many")
+
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?")
@@ -1246,7 +1255,7 @@ full_catalog = [
     vulture, distraction, bastet, crab, armadillo, crypt, turtle, carrion, maggot,
     duality, sicken, stable,
     bee, beehive, butterfly, spider, mantis, scorpion, honey, beekeep,
-    uprising, cornucopia
+    uprising, cornucopia, juggle
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [

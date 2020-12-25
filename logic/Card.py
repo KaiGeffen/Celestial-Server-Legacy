@@ -177,6 +177,22 @@ class Card:
         else:
             return ''
 
+    # Put X cards from hand on the bottom of deck (left to right).
+    def bottom(self, amt, game, player):
+        recap = '\nBottom'
+
+        any_seen = False
+        for _ in range(amt):
+            card = game.bottom(player)
+            if card:
+                any_seen = True
+                recap += f'\n{card.name}'
+
+        if any_seen:
+            return recap
+        else:
+            return ''
+
     # Remove from the game the lowest X cards from your hand
     def oust(self, amt, game, player):
         recap = '\nOust:'
