@@ -75,6 +75,7 @@ class Story:
         # else:
         #     return None
 
+    # TODO This has a bug if origin is before destination, since the indexing changes in that case
     def move_act(self, index_origin, index_dest):
         act = self.acts.pop(index_origin)
         self.acts.insert(index_dest, act)

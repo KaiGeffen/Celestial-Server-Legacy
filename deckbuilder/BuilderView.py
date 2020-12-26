@@ -176,8 +176,10 @@ class DeckView(BaseView):
         cards = list(map(lambda sprite: sprite.card,
                          self.cards))
 
+        # How the deck is sorted (Cost, with same cards grouped) - used to sort player 1's deck below
         def cost_then_alphabet(card):
-            return card.cost + 1 / hash(card.name)
+            rand_from_name = int.from_bytes(card.name.encode(), 'little') % 1000 / 1000
+            return card.cost + rand_from_name
 
         cards.sort(key=cost_then_alphabet)
 
