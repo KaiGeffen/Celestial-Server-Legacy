@@ -54,9 +54,13 @@ class Card:
         return False
 
     """GENERIC THINGS A CARD CAN DO"""
-    # Reset the scores to 0, 0
+    # Reset the scores to 0, 0 - removes all safe
     def reset(self, game):
         game.score = [0, 0]
+
+        for player in [0, 1]:
+            self.remove_status(game, player, Status.SAFE)
+
         return '\nReset'
 
     # Add X mana this turn
@@ -92,6 +96,12 @@ class Card:
             game.status[player].append(stat)
 
         return recap
+
+    # Remove all instances of the given status
+    def remove_status(self, game, player, removed_status):
+        def clear_status(stat):
+            return stat is not removed_status
+        game.status[player] = list(filter(clear_status, game.status[player]))
 
     # Add X mana next turn
     def inspire(self, amt, game, player):
