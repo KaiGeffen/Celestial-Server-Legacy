@@ -1137,6 +1137,84 @@ bull = RushCard(name="Bull", cost=1, points=2, qualities=[Quality.VISIBLE],
                 text="1:2, visible, rush (If this card is in your hand during your upkeep and you have enough mana, play it)")
 
 
+"""EPIC"""
+class MachineApocalypse(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        if index < 2:
+            recap += '\nInspirit my cards'
+
+            for act in game.story.acts:
+                if act.owner == player:
+                    act.bonus += 1
+        elif 2 <= index < 5:
+            recap += self.restrict(2, game, player ^ 1)
+        else:
+            recap += self.build(3, game, player)
+
+        return recap
+machine_apocalypse = MachineApocalypse(name="Machine Apocalypse", cost=2, points=0,
+                                       text="""2:0, based on the number of cards before this in story:
+                                            0-1: Boost each of your later cards this round by 1
+                                            2-4: Restrict 2
+                                            5+: Build 3""")
+class Crowning(Card):
+    def play(self, player, game, index, bonus):
+        if index < 2:
+            # Covered in the on_play method
+            recap = super().play(player, game, index, bonus)
+        elif 2 <= index < 5:
+            bonus += 1
+            recap = super().play(player, game, index, bonus)
+        else:
+            recap = super().play(player, game, index, bonus)
+            recap += self.inspire(2, game, player)
+
+        return recap
+
+    def on_play(self, player, game):
+        if game.story.get_length() <= 1:
+            game.vision[player] = True
+crowning = Crowning(name="Crowning", cost=1, points=0,
+                                       text="""1:0, based on the number of cards before this in story:
+                                            0-1: Sight
+                                            2-4: +1 points
+                                            5+: Inspire 2""")
+class Nature(Card):
+    def play(self, player, game, index, bonus):
+        if index < 2:
+            recap = super().play(player, game, index, bonus)
+            recap += self.counter(game)
+        elif 2 <= index < 5:
+            bonus += min(2, len(game.hand[player])) * 3
+
+            recap = super().play(player, game, index, bonus)
+            recap += self.oust(2, game, player)
+        else:
+            recap = super().play(player, game, index, bonus)
+
+            # Get the highest costing card from this player's deck + pile
+            highest_cost_card = None
+            for card in (game.deck[player] + game.pile[player]):
+                if highest_cost_card is None or card.cost > highest_cost_card.cost:
+                    highest_cost_card = card
+
+            if highest_cost_card is not None:
+                game.deck[player] = [highest_cost_card] * len(game.deck[player])
+                game.pile[player] = [highest_cost_card] * len(game.pile[player])
+
+            recap += f'\nSpread {highest_cost_card.name}'
+
+        return recap
+nature = Nature(name="Nature", cost=3, points=0,
+                                       text="""3:0, based on the number of cards before this in story:
+                                            0-1: Counter the next card
+                                            2-4: Oust 2, +3 for each
+                                            5+: Change every card in your deck and pile into the highest cost card therein""")
+
+
+
 """Other"""
 class Hurricane(Card):
     def play(self, player, game, index, bonus):
@@ -1255,7 +1333,8 @@ full_catalog = [
     vulture, distraction, bastet, crab, armadillo, crypt, turtle, carrion, maggot,
     duality, sicken, stable,
     bee, beehive, butterfly, spider, mantis, scorpion, honey, beekeep,
-    uprising, cornucopia, juggle
+    uprising, cornucopia, juggle,
+    machine_apocalypse, crowning, nature
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
