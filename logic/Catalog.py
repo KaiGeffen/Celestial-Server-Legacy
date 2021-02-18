@@ -1155,7 +1155,7 @@ class MachineApocalypse(Card):
 
         return recap
 machine_apocalypse = MachineApocalypse(name="Machine Apocalypse", cost=2, points=0,
-                                       text="""2:0, based on the number of cards before this in story:
+                                       text="""2:0, modal:
                                             0-1: Boost each of your later cards this round by 1
                                             2-4: Restrict 2
                                             5+: Build 3""")
@@ -1177,7 +1177,7 @@ class Crowning(Card):
         if game.story.get_length() <= 1:
             game.vision[player] = True
 crowning = Crowning(name="Crowning", cost=1, points=0,
-                                       text="""1:0, based on the number of cards before this in story:
+                                       text="""1:0, modal:
                                             0-1: Sight
                                             2-4: +1 points
                                             5+: Inspire 2""")
@@ -1208,10 +1208,49 @@ class Nature(Card):
 
         return recap
 nature = Nature(name="Nature", cost=3, points=0,
-                                       text="""3:0, based on the number of cards before this in story:
+                                       text="""3:0, modal:
                                             0-1: Counter the next card
                                             2-4: Oust 2, +3 for each
                                             5+: Change every card in your deck and pile into the highest cost card therein""")
+class Desert(Card):
+    def play(self, player, game, index, bonus):
+        if index == 0:
+            bonus += 1
+            recap = super().play(player, game, index, bonus) + '\nOppressx2'
+
+            for act in game.story.acts:
+                act.bonus -= 2
+
+        elif 1 <= index <= 2:
+            recap = super().play(player, game, index, bonus)
+            recap += self.reset(game)
+        else:
+            bonus += 4
+            recap = super().play(player, game, index, bonus)
+
+        return recap
+desert = Desert(name="Desert", cost=4, points=0,
+                                       text="""4:0, modal:
+                                            0: +1, later cards this round are worth -2
+                                            1-2: Reset
+                                            3+: +4""")
+class Privation(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        if index <= 1:
+            recap += self.restrict(1, game, player ^ 1)
+        elif 2 <= index <= 3:
+            recap += self.discard(1, game, player ^ 1)
+        else:
+            recap += self.create(virus, game, player ^ 1)
+
+        return recap
+privation = Privation(name="Privation", cost=1, points=0,
+                                       text="""1:0, modal:
+                                            0-1: Restrict 1
+                                            2-3: Opponent discards 1
+                                            4+: Create a 3:0 Virus in opponent's hand""")
 
 
 
@@ -1334,7 +1373,7 @@ full_catalog = [
     duality, sicken, stable,
     bee, beehive, butterfly, spider, mantis, scorpion, honey, beekeep,
     uprising, cornucopia, juggle,
-    machine_apocalypse, crowning, nature
+    machine_apocalypse, crowning, nature, desert, privation
 ]
 # A list of simple cards, so that new players aren't overwhelmed
 vanilla_catalog = [
