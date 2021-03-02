@@ -14,7 +14,6 @@ class ClientModel(pyglet.event.EventDispatcher):
         self.opp_hand = state['opp_hand']
         self.deck = CardCodec.decode_deck(state['deck'])
         self.opp_deck = state['opp_deck']
-        # TODO Is this right? state pile is a single element right?
         self.pile = list(map(CardCodec.decode_deck, state['pile']))
 
         self.wins = state['wins']

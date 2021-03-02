@@ -68,6 +68,9 @@ async def main(websocket, path):
                     game = ServerController(deck1, deck)
                     game.start()
 
+                    # So that reconnects don't reuse the previous deck
+                    deck1 = None
+
                     await notify_state()
 
             # data = json.loads(message)
