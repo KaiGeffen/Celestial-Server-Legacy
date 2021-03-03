@@ -1356,6 +1356,7 @@ juggle = Juggle(name="Juggle", cost=1, points=1,
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?")
 full_catalog = [
+    crossed_bones, spy, swift, sine, fruiting, gift, desert, hurricane, nightmare,
     ember, dash, firewall, portal, charcoal, kindle, haze, force, fire_ring, ifrit,
     dove, twitter, owl, nest, swift, peace, pelican, phoenix, icarus,
     swamp, snake_egg, ouroboros, snake_eye, serpent, snake_spiral, salamander, temptation, frog_prince, wyvern, cobra,

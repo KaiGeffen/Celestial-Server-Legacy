@@ -49,6 +49,9 @@ async def main(websocket, path):
     global game
     global deck1
 
+    # Which player I am
+    player = None
+
     # register(websocket) sends user_event() to websocket
     await register(websocket)
     try:
@@ -62,8 +65,11 @@ async def main(websocket, path):
 
                 if deck1 is None:
                     deck1 = deck
+                    player = 0
 
                 else:
+                    player = 1
+
                     # TODO locks
                     game = ServerController(deck1, deck)
                     game.start()
@@ -71,6 +77,14 @@ async def main(websocket, path):
                     # So that reconnects don't reuse the previous deck
                     deck1 = None
 
+                    await notify_state()
+            elif data["type"] == "mulligan":
+                # TODO implement for real
+                mulligan = CardCodec.decode_mulligans(data["value"])
+                game.do_mulligan(player, mulligan)
+            elif data["type"] == "play_card":
+                if game.on_player_input(player, data["value"]):
+                    print("Yeah that worked gonna play now")
                     await notify_state()
 
             # data = json.loads(message)

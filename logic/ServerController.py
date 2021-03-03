@@ -93,6 +93,10 @@ class ServerController():
         self.do_setup()
         self.do_upkeep()
 
+        # TODO Remove and implement
+        self.do_mulligan(0, [False, False, False])
+        self.do_mulligan(1, [False, False, False])
+
     # Perform the setup phase
     def do_setup(self):
         for player in (0, 1):
