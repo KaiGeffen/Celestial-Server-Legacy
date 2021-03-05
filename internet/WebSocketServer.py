@@ -3,6 +3,7 @@ import json
 import logging
 import websockets
 
+from internet.Settings import *
 import CardCodec
 from logic.ServerController import ServerController
 
@@ -79,28 +80,23 @@ async def main(websocket, path):
 
                     await notify_state()
             elif data["type"] == "mulligan":
-                # TODO implement for real
                 mulligan = CardCodec.decode_mulligans(data["value"])
                 game.do_mulligan(player, mulligan)
+                await notify_state()
+
             elif data["type"] == "play_card":
                 if game.on_player_input(player, data["value"]):
-                    print("Yeah that worked gonna play now")
                     await notify_state()
 
-            # data = json.loads(message)
-            # if data["action"] == "minus":
-            #     STATE["value"] -= 1
-            #     await notify_state()
-            # elif data["action"] == "plus":
-            #     STATE["value"] += 1
-            #     await notify_state()
-            # else:
-            #     logging.error("unsupported event: {}", data)
+            elif data["type"] == "pass_turn":
+                if game.on_player_input(player, 10):
+                    await notify_state()
+
     finally:
         await unregister(websocket)
 
 
-start_server = websockets.serve(main, "localhost", 6789)
+start_server = websockets.serve(main, LOCAL, PORT)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()

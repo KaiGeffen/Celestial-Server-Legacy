@@ -61,9 +61,11 @@ portal = Portal(name="Portal", cost=2, points=2, text="2:2, your last card this 
 class Charcoal(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
-        recap += self.oust(1, game, player)
-        return  recap
-charcoal = Charcoal(name="Charcoal", cost=3, points=4, text="3:4, oust (Remove from the game) the lowest card in your hand")
+        # recap += self.oust(1, game, player)
+        recap += self.discard(1, game, player)
+
+        return recap
+charcoal = Charcoal(name="Charcoal", cost=3, points=4, qualities=[Quality.VISIBLE], text="3:4, visible, discard a card")
 class Haze(Card):
     def play(self, player, game, index, bonus):
         def is_cost_3(act):
@@ -720,7 +722,7 @@ class Figurehead(EbbCard):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.inspire(1, game, player)
 figurehead = Figurehead(name="Figurehead", cost=1, text="1:0, ebb, inspire 1")
-class FishingBoat(EbbCard):
+class FishingBoat(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
 
@@ -728,7 +730,7 @@ class FishingBoat(EbbCard):
             recap += self.tutor(1, game, player)
 
         return recap
-fishing_boat = FishingBoat(name="Fishing Boat", cost=2, text="2:0, ebb, tutor a 1 3 times")
+fishing_boat = FishingBoat(name="Fishing Boat", cost=2, text="2:0, tutor a 1 3 times")
 drakkar = EbbCard(name="Drakkar", cost=3, points=3, text="3:3, ebb")
 class ShipWreck(EbbCard):
     def get_cost(self, player, game):

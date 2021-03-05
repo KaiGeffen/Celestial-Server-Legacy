@@ -29,6 +29,10 @@ class ServerController():
         if player != self.model.priority:
             return False
 
+        # Mulligans are still being performed
+        if False in self.model.mulligans_complete:
+            return False
+
         if choice == PASS:
             self.model.passes += 1
 
@@ -92,10 +96,6 @@ class ServerController():
     def start(self):
         self.do_setup()
         self.do_upkeep()
-
-        # TODO Remove and implement
-        self.do_mulligan(0, [False, False, False])
-        self.do_mulligan(1, [False, False, False])
 
     # Perform the setup phase
     def do_setup(self):
@@ -291,10 +291,6 @@ class ServerController():
     """UTILITY CHECKS"""
     # Check if the given player can play the given card
     def can_play(self, player, card_num):
-        # Mulligans are still being performed
-        if False in self.model.mulligans_complete:
-            return False
-
         # Choice isn't in the player's hand
         if card_num >= len(self.model.hand[player]):
             return False
