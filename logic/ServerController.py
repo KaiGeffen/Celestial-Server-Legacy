@@ -105,7 +105,7 @@ class ServerController():
 
     # Perform the upkeep phase
     def do_upkeep(self):
-        self.model.vision = [False, False]
+        self.model.vision = [0, 0]
 
         # Give priority to the player in the lead, or random if tied
         if self.model.wins[0] > self.model.wins[1]:

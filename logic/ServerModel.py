@@ -43,7 +43,7 @@ class ServerModel(pyglet.event.EventDispatcher):
         self.priority = 0
 
         # Bool for each player if they have total vision this round
-        self.vision = [False, False]
+        self.vision = [0, 0]
 
         # Recap of the last round's resolution (Revealed stack + points awarded from each card)
         self.recap = Recap()
@@ -51,7 +51,7 @@ class ServerModel(pyglet.event.EventDispatcher):
         # Whether each player has completed the mulligan phase at the start of the game
         self.mulligans_complete = [False, False]
 
-        # The number of times an action has occcured, used for syncing with clients
+        # The number of times an action has occured, used for syncing with clients
         self.version_no = 0
 
     """GENERIC ACTIONS"""
@@ -248,12 +248,15 @@ class ServerModel(pyglet.event.EventDispatcher):
             card, owner = live_card
             return card, owner ^ 1
 
+        # Add all acts to the story
         result = []
         for act in self.story.acts:
             result.append((act.card, act.owner))
 
-        if not self.vision[player]:
-            result = list(map(hide_opponents_cards, result))
+        # Hide all of the opponent's acts that player can't see
+        visible_result = result[0:self.vision[player]]
+        invisible_result = list(map(hide_opponents_cards, result[self.vision[player]:]))
+        result = visible_result + invisible_result
 
         if player == 1:
             result = list(map(switch_owners, result))

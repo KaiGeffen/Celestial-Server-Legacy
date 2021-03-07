@@ -317,8 +317,12 @@ class FlowCard(Card):
 
 # Card that makes story visible to owner this round
 class SightCard(Card):
+    def __init__(self, amt, **kwargs):
+        self.amt = amt
+        super().__init__(**kwargs)
+
     def on_play(self, player, game):
-        game.vision[player] = True
+        game.vision[player] += self.amt
 
 class FlockCard(Card):
     def __init__(self, name, amt, **args):

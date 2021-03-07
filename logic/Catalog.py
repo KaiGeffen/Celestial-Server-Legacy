@@ -6,9 +6,9 @@ from logic.Story import Source,  Act
 """Tokens"""
 class Camera(Card):
     def on_upkeep(self, player, game, index):
-        game.vision[player^1] = True
+        game.vision[player^1] += 4
 camera = Camera(name="Camera", cost=2, qualities=[Quality.FLEETING],
-                text="2:0, fleeting, gives sight to your opponent during your upkeep")
+                text="2:0, fleeting, at the start of each round, give your opponent vision 4")
 broken_bone = Card(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], text="1:0, fleeting")
 robot = Card(name='Robot', qualities=[Quality.FLEETING], text="0:X, fleeting")
 class Virus(Card):
@@ -132,7 +132,7 @@ twitter = Twitter(name="Twitter", cost=1, qualities=[Quality.VISIBLE], text="1:0
 class Owl(SightCard):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.flock(1, game, player)
-owl = Owl(name="Owl", cost=1, text="1:0, flock 1 (After your next draw step, add 1 Dove to your hand), sight (This round the story is visible to you)")
+owl = Owl(amt=4, name="Owl", cost=1, text="1:0, flock 1 (After your next draw step, add 1 Dove to your hand), sight 4 (This round the first 4 cards of story are visible to you)")
 nest = FlockCard(name="Nest", amt=3, cost=2, points=1, text="2:1, flock 3 (After your next draw step, add 3 Doves to your hand.)")
 class Swift(Card):
     def play(self, player, game, index, bonus):
@@ -231,8 +231,8 @@ class SnakeEye(SightCard):
                 amt += 3
 
         return super().play(player, game, index, bonus + amt)
-snake_eye = SnakeEye(name="Snake Eye", cost=2, points=0, qualities=[Quality.VISIBLE],
-                     text="2:0, visible, sight, +3 if the final card this round is yours (Not counting this)")
+snake_eye = SnakeEye(amt=3, name="Snake Eye", cost=2, points=0, qualities=[Quality.VISIBLE],
+                     text="2:0, visible, sight 3, +3 if the final card this round is yours (Not counting this)")
 class Serpent(Card):
     def play_spring(self, player, game, index, bonus):
         recap = super().play_spring(player, game, index, bonus - self.points)
@@ -941,8 +941,8 @@ class Sunlight(SightCard):
         bonus += game.status[player].count(Status.INSPIRED)
 
         return super().play(player, game, index, bonus)
-sunlight = Sunlight(name="Sunlight", cost=2, points=0,
-                     text="2:X, sight, X is how much you are inspired (How much mana you've gained this turn)")
+sunlight = Sunlight(amt=4, name="Sunlight", cost=2, points=0,
+                     text="2:X, sight4, X is how much you are inspired (How much mana you've gained this turn)")
 class SolarSystem(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -1177,10 +1177,10 @@ class Crowning(Card):
 
     def on_play(self, player, game):
         if game.story.get_length() <= 1:
-            game.vision[player] = True
+            game.vision[player] += 4
 crowning = Crowning(name="Crowning", cost=1, points=0,
                                        text="""1:0, modal:
-                                            0-1: Sight
+                                            0-1: Sight 4
                                             2-4: +1 points
                                             5+: Inspire 2""")
 class Nature(Card):
@@ -1353,6 +1353,14 @@ class Juggle(Card):
         self.draw(amt, game, player)
 juggle = Juggle(name="Juggle", cost=1, points=1,
                            text="1:1. When played, put up to 3 cards from your hand on the bottom of your deck, then draw that many")
+class Paranoia(Card):
+    def on_play(self, player, game):
+        amt = game.story.get_length()
+        game.vision[player] += amt
+
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus)
+paranoia = Paranoia(name="Paranoia", cost=3, points=3, text="3:3, sight N (This round the first 4 cards of story are visible to you) (N is the number of cards before this in the story)")
 
 
 """Lists"""
@@ -1360,7 +1368,7 @@ hidden_card = Card(name="Cardback", cost=0, points=0, text="?")
 full_catalog = [
     crossed_bones, spy, swift, sine, fruiting, gift, desert, hurricane, nightmare,
     ember, dash, firewall, portal, charcoal, kindle, haze, force, fire_ring, ifrit,
-    dove, twitter, owl, nest, swift, peace, pelican, phoenix, icarus,
+    dove, twitter, paranoia, nest, swift, peace, pelican, phoenix, icarus,
     swamp, snake_egg, ouroboros, snake_eye, serpent, snake_spiral, salamander, temptation, frog_prince, wyvern, cobra,
     stars, cosmos, roots, sprout, fruiting, pine, bulb, lotus, leaf_swirl, pollen, oak,
     bone_knife, mute, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
