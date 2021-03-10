@@ -1254,7 +1254,17 @@ privation = Privation(name="Privation", cost=1, points=0,
                                             2-3: Opponent discards 1
                                             4+: Create a 3:0 Virus in opponent's hand""")
 
+"""1:0 Grit
+0-1: If the next card costs 2, +2
+2-3: Counter your next card: +3
+4+: On play, reduce the cost of each card in your hand by 1.
+"""
 
+"""2:0 Avoidance
+0: Return the next card to its owners hand
+1-2: +3, your opponents cards +1
+3: Remove the top 3 cards of your discard pile from the game
+"""
 
 """Other"""
 class Hurricane(Card):

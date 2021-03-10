@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import websockets
+import ssl
 
 from internet.Settings import *
 import CardCodec
@@ -30,6 +31,7 @@ async def notify_state():
 
 
 async def notify_users():
+    print(f'Do we have user? {USERS}')
     if USERS:  # asyncio.wait doesn't accept an empty list
         message = users_event()
         await asyncio.wait([user.send(message) for user in USERS])
@@ -37,6 +39,7 @@ async def notify_users():
 
 async def register(websocket):
     USERS.append(websocket)
+    print('about to notify')
     await notify_users()
 
 
@@ -47,6 +50,7 @@ async def unregister(websocket):
 
 deck1 = None
 async def main(websocket, path):
+    print(f'Main has start ws: {dir(websocket)}\n*: {websocket}')
     global game
     global deck1
 
@@ -54,6 +58,7 @@ async def main(websocket, path):
     player = None
 
     # register(websocket) sends user_event() to websocket
+    print('about to register')
     await register(websocket)
     try:
         async for message in websocket:
@@ -96,7 +101,10 @@ async def main(websocket, path):
         await unregister(websocket)
 
 
-start_server = websockets.serve(main, LOCAL, PORT)
+# ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
+def main():
+    start_server = websockets.serve(main, LOCAL, PORT, ping_interval=None)#, ssl=ssl_context)
+
+    asyncio.get_event_loop().run_until_complete(start_server)
+    asyncio.get_event_loop().run_forever()
