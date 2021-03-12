@@ -30,8 +30,17 @@ async def notify_state():
         await asyncio.wait([USERS[i].send(state_event(i)) for i in range(len(USERS))])
 
 
+def error_event():
+    return json.dumps({"type": "signal_error"})
+
+
+# Notify the user that they have done something wrong (Played an impossible card, etc)
+async def notify_error(player):
+    if USERS:
+        await asyncio.wait([USERS[player].send(error_event())])
+
+
 async def notify_users():
-    print(f'Do we have user? {USERS}')
     if USERS:  # asyncio.wait doesn't accept an empty list
         message = users_event()
         await asyncio.wait([user.send(message) for user in USERS])
@@ -49,7 +58,7 @@ async def unregister(websocket):
 
 
 deck1 = None
-async def main(websocket, path):
+async def serveMain(websocket, path):
     print(f'Main has start ws: {dir(websocket)}\n*: {websocket}')
     global game
     global deck1
@@ -92,10 +101,14 @@ async def main(websocket, path):
             elif data["type"] == "play_card":
                 if game.on_player_input(player, data["value"]):
                     await notify_state()
+                else:
+                    await notify_error(player)
 
             elif data["type"] == "pass_turn":
                 if game.on_player_input(player, 10):
                     await notify_state()
+                else:
+                    await notify_error(player)
 
     finally:
         await unregister(websocket)
@@ -104,7 +117,7 @@ async def main(websocket, path):
 # ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 
 def main():
-    start_server = websockets.serve(main, LOCAL, PORT, ping_interval=None)#, ssl=ssl_context)
+    start_server = websockets.serve(serveMain, LOCAL, PORT, ping_interval=None)#, ssl=ssl_context)
 
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()
