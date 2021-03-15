@@ -648,6 +648,14 @@ class Bastet(Card):
 
         return super().play(player, game, index, bonus)
 bastet = Bastet(1)
+class CatEyes(SightCard):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+        recap += self.tutor(2, game, player)
+
+        return recap
+cat_eyes = CatEyes(amt=2, name="Cat Eyes", cost=1, points=0, text="1:0, tutor 2, sight 2 (This round the first 2 cards of story are visible to you)")
+
 
 """Fish"""
 flying_fish = FlowCard(name="Flying Fish", cost=1, points=1, text="1:1, flow (As soon as you ebb, cycle this)")
