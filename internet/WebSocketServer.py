@@ -10,6 +10,19 @@ from logic.ServerController import ServerController
 
 logging.basicConfig()
 
+class GameMatch:
+    game = None
+
+    def __init__(self, deck, websocket):
+        self.deck1 = deck
+        self.websocket = [websocket]
+
+    def add_player_2(self, deck, websocket):
+        self.websocket.append(websocket)
+
+        self.game = ServerController(self.deck1, deck)
+        self.game.start()
+
 STATE = {"value": 0}
 
 USERS = []
@@ -59,7 +72,7 @@ async def unregister(websocket):
 
 deck1 = None
 async def serveMain(websocket, path):
-    print(f'Main has start ws: {dir(websocket)}\n*: {websocket}')
+    # print(f'Main has start ws: {dir(websocket)}\n*: {websocket}')
     global game
     global deck1
 
