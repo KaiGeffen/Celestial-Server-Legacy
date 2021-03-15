@@ -33,12 +33,12 @@ class GameMatch:
             return
 
         wss = [self.ws1, self.ws2]
-        await asyncio.wait([wss[i].send(self.state_event(i)) for i in [0,1]])
+        await asyncio.wait([wss[i].send(self.state_event(i)) for i in [0, 1]])
 
     def state_event(self, player):
         return json.dumps({"type": "transmit_state", "value": self.game.get_client_model(player)})
 
-    # TODO Tell player that their opponent has left
+    # TODO Tell player that their opponent has left - be aware there could only be 1 ws
     async def notify_exit(self):
         pass
 
@@ -74,22 +74,16 @@ async def notify_error(ws):
 # A match being formed which only has 1 player
 NEXT_MATCH = None
 async def serveMain(ws, path):
-
     global NEXT_MATCH
-    # The match this player is in
-    match = None
-    player = None
 
     if NEXT_MATCH is None:
+        player = 0
         match = NEXT_MATCH = GameMatch(ws)
 
-        player = 0
     else:
-        # TODO Check that player is still there
+        player = 1
         match = NEXT_MATCH.add_player_2(ws)
         NEXT_MATCH = None
-
-        player = 1
 
     await match.notify_number_players_connected()
 
@@ -128,6 +122,10 @@ async def serveMain(ws, path):
                     await notify_error(ws)
 
     finally:
+        # If this player was searching for an opponent and left, remove that open match
+        if match is NEXT_MATCH:
+            NEXT_MATCH = None
+
         await match.notify_exit()
 
 
