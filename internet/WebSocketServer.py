@@ -10,80 +10,92 @@ from logic.ServerController import ServerController
 
 logging.basicConfig()
 
+
 class GameMatch:
     game = None
+    ws1 = None
+    ws2 = None
+    stored_deck = None
 
-    def __init__(self, deck, websocket):
-        self.deck1 = deck
-        self.websocket = [websocket]
+    def __init__(self, ws):
+        self.ws1 = ws
 
-    def add_player_2(self, deck, websocket):
-        self.websocket.append(websocket)
+    # Notify each player how many players are connected
+    async def notify_number_players_connected(self):
+        message = json.dumps({"type": "both_players_connected", "value": (self.ws2 is not None)})
 
-        self.game = ServerController(self.deck1, deck)
-        self.game.start()
+        active_ws = [self.ws1, self.ws2] if self.ws2 else [self.ws1]
+        await asyncio.wait([ws.send(message) for ws in active_ws])
 
-STATE = {"value": 0}
+    # If game has started, notify each player the state of the game
+    async def notify_state(self):
+        if self.game is None:
+            return
+
+        wss = [self.ws1, self.ws2]
+        await asyncio.wait([wss[i].send(self.state_event(i)) for i in [0,1]])
+
+    def state_event(self, player):
+        return json.dumps({"type": "transmit_state", "value": self.game.get_client_model(player)})
+
+    # TODO Tell player that their opponent has left
+    async def notify_exit(self):
+        pass
+
+    def add_player_2(self, ws):
+        self.ws2 = ws
+
+        return self
+
+    def add_deck(self, player, deck):
+        if self.stored_deck is None:
+            self.stored_deck = deck
+        else:
+            if player == 0:
+                self.game = ServerController(deck, self.stored_deck)
+            else:
+                self.game = ServerController(self.stored_deck, deck)
+            self.game.start()
+
 
 USERS = []
-
-game = None
-
-
-def state_event(player):
-    return json.dumps({"type": "transmit_state", "value": game.get_client_model(player)})
-
-
-def users_event():
-    return json.dumps({"type": "both_players_connected", "value": len(USERS) == 2})
-
-
-async def notify_state():
-    if USERS:  # asyncio.wait doesn't accept an empty list
-        await asyncio.wait([USERS[i].send(state_event(i)) for i in range(len(USERS))])
-
-
-def error_event():
-    return json.dumps({"type": "signal_error"})
+# Not passworded
+MATCHES = []
+# Passworded
+PWD_MATCHES = {}
 
 
 # Notify the user that they have done something wrong (Played an impossible card, etc)
-async def notify_error(player):
-    if USERS:
-        await asyncio.wait([USERS[player].send(error_event())])
+async def notify_error(ws):
+    msg = json.dumps({"type": "signal_error"})
+    await asyncio.wait([ws.send(msg)])
 
 
-async def notify_users():
-    if USERS:  # asyncio.wait doesn't accept an empty list
-        message = users_event()
-        await asyncio.wait([user.send(message) for user in USERS])
+# A match being formed which only has 1 player
+NEXT_MATCH = None
+async def serveMain(ws, path):
 
-
-async def register(websocket):
-    USERS.append(websocket)
-    print('about to notify')
-    await notify_users()
-
-
-async def unregister(websocket):
-    USERS.remove(websocket)
-    await notify_users()
-
-
-deck1 = None
-async def serveMain(websocket, path):
-    # print(f'Main has start ws: {dir(websocket)}\n*: {websocket}')
-    global game
-    global deck1
-
-    # Which player I am
+    global NEXT_MATCH
+    # The match this player is in
+    match = None
     player = None
 
-    # register(websocket) sends user_event() to websocket
-    print('about to register')
-    await register(websocket)
+    if NEXT_MATCH is None:
+        match = NEXT_MATCH = GameMatch(ws)
+
+        player = 0
+    else:
+        # TODO Check that player is still there
+        match = NEXT_MATCH.add_player_2(ws)
+        NEXT_MATCH = None
+
+        player = 1
+
+    await match.notify_number_players_connected()
+
+    # Listen to the ws and respond accordingly
     try:
-        async for message in websocket:
+        async for message in ws:
             print(message)
             data = json.loads(message)
 
@@ -91,40 +103,32 @@ async def serveMain(websocket, path):
                 deck = CardCodec.decode_deck(data["value"])
                 print(deck)
 
-                if deck1 is None:
-                    deck1 = deck
-                    player = 0
+                match.add_deck(player, deck)
 
-                else:
-                    player = 1
+                await match.notify_state()
 
-                    # TODO locks
-                    game = ServerController(deck1, deck)
-                    game.start()
-
-                    # So that reconnects don't reuse the previous deck
-                    deck1 = None
-
-                    await notify_state()
             elif data["type"] == "mulligan":
                 mulligan = CardCodec.decode_mulligans(data["value"])
-                game.do_mulligan(player, mulligan)
-                await notify_state()
+                # TODO Move this into the GameMatch class instead of grabbing its attribute
+                match.game.do_mulligan(player, mulligan)
+                await match.notify_state()
 
             elif data["type"] == "play_card":
-                if game.on_player_input(player, data["value"]):
-                    await notify_state()
+                # TODO Move this into the GameMatch class instead of grabbing its attribute
+                if match.game.on_player_input(player, data["value"]):
+                    await match.notify_state()
                 else:
-                    await notify_error(player)
+                    await notify_error(ws)
 
             elif data["type"] == "pass_turn":
-                if game.on_player_input(player, 10):
-                    await notify_state()
+                # TODO Move this into GameMatch class
+                if match.game.on_player_input(player, 10):
+                    await match.notify_state()
                 else:
-                    await notify_error(player)
+                    await notify_error(ws)
 
     finally:
-        await unregister(websocket)
+        await match.notify_exit()
 
 
 # ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
