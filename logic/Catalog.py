@@ -1380,6 +1380,22 @@ class Paranoia(Card):
         return super().play(player, game, index, bonus)
 paranoia = Paranoia(name="Paranoia", cost=3, points=3, text="3:3, sight N (This round the first 4 cards of story are visible to you) (N is the number of cards before this in the story)")
 
+class Horus(Card):
+    def get_cost(self, player, game):
+
+        num_seen_cards = 0
+        for i in range(len(game.story.acts)):
+            act = game.story.acts[i]
+            if act.owner == player ^ 1:
+                if i + 1 <= game.vision[player] or Quality.VISIBLE in act.card.qualities:
+                    num_seen_cards += 1
+
+        if num_seen_cards >= 3:
+            return 0
+        else:
+            return self.cost
+horus = Horus(name="Horus", cost=7, points=7,
+              text="7:7, costs 0 if you can see at least 3 of your opponent's cards in the story")
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?")
@@ -1391,7 +1407,7 @@ full_catalog = [
     stars, cosmos, roots, sprout, fruiting, pine, bulb, lotus, leaf_swirl, pollen, oak,
     bone_knife, mute, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
     flying_fish, star_fish, perch, angler, piranha, school_of_fish, whale, wave,
-    figurehead, fishing_boat, drakkar, ship_wreck, trireme, warship,
+    horus, fishing_boat, drakkar, ship_wreck, trireme, warship,
     cog, drone, gears, factory, anvil, cogsplosion, ai, sine, foundry,
     crossed_bones, dig, gnaw, mine, dinosaur_bones, wolf, stone_golem, boar, atlas, uluru,
     graveyard, zombie, drown, raise_dead, haunt, spectre, prayer, tumulus, sarcophagus, anubis,
