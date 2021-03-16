@@ -209,7 +209,12 @@ class ServerController():
 
     """EXPOSED UTILITY METHODS"""
     def get_client_model(self, player):
-        return self.model.get_client_model(player)
+        def player_can_play(card_num):
+            return self.can_play(player, card_num)
+
+        cards_playable = list(map(player_can_play, self.model.hand))
+
+        return self.model.get_client_model(player, cards_playable)
 
     """SUB-PHASES"""
     def do_upkeep_statuses(self, player):

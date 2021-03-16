@@ -207,7 +207,7 @@ class ServerModel(pyglet.event.EventDispatcher):
         self.priority = (self.priority + 1) % 2
 
     # Get a model for the given player (So they see themselves as Player 1) also, sort the deck to hide ordering
-    def get_client_model(self, player):
+    def get_client_model(self, player, cards_playable):
         # How the deck is sorted (Cost, with same cards grouped) - used to sort player 1's deck below
         def deck_sort(card):
             rand_from_name = int.from_bytes(card.name.encode(), 'little') % 1000 / 1000
@@ -232,7 +232,8 @@ class ServerModel(pyglet.event.EventDispatcher):
             'passes': self.passes,
             'recap': CardCodec.encode_recap(relative_recap),
             'mulligans_complete': self.mulligans_complete[::slice_step],
-            'version_num': self.version_no
+            'version_num': self.version_no,
+            'cards_playable': cards_playable
         }
 
     # Get a view of the story that the given player can see
