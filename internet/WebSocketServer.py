@@ -124,6 +124,7 @@ async def serveMain(ws, path):
     finally:
         # If this player was searching for an opponent and left, remove that open match
         if match is NEXT_MATCH:
+            print("My opponent left before we got into a game.")
             NEXT_MATCH = None
 
         await match.notify_exit()

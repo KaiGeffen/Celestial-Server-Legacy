@@ -105,7 +105,20 @@ class Ifrit(Card):
 
         return recap
 ifrit = Ifrit(name="Ifrit", cost=8, points=7, text="8:7, later cards this round are worth -1")
+class Enrage(Card):
+    def on_play(self, player, game):
+        for act in game.story.acts:
+            act.bonus -= act.card.cost
 
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus) + '\nOppress'
+
+        for act in game.story.acts:
+            act.bonus -= act.card.cost
+
+        return recap
+enrage = Enrage(name="Enrage", cost=8, points=1,
+                text="8:1, give each card later in the story -X, where X is its cost. When played, give each card ealier in the story -X.")
 
 """BIRD"""
 class Distraction(Card):
@@ -1390,6 +1403,7 @@ class Horus(Card):
                 if i + 1 <= game.vision[player] or Quality.VISIBLE in act.card.qualities:
                     num_seen_cards += 1
 
+        # if game.vision[player] >= 10:
         if num_seen_cards >= 3:
             return 0
         else:
@@ -1400,7 +1414,7 @@ horus = Horus(name="Horus", cost=7, points=7,
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?")
 full_catalog = [
-    crossed_bones, spy, swift, sine, fruiting, gift, desert, hurricane, nightmare,
+    crossed_bones, spy, swift, sine, fruiting, gift, enrage, hurricane, nightmare,
     ember, dash, firewall, portal, charcoal, kindle, haze, force, fire_ring, ifrit,
     dove, twitter, paranoia, nest, swift, peace, pelican, phoenix, icarus,
     swamp, snake_egg, ouroboros, snake_eye, serpent, snake_spiral, salamander, temptation, frog_prince, wyvern, cobra,
