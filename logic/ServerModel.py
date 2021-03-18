@@ -1,4 +1,3 @@
-import pyglet
 import random
 
 # from logic.ClientModel import ClientModel
@@ -20,7 +19,7 @@ MANA_CAP = 10
 PASS = 10
 
 
-class ServerModel(pyglet.event.EventDispatcher):
+class ServerModel():
     def __init__(self, deck1, deck2):
         super().__init__()
 
