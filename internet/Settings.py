@@ -10,6 +10,7 @@ if platform.system() == 'Darwin':
 else:
     # server is the name of this component in the digital ocean app
     LOCAL = "http://server"
+print('LOCAL ip is ' + LOCAL)
 SINGLE_PLAYER = True
 
 # Time client waits between sending requests for changed state
