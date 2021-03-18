@@ -1,4 +1,5 @@
 import platform
+import os
 import sys
 # Resources shared by both the Network and Server files
 
@@ -7,13 +8,13 @@ PORT = 5555
 # The ipv4 address of the host machine. Run ipconfig from cmd to get this
 HOST = "127.0.0.1"
 if platform.system() == 'Darwin':
-    LOCAL = "192.168.1.154"#"127.0.0.1" #
+    LOCAL = "127.0.0.1" #"192.168.1.154"
 else:
     # server is the name of this component in the digital ocean app
     if len(sys.argv) >= 2:
         LOCAL = sys.argv[1]
     else:
-        LOCAL = "localhost"
+        LOCAL = os.getenv('HOSTNAME')#, "localhost")
 print('LOCAL ip is ' + LOCAL)
 SINGLE_PLAYER = True
 
