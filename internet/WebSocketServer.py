@@ -133,7 +133,7 @@ async def serveMain(ws, path):
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 
 def main():
-    start_server = websockets.serve(serveMain, LOCAL, PORT, ssl=ssl_context)
+    start_server = websockets.serve(serveMain, LOCAL, PORT, ping_interval=None, ssl=ssl_context)
 
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()
