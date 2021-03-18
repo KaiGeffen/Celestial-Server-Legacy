@@ -1,4 +1,5 @@
 import platform
+import sys
 # Resources shared by both the Network and Server files
 
 BUFSIZE = 4096 * 2
@@ -9,7 +10,10 @@ if platform.system() == 'Darwin':
     LOCAL = "192.168.1.154"#"127.0.0.1" #
 else:
     # server is the name of this component in the digital ocean app
-    LOCAL = "10.244.10.228"
+    if len(sys.argv) >= 2:
+        LOCAL = sys.argv[1]
+    else:
+        LOCAL = "localhost"
 print('LOCAL ip is ' + LOCAL)
 SINGLE_PLAYER = True
 
