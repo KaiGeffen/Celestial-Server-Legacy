@@ -284,7 +284,7 @@ class ServerController():
     def do_gentle(self):
         # Consider p1 winning and consider p2 winning
         for (p1, p2) in [(0, 1), (1, 0)]:
-            score_dif = self.model.score[p1] - self.model.score[p2]
+            score_dif = self.model.score[p1] - max(self.model.score[p2], 0)
 
             # Subtract the safety of the losing player
             score_above_winning = score_dif - self.model.status[p2].count([Status.SAFE])
