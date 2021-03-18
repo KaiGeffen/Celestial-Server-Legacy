@@ -1,1 +1,1 @@
-web: python3 nothing.py
+web: python3 WS.py
