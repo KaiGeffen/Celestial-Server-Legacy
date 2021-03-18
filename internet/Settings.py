@@ -15,6 +15,7 @@ else:
         LOCAL = sys.argv[1]
     else:
         LOCAL = os.getenv('HOSTNAME')#, "localhost")
+LOCAL = "127.0.0.1"
 print('LOCAL ip is ' + LOCAL)
 SINGLE_PLAYER = True
 
