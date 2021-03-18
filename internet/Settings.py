@@ -9,7 +9,7 @@ if platform.system() == 'Darwin':
     LOCAL = "192.168.1.154"#"127.0.0.1" #
 else:
     # server is the name of this component in the digital ocean app
-    LOCAL = "http://server"
+    LOCAL = ""
 print('LOCAL ip is ' + LOCAL)
 SINGLE_PLAYER = True
 
