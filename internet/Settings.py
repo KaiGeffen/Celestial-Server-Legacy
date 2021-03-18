@@ -13,7 +13,7 @@ else:
     if len(sys.argv) >= 2:
         LOCAL = sys.argv[1]
     else:
-        LOCAL = "server-6d66b4ccc9-xc989"#"localhost"
+        LOCAL = "localhost"
 print('LOCAL ip is ' + LOCAL)
 SINGLE_PLAYER = True
 
