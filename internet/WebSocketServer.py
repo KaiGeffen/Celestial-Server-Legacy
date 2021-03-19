@@ -3,6 +3,8 @@ import json
 import logging
 import websockets
 import ssl
+import pathlib
+import os
 
 from internet.Settings import *
 import CardCodec
@@ -131,8 +133,9 @@ async def serveMain(ws, path):
 
 
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
-localhost_pem = open("cert.pem")
-# pathlib.Path(__file__).with_name("localhost.pem")
+print(os.getcwd())
+# localhost_pem = open("../cert.pem")
+localhost_pem = pathlib.Path(__file__).with_name("../cert.pem")
 ssl_context.load_cert_chain(localhost_pem)
 
 
