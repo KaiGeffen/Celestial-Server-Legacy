@@ -133,9 +133,9 @@ async def serveMain(ws, path):
 
 
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
-print(os.getcwd())
-# localhost_pem = open("../cert.pem")
-localhost_pem = pathlib.Path(__file__).with_name("../cert.pem")
+# print(os.getcwd())
+# localhost_pem = open("cert.pem")
+localhost_pem = pathlib.Path(__file__).parents[0].with_name("cert.pem")
 ssl_context.load_cert_chain(localhost_pem)
 
 
