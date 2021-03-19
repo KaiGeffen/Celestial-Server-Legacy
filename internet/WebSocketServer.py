@@ -60,32 +60,24 @@ class GameMatch:
             self.game.start()
 
 
-USERS = []
-# Not passworded
-MATCHES = []
-# Passworded
-PWD_MATCHES = {}
-
-
 # Notify the user that they have done something wrong (Played an impossible card, etc)
 async def notify_error(ws):
     msg = json.dumps({"type": "signal_error"})
     await asyncio.wait([ws.send(msg)])
 
-
-# A match being formed which only has 1 player
-NEXT_MATCH = None
+# A dictionary with paths (passwords) as keys
+PWD_MATCHES = {}
 async def serveMain(ws, path):
-    global NEXT_MATCH
+    global PWD_MATCHES
 
-    if NEXT_MATCH is None:
+    if path not in PWD_MATCHES.keys():
         player = 0
-        match = NEXT_MATCH = GameMatch(ws)
+        match = GameMatch(ws)
+        PWD_MATCHES[path] = match
 
     else:
         player = 1
-        match = NEXT_MATCH.add_player_2(ws)
-        NEXT_MATCH = None
+        match = PWD_MATCHES.pop(path).add_player_2(ws)
 
     await match.notify_number_players_connected()
 
@@ -124,10 +116,10 @@ async def serveMain(ws, path):
                     await notify_error(ws)
 
     finally:
-        # If this player was searching for an opponent and left, remove that open match
-        if match is NEXT_MATCH:
-            print("My opponent left before we got into a game.")
-            NEXT_MATCH = None
+        # If this player was searching for an opponent and left, remove their open match
+        if path in PWD_MATCHES:
+            print("My opponent left before we got into a game. " + path)
+            PWD_MATCHES.pop(path)
 
         await match.notify_exit()
 
