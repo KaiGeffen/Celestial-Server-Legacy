@@ -571,10 +571,13 @@ cornucopia = Cornucopia(name="Cornucopia", cost=2, points=2, qualities=[Quality.
 """Earth"""
 class CrossedBones(Card):
     def play(self, player, game, index, bonus):
-        for _ in range(2):
-            game.pile[player].append(broken_bone)
+        recap = super().play(player, game, index, bonus)
 
-        return super().play(player, game, index, bonus)
+        recap += '\nBury:'
+        for _ in range(2):
+            recap += self.create_in_pile(broken_bone, game, player)
+
+        return recap
 crossed_bones = CrossedBones(name="Crossed Bones", cost=1, points=2, qualities=[Quality.FLEETING],
                              text="1:2, becomes 2x 1:0 fleeting broken bones after resolving")
 class Dig(Card):
@@ -604,10 +607,13 @@ class Mine(Card):
 mine = Mine(name="Mine", cost=4, points=4, text="4:4, oust the top 4 cards of your discard pile")
 class DinosaurBones(Card):
     def play(self, player, game, index, bonus):
-        for _ in range(3):
-            game.pile[player].append(broken_bone)
+        recap = super().play(player, game, index, bonus)
 
-        return super().play(player, game, index, bonus)
+        recap += '\nBury:'
+        for _ in range(3):
+            recap += self.create_in_pile(broken_bone, game, player)
+
+        return recap
 dinosaur_bones = DinosaurBones(name="Dinosaur Bones", cost=4, points=5, qualities=[Quality.FLEETING],
                              text="4:5, becomes 3x 1:0 fleeting broken bones after resolving")
 class Wolf(Card):
