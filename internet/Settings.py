@@ -10,12 +10,12 @@ HOST = "127.0.0.1"
 if platform.system() == 'Darwin':
     LOCAL = "127.0.0.1" #"192.168.1.154"
 else:
-    # server is the name of this component in the digital ocean app
+    # This allows you to try out different ports when running through DO cli
     if len(sys.argv) >= 2:
         LOCAL = sys.argv[1]
     else:
-        LOCAL = os.getenv('HOSTNAME')#, "localhost")
-print('LOCAL ip is ' + LOCAL)
+        LOCAL = os.getenv('HOSTNAME')
+
 SINGLE_PLAYER = True
 
 # Time client waits between sending requests for changed state
