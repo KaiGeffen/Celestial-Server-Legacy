@@ -140,7 +140,7 @@ async def serveMain(ws, path):
 
 
 def main():
-    start_server = websockets.serve(serveMain, LOCAL, PORT, ping_interval=None, ssl=True)
+    start_server = websockets.serve(serveMain, LOCAL, PORT)#, ping_interval=None, ssl=foo)
 
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()
