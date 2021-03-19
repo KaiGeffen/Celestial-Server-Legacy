@@ -74,13 +74,16 @@ async def notify_error(ws):
 # A match being formed which only has 1 player
 NEXT_MATCH = None
 async def serveMain(ws, path):
+    print(f'Gosh darn in main and the ws/path are: {ws} + {path}')
     global NEXT_MATCH
 
     if NEXT_MATCH is None:
+        print('No next match yet')
         player = 0
         match = NEXT_MATCH = GameMatch(ws)
 
     else:
+        print(f'opponent is {NEXT_MATCH}')
         player = 1
         match = NEXT_MATCH.add_player_2(ws)
         NEXT_MATCH = None
