@@ -74,16 +74,13 @@ async def notify_error(ws):
 # A match being formed which only has 1 player
 NEXT_MATCH = None
 async def serveMain(ws, path):
-    print(f'Gosh darn in main and the ws/path are: {ws} + {path}')
     global NEXT_MATCH
 
     if NEXT_MATCH is None:
-        print('No next match yet')
         player = 0
         match = NEXT_MATCH = GameMatch(ws)
 
     else:
-        print(f'opponent is {NEXT_MATCH}')
         player = 1
         match = NEXT_MATCH.add_player_2(ws)
         NEXT_MATCH = None
@@ -133,10 +130,10 @@ async def serveMain(ws, path):
         await match.notify_exit()
 
 
-# ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
 
 def main():
-    start_server = websockets.serve(serveMain, LOCAL, PORT, ping_interval=None)#, ssl=ssl_context)
+    start_server = websockets.serve(serveMain, LOCAL, PORT, ping_interval=None, ssl=ssl_context)
 
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()
