@@ -132,15 +132,15 @@ async def serveMain(ws, path):
         await match.notify_exit()
 
 
-ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
-# print(os.getcwd())
-# localhost_pem = open("cert.pem")
-localhost_pem = pathlib.Path(__file__).parents[0].with_name("cert.pem")
-ssl_context.load_cert_chain(localhost_pem)
+# ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+# # print(os.getcwd())
+# # localhost_pem = open("cert.pem")
+# localhost_pem = pathlib.Path(__file__).parents[0].with_name("cert.pem")
+# ssl_context.load_cert_chain(localhost_pem)
 
 
 def main():
-    start_server = websockets.serve(serveMain, LOCAL, PORT, ping_interval=None, ssl=ssl_context)
+    start_server = websockets.serve(serveMain, LOCAL, PORT, ping_interval=None, ssl=True)
 
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()
