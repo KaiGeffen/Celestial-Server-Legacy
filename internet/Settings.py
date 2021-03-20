@@ -4,7 +4,7 @@ import sys
 # Resources shared by both the Network and Server files
 
 BUFSIZE = 4096 * 2
-PORT = 4321#5555
+PORT = 5555
 # The ipv4 address of the host machine. Run ipconfig from cmd to get this
 HOST = "127.0.0.1"
 if platform.system() == 'Darwin':
