@@ -5,6 +5,7 @@ import sys
 
 BUFSIZE = 4096 * 2
 PORT = 5555
+INTERNAL_PORT = 4321
 # The ipv4 address of the host machine. Run ipconfig from cmd to get this
 HOST = "127.0.0.1"
 if platform.system() == 'Darwin':
@@ -12,7 +13,8 @@ if platform.system() == 'Darwin':
 else:
     # This allows you to try out different ports when running through DO cli
     if len(sys.argv) >= 2:
-        LOCAL = sys.argv[1]
+        LOCAL = os.getenv('HOSTNAME')
+        PORT = sys.argv[1]
     else:
         LOCAL = os.getenv('HOSTNAME')
 
