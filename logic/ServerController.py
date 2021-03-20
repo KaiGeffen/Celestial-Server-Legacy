@@ -188,9 +188,11 @@ class ServerController():
 
         # Add to wins here
         if self.model.score[0] > self.model.score[1] + self.model.status[1].count(Status.SAFE):
-            wins[0] += 1
+            if self.model.score[0] > 0:
+                wins[0] += 1
         elif self.model.score[1] > self.model.score[0] + self.model.status[0].count(Status.SAFE):
-            wins[1] += 1
+            if self.model.score[1] > 0:
+                wins[1] += 1
         else:
             pass
         # Adjust the scores to reflect the wins from this round
