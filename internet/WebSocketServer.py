@@ -9,6 +9,9 @@ import os
 from internet.Settings import *
 import CardCodec
 from logic.ServerController import ServerController
+from logic.Catalog import get_computer_deck
+from logic.ClientModel import ClientModel
+import AI
 
 logging.basicConfig()
 
@@ -18,15 +21,21 @@ class GameMatch:
     ws1 = None
     ws2 = None
     stored_deck = None
+    vs_ai = False
 
     def __init__(self, ws):
         self.ws1 = ws
 
     # Notify each player how many players are connected
     async def notify_number_players_connected(self):
-        message = json.dumps({"type": "both_players_connected", "value": (self.ws2 is not None)})
+        ready = self.ws2 is not None or self.vs_ai
+        message = json.dumps({"type": "both_players_connected", "value": ready})
 
-        active_ws = [self.ws1, self.ws2] if self.ws2 else [self.ws1]
+        active_ws = []
+        if self.ws1 is not None:
+            active_ws.append(self.ws1)
+        if self.ws2 is not None:
+            active_ws.append(self.ws2)
         await asyncio.wait([ws.send(message) for ws in active_ws])
 
     # If game has started, notify each player the state of the game
@@ -34,8 +43,17 @@ class GameMatch:
         if self.game is None:
             return
 
-        wss = [self.ws1, self.ws2]
-        await asyncio.wait([wss[i].send(self.state_event(i)) for i in [0, 1]])
+        # If vs an ai opponent, they may have a chance to act before sending state back
+        if self.vs_ai and self.game.model.priority == 1:
+            self.opponent_acts()
+
+        messages = []
+        if self.ws1 is not None:
+            messages.append(self.ws1.send(self.state_event(0)))
+        if self.ws2 is not None:
+            messages.append(self.ws2.send(self.state_event(1)))
+
+        await asyncio.wait(messages)
 
     def state_event(self, player):
         return json.dumps({"type": "transmit_state", "value": self.game.get_client_model(player)})
@@ -49,6 +67,15 @@ class GameMatch:
 
         return self
 
+    def do_mulligan(self, player, mulligan):
+        self.game.do_mulligan(player, mulligan)
+        if self.vs_ai:
+            self.game.do_mulligan(1, (False, False, False))
+
+    def add_ai_opponent(self):
+        self.add_deck(1, get_computer_deck())
+        self.vs_ai = True
+
     def add_deck(self, player, deck):
         if self.stored_deck is None:
             self.stored_deck = deck
@@ -58,6 +85,17 @@ class GameMatch:
             else:
                 self.game = ServerController(self.stored_deck, deck)
             self.game.start()
+
+    # Opponent plays cards until they don't have priority
+    def opponent_acts(self):
+        opponent_model = ClientModel(self.game.get_client_model(1))
+        opponent_action = AI.get_action(opponent_model)
+
+        self.game.on_player_input(1, opponent_action)
+
+        # If my opponent still has priority, they act again
+        if self.game.model.priority == 1:
+            self.opponent_acts()
 
 
 # Notify the user that they have done something wrong (Played an impossible card, etc)
@@ -70,11 +108,17 @@ PWD_MATCHES = {}
 async def serveMain(ws, path):
     global PWD_MATCHES
 
-    if path not in PWD_MATCHES.keys():
+    # Remove leading /
+    path = path[1:]
+
+    if path == 'ai':
+        player = 0
+        match = GameMatch(ws)
+        match.add_ai_opponent()
+    elif path not in PWD_MATCHES.keys():
         player = 0
         match = GameMatch(ws)
         PWD_MATCHES[path] = match
-
     else:
         player = 1
         match = PWD_MATCHES.pop(path).add_player_2(ws)
@@ -97,8 +141,8 @@ async def serveMain(ws, path):
 
             elif data["type"] == "mulligan":
                 mulligan = CardCodec.decode_mulligans(data["value"])
-                # TODO Move this into the GameMatch class instead of grabbing its attribute
-                match.game.do_mulligan(player, mulligan)
+                match.do_mulligan(player, mulligan)
+
                 await match.notify_state()
 
             elif data["type"] == "play_card":

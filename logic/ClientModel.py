@@ -1,12 +1,10 @@
-import pyglet
-
 import CardCodec
 
 # TODO arbitrary, think about
 PASS = 10
 
 
-class ClientModel(pyglet.event.EventDispatcher):
+class ClientModel:
     def __init__(self, state):
         super().__init__()
 
