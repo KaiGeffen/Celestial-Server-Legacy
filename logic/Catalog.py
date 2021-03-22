@@ -1483,4 +1483,13 @@ def get_computer_deck():
             stone_golem, stone_golem, stone_golem,
             stalker, pollen]
 
+    # New deck using web-app cards:
+    deck = [
+        crossed_bones, crossed_bones, crossed_bones, crossed_bones, crossed_bones,
+        swift, swift, swift, swift,
+        gift, gift, gift,
+        dinosaur_bones, dinosaur_bones,
+        tumulus
+    ]
+
     return deck

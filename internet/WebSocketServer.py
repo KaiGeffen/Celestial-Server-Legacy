@@ -91,10 +91,10 @@ class GameMatch:
         opponent_model = ClientModel(self.game.get_client_model(1))
         opponent_action = AI.get_action(opponent_model)
 
-        self.game.on_player_input(1, opponent_action)
+        valid_act = self.game.on_player_input(1, opponent_action)
 
         # If my opponent still has priority, they act again
-        if self.game.model.priority == 1:
+        if valid_act and self.game.model.priority == 1:
             self.opponent_acts()
 
 
