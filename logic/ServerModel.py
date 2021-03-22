@@ -41,7 +41,7 @@ class ServerModel():
         self.passes = 0
         self.priority = 0
 
-        # Bool for each player if they have total vision this round
+        # How many cards each player can see in the story this round
         self.vision = [0, 0]
 
         # Recap of the last round's resolution (Revealed stack + points awarded from each card)
@@ -232,7 +232,8 @@ class ServerModel():
             'recap': CardCodec.encode_recap(relative_recap),
             'mulligans_complete': self.mulligans_complete[::slice_step],
             'version_num': self.version_no,
-            'cards_playable': cards_playable
+            'cards_playable': cards_playable,
+            'vision': self.vision[player]
         }
 
     # Get a view of the story that the given player can see
