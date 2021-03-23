@@ -43,10 +43,6 @@ class GameMatch:
         if self.game is None:
             return
 
-        # If vs an ai opponent, they may have a chance to act before sending state back
-        if self.vs_ai and self.game.model.priority == 1:
-            self.opponent_acts()
-
         messages = []
         if self.ws1 is not None:
             messages.append(self.ws1.send(self.state_event(0)))
@@ -54,6 +50,10 @@ class GameMatch:
             messages.append(self.ws2.send(self.state_event(1)))
 
         await asyncio.wait(messages)
+
+        # If vs an ai opponent, they may now have a chance to act
+        if self.vs_ai and self.game.model.priority == 1:
+            await self.opponent_acts()
 
     def state_event(self, player):
         return json.dumps({"type": "transmit_state", "value": self.game.get_client_model(player)})
@@ -87,15 +87,15 @@ class GameMatch:
             self.game.start()
 
     # Opponent plays cards until they don't have priority
-    def opponent_acts(self):
+    async def opponent_acts(self):
         opponent_model = ClientModel(self.game.get_client_model(1))
         opponent_action = AI.get_action(opponent_model)
 
         valid_act = self.game.on_player_input(1, opponent_action)
 
-        # If my opponent still has priority, they act again
-        if valid_act and self.game.model.priority == 1:
-            self.opponent_acts()
+        # If my opponent acted, notify state
+        if valid_act:
+            await self.notify_state()
 
 
 # Notify the user that they have done something wrong (Played an impossible card, etc)
