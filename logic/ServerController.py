@@ -26,6 +26,9 @@ class ServerController():
 
     # Return True if a play/pass occurred (False if play couldn't be completed)
     def on_player_input(self, player, choice):
+        if self.model.get_winner() is not None:
+            return False
+
         if player != self.model.priority:
             return False
 

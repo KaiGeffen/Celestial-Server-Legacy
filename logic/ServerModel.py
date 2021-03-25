@@ -215,6 +215,7 @@ class ServerModel():
         # For player 1, don't reverse the lists, for player 2 do. This gives relative view of pile, wins, etc
         slice_step = 1 if player == 0 else -1
         relative_recap = self.recap if player == 0 else self.recap.get_flipped()
+
         return {
             'hand': CardCodec.encode_deck(self.hand[player]),
             'opp_hand': len(self.hand[player ^ 1]),
@@ -233,7 +234,8 @@ class ServerModel():
             'mulligans_complete': self.mulligans_complete[::slice_step],
             'version_num': self.version_no,
             'cards_playable': cards_playable,
-            'vision': self.vision[player]
+            'vision': self.vision[player],
+            'winner': None if self.get_winner() is None else self.get_winner() ^ player
         }
 
     # Get a view of the story that the given player can see
@@ -266,4 +268,10 @@ class ServerModel():
 
     """UTILITY CHECKS"""
     def get_winner(self):
+        if self.wins[0] >= 5 and self.wins[0] >= self.wins[1] + 2:
+            return 0
+
+        if self.wins[1] >= 5 and self.wins[1] >= self.wins[0] + 2:
+            return 1
+
         return None
