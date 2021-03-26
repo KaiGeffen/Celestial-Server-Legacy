@@ -109,11 +109,11 @@ class GameMatch:
             opponent_model = ClientModel(self.game.get_client_model(1))
             opponent_action = AI.get_action(opponent_model)
 
-            valid_act = self.game.on_player_input(1, opponent_action)
+            valid = self.game.on_player_input(1, opponent_action)
 
-            # If my opponent acted, notify state
-            if valid_act:
-                await self.notify_state()
+        # If my opponent acted, notify state
+        if valid:
+            await self.notify_state()
 
 
 # Notify the user that they have done something wrong (Played an impossible card, etc)
