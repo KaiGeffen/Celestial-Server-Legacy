@@ -22,9 +22,12 @@ class GameMatch:
     ws2 = None
     stored_deck = None
     vs_ai = False
+    lock = None
 
     def __init__(self, ws):
         self.ws1 = ws
+
+        self.lock = asyncio.Lock()
 
     # Notify each player how many players are connected
     async def notify_number_players_connected(self):
@@ -67,34 +70,49 @@ class GameMatch:
 
         return self
 
-    def do_mulligan(self, player, mulligan):
-        self.game.do_mulligan(player, mulligan)
-        if self.vs_ai:
-            self.game.do_mulligan(1, (False, False, False))
+    async def do_mulligan(self, player, mulligan):
+        async with self.lock:
+            self.game.do_mulligan(player, mulligan)
+            if self.vs_ai:
+                self.game.do_mulligan(1, (False, False, False))
 
-    def add_ai_opponent(self):
-        self.add_deck(1, get_computer_deck())
+    # Do the given action, if it is valid inform others of changed state, otherwise signal error to player
+    async def do_action(self, player, action):
+        valid = None
+        async with self.lock:
+            valid = self.game.on_player_input(player, action)
+
+        if valid:
+            await self.notify_state()
+        else:
+            ws = self.ws1 if player == 0 else self.ws2
+            await notify_error(ws)
+
+    async def add_ai_opponent(self):
+        await self.add_deck(1, get_computer_deck())
         self.vs_ai = True
 
-    def add_deck(self, player, deck):
-        if self.stored_deck is None:
-            self.stored_deck = deck
-        else:
-            if player == 0:
-                self.game = ServerController(deck, self.stored_deck)
+    async def add_deck(self, player, deck):
+        async with self.lock:
+            if self.stored_deck is None:
+                self.stored_deck = deck
             else:
-                self.game = ServerController(self.stored_deck, deck)
-            self.game.start()
+                if player == 0:
+                    self.game = ServerController(deck, self.stored_deck)
+                else:
+                    self.game = ServerController(self.stored_deck, deck)
+                self.game.start()
 
     # Opponent plays cards until they don't have priority
     async def opponent_acts(self):
-        opponent_model = ClientModel(self.game.get_client_model(1))
-        opponent_action = AI.get_action(opponent_model)
+        async with self.lock:
+            opponent_model = ClientModel(self.game.get_client_model(1))
+            opponent_action = AI.get_action(opponent_model)
 
-        valid_act = self.game.on_player_input(1, opponent_action)
+            valid = self.game.on_player_input(1, opponent_action)
 
         # If my opponent acted, notify state
-        if valid_act:
+        if valid:
             await self.notify_state()
 
 
@@ -105,6 +123,7 @@ async def notify_error(ws):
 
 # A dictionary with paths (passwords) as keys
 PWD_MATCHES = {}
+matches_lock = asyncio.Lock()
 async def serveMain(ws, path):
     global PWD_MATCHES
 
@@ -114,14 +133,17 @@ async def serveMain(ws, path):
     if path == 'ai':
         player = 0
         match = GameMatch(ws)
-        match.add_ai_opponent()
-    elif path not in PWD_MATCHES.keys():
-        player = 0
-        match = GameMatch(ws)
-        PWD_MATCHES[path] = match
+        await match.add_ai_opponent()
     else:
-        player = 1
-        match = PWD_MATCHES.pop(path).add_player_2(ws)
+        # This ensures that 2 players won't both think they're first or second
+        async with matches_lock:
+            if path not in PWD_MATCHES.keys():
+                player = 0
+                match = GameMatch(ws)
+                PWD_MATCHES[path] = match
+            else:
+                player = 1
+                match = PWD_MATCHES.pop(path).add_player_2(ws)
 
     await match.notify_number_players_connected()
 
@@ -135,35 +157,29 @@ async def serveMain(ws, path):
                 deck = CardCodec.decode_deck(data["value"])
                 print(deck)
 
-                match.add_deck(player, deck)
+                await match.add_deck(player, deck)
 
                 await match.notify_state()
 
             elif data["type"] == "mulligan":
                 mulligan = CardCodec.decode_mulligans(data["value"])
-                match.do_mulligan(player, mulligan)
+                await match.do_mulligan(player, mulligan)
 
                 await match.notify_state()
 
             elif data["type"] == "play_card":
-                # TODO Move this into the GameMatch class instead of grabbing its attribute
-                if match.game.on_player_input(player, data["value"]):
-                    await match.notify_state()
-                else:
-                    await notify_error(ws)
+                await match.do_action(player, data["value"])
 
             elif data["type"] == "pass_turn":
-                # TODO Move this into GameMatch class
-                if match.game.on_player_input(player, 10):
-                    await match.notify_state()
-                else:
-                    await notify_error(ws)
+                # TODO 10 is the pass action, use the constant for pass to avoid arbitrary literal
+                await match.do_action(player, 10)
 
     finally:
         # If this player was searching for an opponent and left, remove their open match
-        if path in PWD_MATCHES:
-            print("My opponent left before we got into a game. " + path)
-            PWD_MATCHES.pop(path)
+        async with matches_lock:
+            if path in PWD_MATCHES:
+                print("My opponent left before we got into a game. " + path)
+                PWD_MATCHES.pop(path)
 
         await match.notify_exit()
 
