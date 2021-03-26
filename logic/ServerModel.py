@@ -19,13 +19,17 @@ MANA_CAP = 10
 PASS = 10
 
 
-class ServerModel():
+class ServerModel:
     def __init__(self, deck1, deck2):
         super().__init__()
 
         self.hand = [[], []]
-        self.deck = [[], []]
-        self.pile = [deck1, deck2]
+        self.deck = [deck1, deck2]
+        self.pile = [[], []]
+        for p in [0, 1]:
+            self.shuffle(player=p, remember=False)
+        # The last discard pile that each player was seen to shuffle back into their deck
+        self.last_shuffle = [[], []]
 
         # Score in current round, and how many round wins
         self.score = [0, 0]
@@ -105,7 +109,7 @@ class ServerModel():
 
             amt -= 1
 
-        self.shuffle(player)
+        self.shuffle(player, remember=False)
 
         return card
 
@@ -180,8 +184,11 @@ class ServerModel():
         card = self.story.counter(function)
         return card
 
-    # Shuffle the player's pile into their deck
-    def shuffle(self, player):
+    # Shuffle the player's pile into their deck, optionally save the shuffled cards if they are known info
+    def shuffle(self, player, remember=True):
+        if remember:
+            self.last_shuffle[player] = self.pile[player]
+
         self.deck[player] = self.pile[player] + self.deck[player]
         random.shuffle(self.deck[player])
         self.pile[player] = []
@@ -222,6 +229,7 @@ class ServerModel():
             'deck': CardCodec.encode_deck(sorted(self.deck[player], key=deck_sort)),
             'opp_deck': len(self.deck[player ^ 1]),
             'pile': list(map(CardCodec.encode_deck, self.pile[::slice_step])),
+            'last_shuffle': list(map(CardCodec.encode_deck, self.last_shuffle[::slice_step])),
             'wins': self.wins[::slice_step],
             'max_mana': self.max_mana[::slice_step],
             'mana': self.mana[player],
@@ -235,7 +243,7 @@ class ServerModel():
             'version_num': self.version_no,
             'cards_playable': cards_playable,
             'vision': self.vision[player],
-            'winner': None if self.get_winner() is None else self.get_winner() ^ player
+            'winner': None if self.get_winner() is None else self.get_winner() ^ player,
         }
 
     # Get a view of the story that the given player can see
