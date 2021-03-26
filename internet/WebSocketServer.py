@@ -78,13 +78,15 @@ class GameMatch:
 
     # Do the given action, if it is valid inform others of changed state, otherwise signal error to player
     async def do_action(self, player, action):
-
+        valid = None
         async with self.lock:
-            if self.game.on_player_input(player, action):
-                await self.notify_state()
-            else:
-                ws = self.ws1 if player == 0 else self.ws2
-                await notify_error(ws)
+            valid = self.game.on_player_input(player, action)
+
+        if valid:
+            await self.notify_state()
+        else:
+            ws = self.ws1 if player == 0 else self.ws2
+            await notify_error(ws)
 
     async def add_ai_opponent(self):
         await self.add_deck(1, get_computer_deck())
