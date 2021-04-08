@@ -1,14 +1,28 @@
 # A recap of what happened last round, including the cards played by whom and what they did, textually
 class Recap:
-    def __init__(self, story=[], sums=[0, 0], wins=[0, 0], safety=[0, 0]):
+    def __init__(self):
+        self.story = story
+
+
+class Recap:
+    def __init__(self, story=[], sums=[0, 0], wins=[0, 0], safety=[0, 0], state_list=[[], []]):
         self.story = story
         self.sums = sums
         self.wins = wins
         self.safety = safety
 
+        # List of what each player sees as the game-state after each act in the story
+        # The state is an encoded string, starting before the first act resolves
+        self.state_list = state_list
+
+    # Add the game state observed before the first act resolves
+    def add_start_state(self, state):
+        self.state_list.append(state)
+
     # In most cases, text is +N, but for things like RESET it could be different
-    def add(self, card, owner, text):
+    def add(self, card, owner, text, state):
         self.story.append((card, owner, text))
+        self.state_list.append(state)
 
     def add_total(self, sums, wins, safety):
         self.sums[0] += sums[0]
@@ -25,6 +39,7 @@ class Recap:
         self.sums = [0, 0]
         self.wins = [0, 0]
         self.safety = [0, 0]
+        self.state_list = [[], []]
 
     # Return a flipped version of this recap
     def get_flipped(self):
@@ -35,5 +50,6 @@ class Recap:
         sums = self.sums[::-1]
         wins = self.wins[::-1]
         safety = self.safety[::-1]
+        state_list = [relative_states[1] for relative_states in self.state_list]
 
-        return Recap(story, sums, wins, safety)
+        return Recap(story, sums, wins, safety, state_list)

@@ -213,7 +213,7 @@ class ServerModel:
         self.priority = (self.priority + 1) % 2
 
     # Get a model for the given player (So they see themselves as Player 1) also, sort the deck to hide ordering
-    def get_client_model(self, player, cards_playable):
+    def get_client_model(self, player, cards_playable=[False]*6):
         # How the deck is sorted (Cost, with same cards grouped) - used to sort player 1's deck below
         def deck_sort(card):
             rand_from_name = int.from_bytes(card.name.encode(), 'little') % 1000 / 1000

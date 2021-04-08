@@ -78,7 +78,9 @@ def decode_story(s):
 
 
 def encode_recap(recap):
-    result = f'{recap.sums[0]}{DELIM2}{recap.sums[1]}{DELIM1}{recap.wins[0]}{DELIM2}{recap.wins[1]}{DELIM1}{recap.safety[0]}{DELIM2}{recap.safety[1]}'
+    result = f'{recap.sums[0]}{DELIM2}{recap.sums[1]}{DELIM1}' \
+             f'{recap.wins[0]}{DELIM2}{recap.wins[1]}{DELIM1}' \
+             f'{recap.safety[0]}{DELIM2}{recap.safety[1]}'
 
     # If no plays happened, just return the sums and wins
     # Otherwise, add a semicolon before the recap
