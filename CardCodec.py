@@ -1,4 +1,5 @@
 import copy
+import json
 
 from logic.Catalog import all_cards
 from logic.Recap import Recap
@@ -10,6 +11,8 @@ from logic.Story import Story, Source
 DELIM1 = '¡'
 DELIM2 = '™'
 DELIM_DYN_TEXT = '£'
+# For when the recap sends full state before/after each act
+DELIM_FULL_STATE = 'ª'
 
 
 # Encode / Decode methods for sending the decklist to server
@@ -95,10 +98,19 @@ def encode_recap(recap):
         return f'{encode_card(card)}{DELIM2}{owner}{DELIM2}{text}'
 
     result += DELIM1.join(list(map(encode_play, recap.story)))
+
+    # Add the full list of states that this player sees before/after each act in story
+    result += DELIM_FULL_STATE
+    result += DELIM_FULL_STATE.join(
+        list(map(json.dumps, recap.get_state_list(player=0))))
+
     return result
 
 
 def decode_recap(s):
+    # NOTE Full_state part is not supported in python version
+    s = s.split(DELIM_FULL_STATE)[0]
+
     recap = s.split(DELIM1, maxsplit=3)
     sums = list(map(int, recap[0].split(DELIM2)))
     wins = list(map(int, recap[1].split(DELIM2)))
