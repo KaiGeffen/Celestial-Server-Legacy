@@ -27,7 +27,7 @@ class Story:
 
         state_before_play = ['', '']
         for player in [0, 1]:
-            state_before_play[player] = game.get_client_model(player=player)
+            state_before_play[player] = game.get_client_model(player=player, total_vision=True)
         self.recap.add_start_state(state_before_play)
 
         index = 0
@@ -56,7 +56,7 @@ class Story:
 
             state_after_play = ['', '']
             for player in [0, 1]:
-                state_after_play[player] = game.get_client_model(player=player)
+                state_after_play[player] = game.get_client_model(player=player, total_vision=True)
             self.recap.add(act.card, act.owner, result, state_after_play)
 
     def clear(self):
