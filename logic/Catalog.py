@@ -1105,13 +1105,13 @@ class Beekeep(Card):
         points = 5
 
         stats = f"{cost}:{points}"
-        text = f"{stats}, store all 0-costs in your pile in this card. This card's effect becomes to add them back to your pile."
+        text = f"{stats}, remove from the game and note all 0-cost cards in your discard pile. This card's effect becomes to add to your discard pile a copy of each of the noted cards."
 
         if stored:
             converted_list = [card.name for card in stored]
             joined_string = ", ".join(converted_list)
 
-            dynamic_text = f"{stats}, put these cards in your pile:\n{joined_string}"
+            dynamic_text = f"{stats}, add a copy of each of these cards to your discard pile:\n{joined_string}"
             qualities = []
         else:
             dynamic_text = ""
@@ -1348,10 +1348,10 @@ class Stable(Card):
         points = 3
 
         stats = f"{cost}:{points}"
-        text = f"{stats}, store the top card of your pile in this card. This card's effect becomes to add one of the stored card to your hand."
+        text = f"{stats}, remove from the game and note the top card of your discard pile. This card's effect becomes to add a copy of the noted card to your hand."
 
         if stored:
-            dynamic_text = f"{stats}, create a {stored.name} in hand"
+            dynamic_text = f"{stats}, add a copy of {stored.name} to your hand"
             if stored.dynamic_text:
                 dynamic_text += f" ({stored.dynamic_text})"
             else:
