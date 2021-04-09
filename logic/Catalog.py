@@ -659,7 +659,7 @@ uluru = Card(name="Uluru", cost=10, points=15, text="10:15")
 
 class Bastet(Card):
     def __init__(self, points):
-        text = f"2:{points}, this card retains all changes to points as it resolves (Nourish, starve, boost, oppress)"
+        text = f"2:{points}, this card retains all changes to points as it resolves (For example, if this card was nourished by 3, it stays a 2:4 once it is in the discard pile)"
         super().__init__("Bastet", cost=2, points=points, qualities=[Quality.FLEETING],
                          text=text, dynamic_text=text)
 
