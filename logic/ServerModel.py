@@ -213,7 +213,7 @@ class ServerModel:
         self.priority = (self.priority + 1) % 2
 
     # Get a model for the given player (So they see themselves as Player 1) also, sort the deck to hide ordering
-    def get_client_model(self, player, cards_playable):
+    def get_client_model(self, player, cards_playable=[False]*6, total_vision=False):
         # How the deck is sorted (Cost, with same cards grouped) - used to sort player 1's deck below
         def deck_sort(card):
             rand_from_name = int.from_bytes(card.name.encode(), 'little') % 1000 / 1000
@@ -235,7 +235,7 @@ class ServerModel:
             'mana': self.mana[player],
             'status': CardCodec.encode_statuses(self.status[player]),
             'opp_status': CardCodec.encode_statuses(self.status[player ^ 1]),
-            'story': self.get_relative_story(player),
+            'story': self.get_relative_story(player, total_vision),
             'priority': self.priority ^ player,
             'passes': self.passes,
             'recap': CardCodec.encode_recap(relative_recap),
@@ -244,13 +244,14 @@ class ServerModel:
             'cards_playable': cards_playable,
             'vision': self.vision[player],
             'winner': None if self.get_winner() is None else self.get_winner() ^ player,
+            'score': self.score[::slice_step]
         }
 
     # Get a view of the story that the given player can see
-    def get_relative_story(self, player):
+    def get_relative_story(self, player, total_vision):
         def hide_opponents_cards(live_card):
             card, owner = live_card
-            if owner != player and Quality.VISIBLE not in card.qualities:
+            if not total_vision and owner != player and Quality.VISIBLE not in card.qualities:
                 return hidden_card, owner
             else:
                 return live_card

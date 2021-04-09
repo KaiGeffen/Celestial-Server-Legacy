@@ -25,6 +25,11 @@ class Story:
         # Reset the recap so that it now recaps this run
         self.recap.reset()
 
+        state_before_play = ['', '']
+        for player in [0, 1]:
+            state_before_play[player] = game.get_client_model(player=player, total_vision=True)
+        self.recap.add_start_state(state_before_play)
+
         index = 0
         while self.acts:
             act = self.acts.pop(0)
@@ -49,7 +54,10 @@ class Story:
 
             index += 1
 
-            self.recap.add(act.card, act.owner, result)
+            state_after_play = ['', '']
+            for player in [0, 1]:
+                state_after_play[player] = game.get_client_model(player=player, total_vision=True)
+            self.recap.add(act.card, act.owner, result, state_after_play)
 
     def clear(self):
         self.acts = []

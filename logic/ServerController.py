@@ -43,8 +43,9 @@ class ServerController():
 
             # If both player's have passed in sequence, end turn and start another
             if self.model.passes == 2:
-                self.do_takedown()
                 self.model.passes = 0
+
+                self.do_takedown()
                 self.do_upkeep()
 
             self.model.version_no += 1
