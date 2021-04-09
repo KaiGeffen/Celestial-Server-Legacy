@@ -244,6 +244,7 @@ class ServerModel:
             'cards_playable': cards_playable,
             'vision': self.vision[player],
             'winner': None if self.get_winner() is None else self.get_winner() ^ player,
+            'score': self.score[::slice_step]
         }
 
     # Get a view of the story that the given player can see
