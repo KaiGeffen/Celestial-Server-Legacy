@@ -18,9 +18,15 @@ class Virus(Card):
         return False
 virus = Virus(name="Virus", cost=3, qualities=[Quality.FLEETING], pile_highlight=True,
               text="3:0, fleeting. On upkeep while in pile starve 1")
+class WantedPoster(Card):
+    def play(self, player, game, index, bonus):
+        bonus += 2 * game.pile[player ^ 1].count(bandit)
 
+        return super().play(player, game, index, bonus)
+wanted_poster = WantedPoster(name="Wanted Poster", cost=1, qualities=[Quality.FLEETING],
+              text="1:0, fleeting, +2 for each Bandit in your opponent's discard pile")
 
-tokens = [camera, broken_bone, robot, virus]
+tokens = [camera, broken_bone, robot, wanted_poster]
 
 
 """FIRE"""
@@ -667,13 +673,13 @@ class Bastet(Card):
 
         return super().play(player, game, index, bonus)
 bastet = Bastet(1)
-class CatEyes(SightCard):
+class NightVision(SightCard):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
         recap += self.tutor(2, game, player)
 
         return recap
-cat_eyes = CatEyes(amt=2, name="Cat Eyes", cost=1, points=0, text="1:0, tutor 2, sight 2 (This round the first 2 cards of story are visible to you)")
+night_vision = NightVision(amt=3, name="Night Vision", cost=1, points=0, text="1:0, tutor 2. On play, sight 3")
 
 
 """Fish"""
@@ -1416,6 +1422,11 @@ class Horus(Card):
             return self.cost
 horus = Horus(name="Horus", cost=7, points=7,
               text="7:7, costs 0 if you can see at least 3 of your opponent's cards in the story")
+class Bandit(Card):
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus) + self.create(wanted_poster, game, player ^ 1)
+bandit = Bandit(name="Bandit", cost=1, points=2, text="1:2, create a ${146} in your opponent's hand")
+
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?")
@@ -1427,7 +1438,7 @@ full_catalog = [
     stars, cosmos, roots, sprout, fruiting, pine, bulb, lotus, leaf_swirl, pollen, oak,
     bone_knife, mute, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
     flying_fish, star_fish, perch, angler, piranha, school_of_fish, whale, wave,
-    horus, fishing_boat, drakkar, ship_wreck, trireme, warship,
+    horus, fishing_boat, bandit, night_vision, trireme, warship,
     cog, drone, gears, factory, anvil, cogsplosion, ai, sine, foundry,
     crossed_bones, dig, gnaw, mine, dinosaur_bones, wolf, stone_golem, boar, atlas, uluru,
     graveyard, zombie, drown, raise_dead, haunt, spectre, prayer, tumulus, sarcophagus, anubis,
