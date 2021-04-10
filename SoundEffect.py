@@ -1,4 +1,4 @@
-Shuffle = 'shuffle'
-Draw = 'draw'
 Play = 'play'
 Pass = 'pass'
+Draw = 'draw'
+Shuffle = 'shuffle'

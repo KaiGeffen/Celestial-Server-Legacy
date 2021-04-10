@@ -1298,6 +1298,10 @@ privation = Privation(name="Privation", cost=1, points=0,
                                             2-3: Opponent discards 1
                                             4+: Create a 3:0 Virus in opponent's hand""")
 
+
+# Opponent discards cards until the total cost is at least 3 (or something)
+# 0-1: +6, nourish 3, sight 2
+
 """1:0 Grit
 0-1: If the next card costs 2, +2
 2-3: Counter your next card: +3

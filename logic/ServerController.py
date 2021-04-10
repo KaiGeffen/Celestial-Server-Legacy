@@ -99,6 +99,7 @@ class ServerController():
         self.model.mulligans_complete[player] = True
         # TODO Lock are necessary to do this right, since everywhere else only 1 player has control at a time, but not here
         self.model.version_no += 1
+        self.model.sound_effect = SoundEffect.Shuffle
 
     """PHASES"""
     # Begin the game

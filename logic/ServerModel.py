@@ -2,6 +2,7 @@ import random
 
 # from logic.ClientModel import ClientModel
 import CardCodec
+import SoundEffect
 from logic.Catalog import hidden_card
 from logic.Effects import Quality
 from logic.Story import Story
