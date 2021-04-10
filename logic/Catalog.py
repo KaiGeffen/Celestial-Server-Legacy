@@ -215,6 +215,17 @@ class Icarus(Card):
             return self.cost
 icarus = Icarus(name="Icarus", cost=7, points=7, text="7:7, costs 0 if you have 5 cards in story")
 
+class Cuauhtli(SightCard):
+    def on_play(self, player, game):
+        game.hand[player] = [dove] * len(game.hand[player])
+
+        super().on_play(player, game)
+
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus) + self.nourish(2, game, player)
+cuauhtli = Cuauhtli(amt=4, name="Cuauhtli", cost=6, points=6,
+                           text="6:6, nourish 2. When played, gain sight 4 and transform each card in your hand into a Dove.")
+
 
 """SNAKE"""
 class Swamp(Card):
@@ -1054,7 +1065,7 @@ beehive = SwarmCard(name="Beehive", amt=3, cost=2, text="2:0, swarm 3 (After you
 class Butterfly(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.nourish(1, game, player)
-butterfly = Butterfly(name="Butterfly", cost=0, text="0:0, nourish 1 (Your next card gives +1 points)")
+butterfly = Butterfly(name="Butterfly", cost=1, text="1:0, nourish 1 (Your next card gives +1 points)")
 class Spider(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -1438,7 +1449,7 @@ full_catalog = [
     stars, cosmos, roots, sprout, fruiting, pine, bulb, lotus, leaf_swirl, pollen, oak,
     bone_knife, mute, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
     flying_fish, star_fish, perch, angler, piranha, school_of_fish, whale, wave,
-    horus, fishing_boat, bandit, night_vision, trireme, warship,
+    horus, fishing_boat, bandit, night_vision, cuauhtli, warship,
     cog, drone, gears, factory, anvil, cogsplosion, ai, sine, foundry,
     crossed_bones, dig, gnaw, mine, dinosaur_bones, wolf, stone_golem, boar, atlas, uluru,
     graveyard, zombie, drown, raise_dead, haunt, spectre, prayer, tumulus, sarcophagus, anubis,
