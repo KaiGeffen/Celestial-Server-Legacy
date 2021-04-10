@@ -44,9 +44,9 @@ class Story:
                                            bonus=act.bonus)
                 elif act.source is Source.SPRING:
                     result = act.card.play_spring(player=act.owner,
-                                           game=game,
-                                           index=index,
-                                           bonus=act.bonus)
+                                                  game=game,
+                                                  index=index,
+                                                  bonus=act.bonus)
 
             # Card goes to pile unless it has fleeting
             if Quality.FLEETING not in act.card.qualities:
@@ -54,10 +54,14 @@ class Story:
 
             index += 1
 
+            self.recap.add(act.card, act.owner, result)
+
+            # Save as a string what state the game is in after the card has been played
             state_after_play = ['', '']
             for player in [0, 1]:
                 state_after_play[player] = game.get_client_model(player=player, total_vision=True)
-            self.recap.add(act.card, act.owner, result, state_after_play)
+
+            self.recap.add_state(state_after_play)
 
     def clear(self):
         self.acts = []

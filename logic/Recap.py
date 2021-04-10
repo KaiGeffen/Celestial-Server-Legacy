@@ -16,12 +16,11 @@ class Recap:
         self.state_list.append(state_pair)
 
     # In most cases, text is +N, but for things like RESET it could be different
-    def add(self, card, owner, text, state_pair):
+    def add(self, card, owner, text):
         self.story.append((card, owner, text))
 
-        # Must reduce the vision each player has because that vision was spent seeing cards earlier in story
-        for player in [0, 1]:
-            state_pair[player]['vision'] = max(0, state_pair[player]['vision'] - len(self.state_list))
+    # Add the state of the game each player each to the ongoing list
+    def add_state(self, state_pair):
         self.state_list.append(state_pair)
 
     def add_total(self, sums, wins, safety):
