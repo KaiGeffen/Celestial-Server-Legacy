@@ -49,7 +49,7 @@ class ServerModel:
         self.vision = [0, 0]
 
         # Recap of the last round's resolution (Revealed stack + points awarded from each card)
-        self.recap = Recap()
+        self.recap = self.story.recap
 
         # Whether each player has completed the mulligan phase at the start of the game
         self.mulligans_complete = [False, False]

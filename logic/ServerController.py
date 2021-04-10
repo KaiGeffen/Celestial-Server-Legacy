@@ -206,7 +206,6 @@ class ServerController():
         self.do_gentle()
 
         # Recap the results
-        self.model.recap = self.model.story.recap
         safe_totals = [self.model.status[0].count(Status.SAFE),
                        self.model.status[1].count(Status.SAFE)]
         self.model.recap.add_total(self.model.score, wins, safe_totals)
