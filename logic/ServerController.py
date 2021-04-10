@@ -3,7 +3,8 @@ import random
 from logic.ServerModel import ServerModel
 
 from logic import Catalog
-from logic.Effects import Quality, Status
+from logic.Effects import Status
+import SoundEffect
 # TODO Separate out source
 from logic.Story import Source
 
@@ -49,6 +50,8 @@ class ServerController():
                 self.do_upkeep()
 
             self.model.version_no += 1
+            self.model.sound_effect = SoundEffect.Pass
+
             return True
         else:
             if self.attempt_play(player, choice):
@@ -80,6 +83,8 @@ class ServerController():
         card.on_play(player, self.model)
 
         self.model.story.add_act(card, owner=player, source=Source.HAND)
+
+        self.model.sound_effect = SoundEffect.Play
 
     # The given player is redrawing the cards specified by mulligans
     def do_mulligan(self, player, mulligans):

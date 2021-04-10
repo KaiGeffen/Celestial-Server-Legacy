@@ -57,6 +57,9 @@ class ServerModel:
         # The number of times an action has occured, used for syncing with clients
         self.version_no = 0
 
+        # The sound effect for client's to play, based on the last action taken
+        self.sound_effect = None
+
     """GENERIC ACTIONS"""
     # Player draws X cards from their deck
     def draw(self, player, amt=1):
@@ -244,7 +247,8 @@ class ServerModel:
             'cards_playable': cards_playable,
             'vision': self.vision[player],
             'winner': None if self.get_winner() is None else self.get_winner() ^ player,
-            'score': self.score[::slice_step]
+            'score': self.score[::slice_step],
+            'sound_effect': self.sound_effect
         }
 
     # Get a view of the story that the given player can see
