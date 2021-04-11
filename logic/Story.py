@@ -29,7 +29,7 @@ class Story:
         state_before_play = ['', '']
         for player in [0, 1]:
             state_before_play[player] = game.get_client_model(player=player, total_vision=True)
-        self.recap.add_start_state(state_before_play)
+        self.recap.add_state(state_before_play)
 
         index = 0
         while self.acts:
@@ -65,6 +65,21 @@ class Story:
                 state_after_play[player] = game.get_client_model(player=player, total_vision=True)
 
             self.recap.add_state(state_after_play)
+
+    def save_end_state(self, game):
+        # Save an ending state which includes win/loss/tie sfx
+        state_after_play = ['', '']
+        for player in [0, 1]:
+            # Win/Lose based on which player the state is for
+            if self.recap.wins[player] > 0:
+                game.sound_effect = SoundEffect.Win
+            elif self.recap.wins[player ^ 1] > 0:
+                game.sound_effect = SoundEffect.Lose
+            else:
+                game.sound_effect = SoundEffect.Tie
+
+            state_after_play[player] = game.get_client_model(player=player, total_vision=True)
+        self.recap.add_state(state_after_play)
 
     def clear(self):
         self.acts = []

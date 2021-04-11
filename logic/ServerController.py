@@ -218,6 +218,8 @@ class ServerController():
                        self.model.status[1].count(Status.SAFE)]
         self.model.recap.add_total(self.model.score, wins, safe_totals)
 
+        # Remember how the round ended for user's recap (Must come after wins are determined)
+        self.model.story.save_end_state(self.model)
         self.model.story.clear()
 
     """EXPOSED UTILITY METHODS"""

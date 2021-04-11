@@ -11,15 +11,11 @@ class Recap:
         # [[state_p0_0, state_p1_0], [state_p0_1, state_p1_1], etc]
         self.state_list = state_list
 
-    # Add the game state observed before the first act resolves
-    def add_start_state(self, state_pair):
-        self.state_list.append(state_pair)
-
     # In most cases, text is +N, but for things like RESET it could be different
     def add(self, card, owner, text):
         self.story.append((card, owner, text))
 
-    # Add the state of the game each player each to the ongoing list
+    # Add the state of the game each player sees to the ongoing list
     def add_state(self, state_pair):
         self.state_list.append(state_pair)
 
