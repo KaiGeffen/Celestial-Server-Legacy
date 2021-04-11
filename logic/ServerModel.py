@@ -82,6 +82,8 @@ class ServerModel:
 
             amt -= 1
 
+            self.sound_effect = SoundEffect.Draw
+
         return card
 
     def discard(self, player, amt=1, index=0):
@@ -128,6 +130,7 @@ class ServerModel:
                     self.hand[player].append(card)
                     self.deck[player].remove(card)
 
+                    self.sound_effect = SoundEffect.Draw
                     return card
 
             for card in self.pile[player][::-1]:
@@ -137,6 +140,7 @@ class ServerModel:
                     self.hand[player].append(card)
                     self.pile[player].remove(card)
 
+                    self.sound_effect = SoundEffect.Draw
                     return card
 
         return None

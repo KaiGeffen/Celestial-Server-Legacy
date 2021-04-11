@@ -1,5 +1,6 @@
 from enum import Enum
 
+import SoundEffect
 from logic.Recap import Recap
 from logic.Effects import Quality
 
@@ -33,6 +34,8 @@ class Story:
         index = 0
         while self.acts:
             act = self.acts.pop(0)
+
+            game.sound_effect = SoundEffect.Resolve
 
             if act.countered:
                 result = 'Countered'

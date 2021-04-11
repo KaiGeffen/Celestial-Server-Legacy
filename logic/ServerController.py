@@ -42,6 +42,8 @@ class ServerController():
 
             self.model.switch_priority()
 
+            self.model.sound_effect = SoundEffect.Pass
+
             # If both player's have passed in sequence, end turn and start another
             if self.model.passes == 2:
                 self.model.passes = 0
@@ -50,7 +52,6 @@ class ServerController():
                 self.do_upkeep()
 
             self.model.version_no += 1
-            self.model.sound_effect = SoundEffect.Pass
 
             return True
         else:
@@ -116,6 +117,7 @@ class ServerController():
     # Perform the upkeep phase
     def do_upkeep(self):
         self.model.vision = [0, 0]
+        self.model.sound_effect = None
 
         # Give priority to the player in the lead, or random if tied
         if self.model.wins[0] > self.model.wins[1]:
