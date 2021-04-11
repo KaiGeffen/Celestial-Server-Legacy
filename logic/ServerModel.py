@@ -94,6 +94,9 @@ class ServerModel:
 
             amt -= 1
 
+        if card is not None:
+            self.sound_effect = SoundEffect.Discard
+
         return card
 
     def bottom(self, player, amt=1, index=0):
@@ -149,6 +152,9 @@ class ServerModel:
     def create(self, player, card):
         if len(self.hand[player]) < HAND_CAP:
             self.hand[player].append(card)
+
+            self.sound_effect = SoundEffect.Create
+
             return card
 
         return None

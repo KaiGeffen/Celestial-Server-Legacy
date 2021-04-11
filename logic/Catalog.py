@@ -122,6 +122,7 @@ class Enrage(Card):
         for act in game.story.acts:
             act.bonus -= act.card.cost
 
+        game.sound_effect = SoundEffect.Yell
         return recap
 enrage = Enrage(name="Enrage", cost=8, points=1,
                 text="8:1, give each card later in the story -X, where X is its cost. When played, give each card ealier in the story -X.")

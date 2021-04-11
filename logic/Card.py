@@ -1,5 +1,6 @@
 from logic.Effects import Status, Quality
-import logic.Catalog
+import SoundEffect
+
 
 class Card:
     def __init__(self, name, cost=0, points=0, qualities=[], text='', spring=False, pile_highlight=False, dynamic_text=''):
@@ -105,6 +106,7 @@ class Card:
 
     # Add X mana next turn
     def inspire(self, amt, game, player):
+        game.sound_effect = SoundEffect.Inspire
         return self.add_status(amt, game, player, Status.INSPIRE)
 
     # Lose X mana next turn
@@ -113,6 +115,7 @@ class Card:
 
     # Next card gives +X points
     def nourish(self, amt, game, player):
+        game.sound_effect = SoundEffect.Nourish
         return self.add_status(amt, game, player, Status.NOURISH)
 
     # Next card gives -X points
@@ -278,10 +281,13 @@ class Card:
             if card.name == 'Robot':
                 card.points += amt
                 card.dynamic_text = f'0:{card.points}, fleeting'
+
+                game.sound_effect = SoundEffect.Build
                 return f'\nBuild +{amt}'
 
         card = Card(name='Robot', points=amt, qualities=[Quality.FLEETING], dynamic_text=f'0:{amt}, fleeting')
         if game.create(player, card):
+            game.sound_effect = SoundEffect.Build
             return f'\nBuild {amt}'
         else:
             return ''

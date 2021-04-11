@@ -1,8 +1,16 @@
 Play = 'play'
 Pass = 'pass'
 Draw = 'draw'
+Discard = 'discard'
+Create = 'create'
 Shuffle = 'shuffle'
 Resolve = 'resolve'
 Win = 'win'
 Lose = 'lose'
 Tie = 'tie'
+
+Build = 'build'
+Inspire = 'inspire'
+Nourish = 'nourish'
+
+Yell = 'yell'
