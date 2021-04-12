@@ -80,7 +80,8 @@ def decode_story(s):
     return story
 
 
-def encode_recap(recap):
+# If shallow, don't encode earlier states just remember the cards/outcomes
+def encode_recap(recap, shallow):
     result = f'{recap.sums[0]}{DELIM2}{recap.sums[1]}{DELIM1}' \
              f'{recap.wins[0]}{DELIM2}{recap.wins[1]}{DELIM1}' \
              f'{recap.safety[0]}{DELIM2}{recap.safety[1]}'
@@ -100,9 +101,10 @@ def encode_recap(recap):
     result += DELIM1.join(list(map(encode_play, recap.story)))
 
     # Add the full list of states that this player sees before/after each act in story
-    result += DELIM_FULL_STATE
-    result += DELIM_FULL_STATE.join(
-        list(map(json.dumps, recap.get_state_list(player=0))))
+    if not shallow:
+        result += DELIM_FULL_STATE
+        result += DELIM_FULL_STATE.join(
+            list(map(json.dumps, recap.get_state_list(player=0))))
 
     return result
 

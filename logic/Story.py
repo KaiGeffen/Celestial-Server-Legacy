@@ -28,7 +28,7 @@ class Story:
 
         state_before_play = ['', '']
         for player in [0, 1]:
-            state_before_play[player] = game.get_client_model(player=player, total_vision=True)
+            state_before_play[player] = game.get_client_model(player=player, is_recap=True)
         self.recap.add_state(state_before_play)
 
         index = 0
@@ -62,7 +62,7 @@ class Story:
             # Save as a string what state the game is in after the card has been played
             state_after_play = ['', '']
             for player in [0, 1]:
-                state_after_play[player] = game.get_client_model(player=player, total_vision=True)
+                state_after_play[player] = game.get_client_model(player=player, is_recap=True)
 
             self.recap.add_state(state_after_play)
 
@@ -78,7 +78,7 @@ class Story:
             else:
                 game.sound_effect = SoundEffect.Tie
 
-            state_after_play[player] = game.get_client_model(player=player, total_vision=True)
+            state_after_play[player] = game.get_client_model(player=player, is_recap=True)
         self.recap.add_state(state_after_play)
 
     def clear(self):
