@@ -56,7 +56,7 @@ def get_action(model) -> int:
         def get_cost(card):
             return model.hand[card].cost
         result = list(best_possible)
-        result.sort(key=get_cost)
+        # result.sort(key=get_cost)
 
         # The first card of the best possible turn (In terms of mana wasted)
         return result[0]
