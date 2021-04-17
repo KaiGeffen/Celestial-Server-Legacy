@@ -77,10 +77,10 @@ class GameMatch:
                 self.game.do_mulligan(1, (False, False, False))
 
     # Do the given action, if it is valid inform others of changed state, otherwise signal error to player
-    async def do_action(self, player, action):
+    async def do_action(self, player, action, version):
         valid = None
         async with self.lock:
-            valid = self.game.on_player_input(player, action)
+            valid = self.game.on_player_input(player, action, version)
 
         if valid:
             await self.notify_state()
@@ -152,10 +152,11 @@ async def serveMain(ws, path):
         async for message in ws:
             print(message)
             data = json.loads(message)
+            print(data)
 
             if data["type"] == "init":
                 deck = CardCodec.decode_deck(data["value"])
-                print(deck)
+                # print(deck)
 
                 await match.add_deck(player, deck)
 
@@ -168,11 +169,11 @@ async def serveMain(ws, path):
                 await match.notify_state()
 
             elif data["type"] == "play_card":
-                await match.do_action(player, data["value"])
+                await match.do_action(player, data["value"], data["version"])
 
             elif data["type"] == "pass_turn":
                 # TODO 10 is the pass action, use the constant for pass to avoid arbitrary literal
-                await match.do_action(player, 10)
+                await match.do_action(player, 10, data["version"])
 
     finally:
         # If this player was searching for an opponent and left, remove their open match

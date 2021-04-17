@@ -256,7 +256,7 @@ class ServerModel:
             'passes': self.passes,
             'recap': CardCodec.encode_recap(relative_recap, shallow=is_recap),
             'mulligans_complete': self.mulligans_complete[::slice_step],
-            'version_num': self.version_no,
+            'version_number': self.version_no,
             'cards_playable': cards_playable,
             'vision': self.vision[player],
             'winner': None if self.get_winner() is None else self.get_winner() ^ player,

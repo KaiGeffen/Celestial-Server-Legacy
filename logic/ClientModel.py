@@ -32,7 +32,7 @@ class ClientModel:
 
         self.mulligans_complete = state['mulligans_complete']
 
-        self.version_num = state['version_num']
+        self.version_num = state['version_number']
 
     # Return if the player can play the card
     def can_play(self, card_num):

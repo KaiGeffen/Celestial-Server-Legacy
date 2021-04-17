@@ -26,7 +26,10 @@ class ServerController():
         self.model = ServerModel(deck1, deck2)
 
     # Return True if a play/pass occurred (False if play couldn't be completed)
-    def on_player_input(self, player, choice):
+    def on_player_input(self, player, choice, version=None):
+        if version is not None and version != self.model.version_no:
+            return False
+
         if self.model.get_winner() is not None:
             return False
 
