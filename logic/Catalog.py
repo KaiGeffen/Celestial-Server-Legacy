@@ -1981,6 +1981,12 @@ class Bandit(Card):
 
 bandit = Bandit(name="Bandit", cost=1, points=2, text="1:2, create a ${146} in your opponent's hand")
 
+class Boar(Card):
+    def play(self, player, game, index, bonus):
+        amt = game.story.get_length()
+        return super().play(player, game, index, bonus) + self.discard(amt, game, player)
+boar = Boar(name="Boar", cost=3, points=4, text="3:4, discard your X leftmost cards, where X is the number of cards later in the story.")
+
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?")
 full_catalog = [
@@ -1991,7 +1997,7 @@ full_catalog = [
     stars, cosmos, roots, sprout, fruiting, pine, bulb, lotus, leaf_swirl, pollen, oak,
     bone_knife, mute, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
     flying_fish, star_fish, perch, angler, piranha, school_of_fish, whale, wave,
-    horus, fishing_boat, bandit, night_vision, cuauhtli, warship,
+    horus, fishing_boat, bandit, night_vision, cuauhtli, boar,
     cog, drone, gears, factory, anvil, cogsplosion, ai, sine, foundry,
     crossed_bones, dig, gnaw, mine, dinosaur_bones, wolf, stone_golem, boar, atlas, uluru,
     graveyard, zombie, drown, raise_dead, haunt, spectre, prayer, tumulus, sarcophagus, anubis,
