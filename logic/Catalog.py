@@ -1986,6 +1986,38 @@ class Boar(Card):
         amt = game.story.get_length()
         return super().play(player, game, index, bonus) + self.discard(amt, game, player)
 boar = Boar(name="Boar", cost=3, points=4, text="3:4, discard your X leftmost cards, where X is the number of cards later in the story.")
+class Disintegrate(Card):
+    def play(self, player, game, index, bonus):
+        result = super().play(player, game, index, bonus)
+
+        replaced_card = None
+        owner = None
+        index = 0
+        for act in game.story.acts:
+            if act.card.cost == 1:
+                replaced_card = act.card
+                owner = act.owner
+                break
+
+            index += 1
+
+        if replaced_card is not None:
+            # The full act with which to replace player's final act
+            replacement_act = Act(card=broken_bone,
+                                  owner=owner,
+                                  source=Source.PILE)
+
+            game.story.replace_act(index, replacement_act)
+
+            result += f'\n{broken_bone.name} replaced {replaced_card.name}'
+
+        return result
+
+
+disintegrate = Disintegrate(name="Disintegrate", cost=1, points=1,
+              text="1:1, transform the next 1-cost card in the story into a Broken Bone.")
+
+
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?")
@@ -1996,7 +2028,7 @@ full_catalog = [
     swamp, snake_egg, ouroboros, snake_eye, serpent, snake_spiral, salamander, temptation, frog_prince, wyvern, cobra,
     stars, cosmos, roots, sprout, fruiting, pine, bulb, lotus, leaf_swirl, pollen, oak,
     bone_knife, mute, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
-    flying_fish, star_fish, perch, angler, piranha, school_of_fish, whale, wave,
+    flying_fish, star_fish, perch, angler, piranha, school_of_fish, whale, disintegrate,
     horus, fishing_boat, bandit, night_vision, cuauhtli, boar,
     cog, drone, gears, factory, anvil, cogsplosion, ai, sine, foundry,
     crossed_bones, dig, gnaw, mine, dinosaur_bones, wolf, stone_golem, boar, atlas, uluru,
