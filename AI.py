@@ -12,7 +12,7 @@ def powerset(l):
 
 # For a given game state, decide what action to take (Card to play, or pass)
 def get_action(model) -> int:
-    time.sleep(.6)
+    time.sleep(.9)
 
     # If we've played points this round and opponent hasn't, don't play more
     we_played_points = False
