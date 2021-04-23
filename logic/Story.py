@@ -22,7 +22,7 @@ class Story:
         act = Act(card, owner, source)
         self.acts.append(act)
 
-    def run(self, game):
+    def run(self, game, isSimplified=False):
         # Reset the recap so that it now recaps this run
         self.recap.reset()
 
@@ -40,7 +40,12 @@ class Story:
             if act.countered:
                 result = 'Countered'
             else:
-                if act.source is Source.HAND or act.source is Source.PILE:
+                # Only for the tutorial
+                if isSimplified:
+                    game.score[act.owner] += act.card.points
+                    result = 'SIMPLIFIED TODO'
+
+                elif act.source is Source.HAND or act.source is Source.PILE:
                     result = act.card.play(player=act.owner,
                                            game=game,
                                            index=index,
