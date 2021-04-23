@@ -21,14 +21,15 @@ PASS = 10
 
 
 class ServerModel:
-    def __init__(self, deck1, deck2):
+    def __init__(self, deck1, deck2, shuffle=True):
         super().__init__()
 
         self.hand = [[], []]
         self.deck = [deck1, deck2]
         self.pile = [[], []]
-        for p in [0, 1]:
-            self.shuffle(player=p, remember=False)
+        if shuffle:
+            for p in [0, 1]:
+                self.shuffle(player=p, remember=False)
         # The last discard pile that each player was seen to shuffle back into their deck
         self.last_shuffle = [[], []]
 

@@ -126,6 +126,8 @@ class TutorialMatch(GameMatch):
         # Start a tutorial game
         self.game = TutorialController()
         self.game.start()
+        self.game.do_mulligan(0, [False, False, False])
+        self.game.do_mulligan(1, [False, False, False])
 
     async def add_deck(self, player, deck):
         return

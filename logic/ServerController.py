@@ -21,7 +21,7 @@ MANA_CAP = 10
 PASS = 10
 
 
-class ServerController():
+class ServerController:
     def __init__(self, deck1, deck2):
         self.model = ServerModel(deck1, deck2)
 
