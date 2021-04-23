@@ -9,6 +9,7 @@ import os
 from internet.Settings import *
 import CardCodec
 from logic.ServerController import ServerController
+from logic.TutorialController import TutorialController
 from logic.Catalog import get_computer_deck
 from logic.ClientModel import ClientModel
 import AI
@@ -116,6 +117,20 @@ class GameMatch:
             await self.notify_state()
 
 
+class TutorialMatch(GameMatch):
+    def __init__(self, ws):
+        super().__init__(ws)
+
+        self.vs_ai = True
+
+        # Start a tutorial game
+        self.game = TutorialController()
+        self.game.start()
+
+    async def add_deck(self, player, deck):
+        return
+
+
 # Notify the user that they have done something wrong (Played an impossible card, etc)
 async def notify_error(ws):
     msg = json.dumps({"type": "signal_error"})
@@ -134,6 +149,9 @@ async def serveMain(ws, path):
         player = 0
         match = GameMatch(ws)
         await match.add_ai_opponent()
+    elif path == 'tutorial':
+      player = 0
+      match = TutorialMatch(ws)
     else:
         # This ensures that 2 players won't both think they're first or second
         async with matches_lock:
@@ -156,7 +174,7 @@ async def serveMain(ws, path):
 
             if data["type"] == "init":
                 deck = CardCodec.decode_deck(data["value"])
-                # print(deck)
+                print(deck)
 
                 await match.add_deck(player, deck)
 
