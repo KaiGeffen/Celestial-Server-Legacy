@@ -86,22 +86,20 @@ def encode_recap(recap, shallow):
              f'{recap.wins[0]}{DELIM2}{recap.wins[1]}{DELIM1}' \
              f'{recap.safety[0]}{DELIM2}{recap.safety[1]}'
 
-    # If no plays happened, just return the sums and wins
-    # Otherwise, add a semicolon before the recap
-    if not recap.story:
-        return result
-    else:
+    # If there is a story, add that
+    if recap.story:
         result += DELIM1
 
-    # Encode a single play of the recap, including textual description of what happened
-    def encode_play(play):
-        card, owner, text = play
-        return f'{encode_card(card)}{DELIM2}{owner}{DELIM2}{text}'
+        # Encode a single play of the recap, including textual description of what happened
+        def encode_play(play):
+            card, owner, text = play
+            return f'{encode_card(card)}{DELIM2}{owner}{DELIM2}{text}'
 
-    result += DELIM1.join(list(map(encode_play, recap.story)))
+        result += DELIM1.join(list(map(encode_play, recap.story)))
 
+    # If a state list exists, add that (List of states visited in the recap)
     # Add the full list of states that this player sees before/after each act in story
-    if not shallow:
+    if recap.state_list and not shallow:
         result += DELIM_FULL_STATE
         result += DELIM_FULL_STATE.join(
             list(map(json.dumps, recap.get_state_list(player=0))))
