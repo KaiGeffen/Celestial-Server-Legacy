@@ -56,7 +56,7 @@ class GameMatch:
         await asyncio.wait(messages)
 
         # If vs an ai opponent, they may now have a chance to act
-        if self.vs_ai and self.game.model.priority == 1:
+        if self.vs_ai and self.game.model.priority == 1 and not False in self.game.model.mulligans_complete:
             await self.opponent_acts()
 
     def state_event(self, player):
@@ -74,6 +74,9 @@ class GameMatch:
     async def do_mulligan(self, player, mulligan):
         async with self.lock:
             self.game.do_mulligan(player, mulligan)
+            # Issue because ai acts after this, notify_state is 2 things
+            await self.notify_state()
+
             if self.vs_ai:
                 self.game.do_mulligan(1, (False, False, False))
 
