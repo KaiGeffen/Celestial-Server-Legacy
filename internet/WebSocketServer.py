@@ -56,7 +56,7 @@ class GameMatch:
         await asyncio.wait(messages)
 
         # If vs an ai opponent, they may now have a chance to act
-        if self.vs_ai and self.game.model.priority == 1 and not False in self.game.model.mulligans_complete:
+        if self.vs_ai and self.game.model.priority == 1 and False not in self.game.model.mulligans_complete:
             await self.opponent_acts()
 
     def state_event(self, player):
@@ -131,6 +131,7 @@ class TutorialMatch(GameMatch):
         self.game.start()
         self.game.do_mulligan(0, [False, False, False])
         self.game.do_mulligan(1, [False, False, False])
+        self.game.model.version_no = 0
 
     async def add_deck(self, player, deck):
         return
