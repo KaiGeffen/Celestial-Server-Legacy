@@ -2017,6 +2017,28 @@ class Disintegrate(Card):
 disintegrate = Disintegrate(name="Disintegrate", cost=1, points=1,
               text="1:1, transform the next 1-cost card in the story into a Broken Bone.")
 
+class Ecology(Card):
+    def on_play(self, player, game):
+        game.mana[player] += 12
+
+    # def play(self, player, game, index, bonus):
+    #     recap = super().play(player, game, index, bonus)
+    #
+    #     recap += self.tutor(index, game, player)
+    #
+    #     if len(game.hand[player]) > 0:
+    #         rightmost_card = game.hand[player][-1]
+    #
+    #         game.deck[player].append(rightmost_card)
+    #         recap += f"\nTop: {rightmost_card.name}"
+    #
+    #     return recap
+
+
+ecology = Ecology(name="Ecology", cost=7, points=2,
+                  text="7:2.\nWhen played, gain 20 mana this round.")
+                  # text="8:6, Tutor X, where X is the number of cards before this in the story. Then create a copy of the rightmost card in your hand and put it on top of your deck.")
+
 
 
 """Lists"""
@@ -2028,7 +2050,7 @@ full_catalog = [
     swamp, snake_egg, ouroboros, snake_eye, serpent, snake_spiral, salamander, temptation, frog_prince, wyvern, cobra,
     stars, cosmos, roots, sprout, fruiting, pine, bulb, lotus, leaf_swirl, pollen, oak,
     bone_knife, mute, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
-    flying_fish, star_fish, perch, angler, piranha, school_of_fish, whale, disintegrate,
+    flying_fish, star_fish, perch, angler, piranha, school_of_fish, ecology, disintegrate,
     horus, fishing_boat, bandit, night_vision, cuauhtli, boar,
     cog, drone, gears, factory, anvil, cogsplosion, ai, sine, foundry,
     crossed_bones, dig, gnaw, mine, dinosaur_bones, wolf, stone_golem, boar, atlas, uluru,
