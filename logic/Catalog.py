@@ -173,8 +173,8 @@ class Enrage(Card):
         return recap
 
 
-enrage = Enrage(name="Enrage", cost=8, points=1,
-                text="8:1, give each card later in the story -X, where X is its cost. When played, give each card ealier in the story -X.")
+enrage = Enrage(name="Enrage", cost=8, points=2,
+                text="8:2, give each card later in the story -X, where X is its cost.\nWhen played, give each card ealier in the story -X.")
 
 """BIRD"""
 
@@ -991,7 +991,10 @@ class Bastet(Card):
         bastet = Bastet(points)
         game.pile[player].append(bastet)
 
-        return super().play(player, game, index, bonus)
+        recap = super().play(player, game, index, bonus)
+
+        game.sound_effect = SoundEffect.Meow
+        return recap
 
 
 bastet = Bastet(1)
