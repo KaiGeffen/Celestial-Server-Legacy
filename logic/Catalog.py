@@ -2022,7 +2022,7 @@ disintegrate = Disintegrate(name="Disintegrate", cost=1, points=1,
 
 class Ecology(Card):
     def on_play(self, player, game):
-        game.mana[player] += 12
+        game.mana[player] += 10
 
     # def play(self, player, game, index, bonus):
     #     recap = super().play(player, game, index, bonus)
@@ -2038,8 +2038,8 @@ class Ecology(Card):
     #     return recap
 
 
-ecology = Ecology(name="Ecology", cost=7, points=2,
-                  text="7:2.\nWhen played, gain 20 mana this round.")
+ecology = Ecology(name="Ecology", cost=7, points=0,
+                  text="7:2.\nWhen played, gain 10 mana this round.")
                   # text="8:6, Tutor X, where X is the number of cards before this in the story. Then create a copy of the rightmost card in your hand and put it on top of your deck.")
 
 
