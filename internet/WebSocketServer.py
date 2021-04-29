@@ -63,6 +63,10 @@ class GameMatch:
         return json.dumps({"type": "transmit_state", "value": self.game.get_client_model(player)})
 
     async def notify_exit(self):
+        # Don't inform after the game has ended, since users will naturally dc
+        if self.game.model.get_winner() is not None:
+            return
+
         messages = []
         if self.ws1 is not None:
             messages.append(self.ws1.send(json.dumps({"type": "dc"})))
