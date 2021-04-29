@@ -62,9 +62,14 @@ class GameMatch:
     def state_event(self, player):
         return json.dumps({"type": "transmit_state", "value": self.game.get_client_model(player)})
 
-    # TODO Tell player that their opponent has left - be aware there could only be 1 ws
     async def notify_exit(self):
-        pass
+        messages = []
+        if self.ws1 is not None:
+            messages.append(self.ws1.send(json.dumps({"type": "dc"})))
+        if self.ws2 is not None:
+            messages.append(self.ws2.send(json.dumps({"type": "dc"})))
+
+        await asyncio.wait(messages)
 
     def add_player_2(self, ws):
         self.ws2 = ws
