@@ -1199,6 +1199,7 @@ zombie = Undead(name="Zombie", cost=0, points=1, qualities=[Quality.VISIBLE],
 
 class Drown(Card):
     def play(self, player, game, index, bonus):
+        game.sound_effect = SoundEffect.Drown
         return super().play(player, game, index, bonus) + self.mill(3, game, player)
 
 
@@ -1273,6 +1274,8 @@ class Sarcophagus(Card):
             game.deck[player].append(card)
 
             bonus += highest_cost
+
+            game.sound_effect = SoundEffect.Sarcophagus
 
             return super().play(player, game, index, bonus) + f"\nTop: {card.name}"
         else:
@@ -1934,6 +1937,7 @@ stable = Stable()
 
 class Uprising(Card):
     def play(self, player, game, index, bonus):
+        game.sound_effect = SoundEffect.Crowd
         return super().play(player, game, index, bonus + index)
 
 

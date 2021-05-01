@@ -62,6 +62,8 @@ class Card:
         for player in [0, 1]:
             self.remove_status(game, player, Status.SAFE)
 
+        game.sound_effect = SoundEffect.Reset
+
         return '\nReset'
 
     # Add X mana this turn
@@ -305,6 +307,7 @@ class Card:
 
 class FireCard(Card):
     def play(self, player, game, index, bonus):
+        game.sound_effect = SoundEffect.Fire
         bonus = bonus - index
         return super().play(player, game, index, bonus)
 
