@@ -13,7 +13,12 @@ class Camera(Card):
 
 camera = Camera(name="Camera", cost=2, qualities=[Quality.FLEETING],
                 text="2:0, fleeting, at the start of each round, give your opponent vision 4")
-broken_bone = Card(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], text="1:0, fleeting")
+
+class BrokenBone(Card):
+    def play(self, player, game, index, bonus):
+        game.sound_effect = SoundEffect.BoneSnap
+        return super().play(player, game, index, bonus)
+broken_bone = BrokenBone(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], text="1:0, fleeting")
 robot = Card(name='Robot', qualities=[Quality.FLEETING], text="0:X, fleeting")
 
 
@@ -193,7 +198,11 @@ class Distraction(Card):
 
 distraction = Distraction(name="Distraction", cost=4, points=4,
                           text="4:4, spend all your unspent mana to flock that much")
-dove = Card(name="Dove", cost=1, points=1, qualities=[Quality.VISIBLE, Quality.FLEETING],
+class Dove(Card):
+    def play(self, player, game, index, bonus):
+        game.sound_effect = SoundEffect.Bird
+        return super().play(player, game, index, bonus)
+dove = Dove(name="Dove", cost=1, points=1, qualities=[Quality.VISIBLE, Quality.FLEETING],
             text="1:1, visible, fleeting (After resolving, this card is removed from the game instead of moving to your discard pile)")
 
 

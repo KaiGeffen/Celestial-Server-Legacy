@@ -15,3 +15,5 @@ Nourish = 'nourish'
 
 Meow = 'meow'
 Yell = 'yell'
+BoneSnap = 'bone_snap'
+Bird = 'bird'
