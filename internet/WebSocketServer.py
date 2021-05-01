@@ -83,6 +83,11 @@ class GameMatch:
     async def do_mulligan(self, player, mulligan):
         async with self.lock:
             self.game.do_mulligan(player, mulligan)
+
+            # Mute one of the mulligans, to avoid both shuffle being audible at once
+            if self.vs_ai:
+                self.game.model.sound_effect = None
+
             # Issue because ai acts after this, notify_state is 2 things
             await self.notify_state()
 
