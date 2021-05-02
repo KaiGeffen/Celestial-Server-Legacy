@@ -2055,6 +2055,21 @@ ecology = Ecology(name="Ecology", cost=7, points=0,
                   text="7:2.\nWhen played, gain 10 mana this round.")
                   # text="8:6, Tutor X, where X is the number of cards before this in the story. Then create a copy of the rightmost card in your hand and put it on top of your deck.")
 
+class Chimney(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        if game.hand[player^1]:
+            card = game.hand[player^1].pop(0)
+            game.deck[player^1].append(card)
+
+            recap += f'\nTop'
+
+        return recap
+
+
+chimney = Chimney(name="Chimney", cost=5, points=2, text="5:2, your opponent puts the leftmost card in their hand on top of their deck.")
+
 
 
 """Lists"""
@@ -2066,7 +2081,7 @@ full_catalog = [
     swamp, snake_egg, ouroboros, snake_eye, serpent, snake_spiral, salamander, temptation, frog_prince, wyvern, cobra,
     stars, cosmos, roots, sprout, fruiting, pine, bulb, lotus, leaf_swirl, pollen, oak,
     bone_knife, mute, cultist, imprison, gift, stalker, carnivore, kenku, nightmare,
-    flying_fish, star_fish, perch, angler, piranha, school_of_fish, ecology, disintegrate,
+    flying_fish, star_fish, perch, angler, piranha, chimney, ecology, disintegrate,
     horus, fishing_boat, bandit, night_vision, cuauhtli, boar,
     cog, drone, gears, factory, anvil, cogsplosion, ai, sine, foundry,
     crossed_bones, dig, gnaw, mine, dinosaur_bones, wolf, stone_golem, boar, atlas, uluru,
