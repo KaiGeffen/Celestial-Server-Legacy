@@ -52,9 +52,13 @@ class ServerController:
                 self.model.passes = 0
 
                 self.do_takedown()
-                self.do_upkeep()
 
-            self.model.version_no += 1
+                # Model must be incremented here, so that all sounds/animations from the upkeep are sent to user
+                self.model.version_incr()
+
+                self.do_upkeep()
+            else:
+                self.model.version_incr()
 
             return True
         else:
@@ -62,7 +66,8 @@ class ServerController:
                 self.model.passes = 0
                 self.model.switch_priority()
 
-                self.model.version_no += 1
+                self.model.version_incr()
+
                 return True
             else:
                 return False
@@ -102,7 +107,7 @@ class ServerController:
 
         self.model.mulligans_complete[player] = True
         # TODO Lock are necessary to do this right, since everywhere else only 1 player has control at a time, but not here
-        self.model.version_no += 1
+        self.model.version_incr()
         self.model.sound_effect = SoundEffect.Shuffle
 
     """PHASES"""

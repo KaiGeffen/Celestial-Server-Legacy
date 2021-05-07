@@ -3,6 +3,7 @@ import random
 # from logic.ClientModel import ClientModel
 import CardCodec
 import SoundEffect
+import Animation
 from logic.Catalog import hidden_card
 from logic.Effects import Quality
 from logic.Story import Story
@@ -23,6 +24,15 @@ PASS = 10
 class ServerModel:
     def __init__(self, deck1, deck2, shuffle=True):
         super().__init__()
+
+        # The number of times an action has occurred, used for syncing with clients
+        self.version_no = 0
+
+        # The sound effect for client's to play, based on the last action taken
+        self.sound_effect = None
+
+        # The animations that should be played for each player
+        self.animations = [[], []]
 
         self.hand = [[], []]
         self.deck = [deck1, deck2]
@@ -56,11 +66,9 @@ class ServerModel:
         # Whether each player has completed the mulligan phase at the start of the game
         self.mulligans_complete = [False, False]
 
-        # The number of times an action has occured, used for syncing with clients
-        self.version_no = 0
-
-        # The sound effect for client's to play, based on the last action taken
-        self.sound_effect = None
+    def version_incr(self):
+        self.version_no += 1
+        self.animations = [[], []]
 
     """GENERIC ACTIONS"""
     # Player draws X cards from their deck
@@ -83,7 +91,9 @@ class ServerModel:
 
             amt -= 1
 
+            # TODO Remove sfx
             self.sound_effect = SoundEffect.Draw
+            self.animations[player].append(Animation.Draw)
 
         return card
 
@@ -95,8 +105,8 @@ class ServerModel:
 
             amt -= 1
 
-        if card is not None:
             self.sound_effect = SoundEffect.Discard
+            self.animations[player].append(Animation.Discard)
 
         return card
 
@@ -135,6 +145,7 @@ class ServerModel:
                     self.deck[player].remove(card)
 
                     self.sound_effect = SoundEffect.Draw
+                    self.animations[player].append(Animation.TutorDeck)
                     return card
 
             for card in self.pile[player][::-1]:
@@ -145,6 +156,7 @@ class ServerModel:
                     self.pile[player].remove(card)
 
                     self.sound_effect = SoundEffect.Draw
+                    self.animations[player].append(Animation.TutorDiscard)
                     return card
 
         return None
@@ -155,6 +167,7 @@ class ServerModel:
             self.hand[player].append(card)
 
             self.sound_effect = SoundEffect.Create
+            self.animations[player].append(Animation.Create)
 
             return card
 
@@ -190,6 +203,9 @@ class ServerModel:
         if len(self.deck[player]) > 0:
             card = self.deck[player].pop()
             self.pile[player].append(card)
+
+            self.animations[player].append(Animation.Mill)
+
             return card
 
         return None
@@ -207,6 +223,9 @@ class ServerModel:
         self.deck[player] = self.pile[player] + self.deck[player]
         random.shuffle(self.deck[player])
         self.pile[player] = []
+
+        if self.deck[player]:
+            self.animations[player].append(Animation.Shuffle)
 
     # Create the given card in the player's hand, if possible
     def create_card(self, player, card):
@@ -262,7 +281,8 @@ class ServerModel:
             'vision': self.vision[player],
             'winner': None if self.get_winner() is None else self.get_winner() ^ player,
             'score': self.score[::slice_step],
-            'sound_effect': self.sound_effect
+            'sound_effect': self.sound_effect,
+            'animations': self.animations[::slice_step]
         }
 
     # Get a view of the story that the given player can see
