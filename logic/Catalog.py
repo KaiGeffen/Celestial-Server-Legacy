@@ -1,6 +1,7 @@
 from logic.Card import *
 from logic.Effects import Status, Quality
 from logic.Story import Source, Act
+import Animation
 
 # TODO make a separate file for tokens
 """Tokens"""
@@ -280,6 +281,7 @@ class RaiseDead(Card):
             game.deck[player].append(card)
 
             recap += f'\nRaise {card.name}'
+            game.animations[player].append(Animation.Top)
 
         return recap
 raise_dead = RaiseDead(name="Raise Dead", cost=2, points=2, text="2:2 put the top card of your pile on top of deck")
@@ -310,6 +312,8 @@ class Sarcophagus(Card):
             bonus += highest_cost
 
             game.sound_effect = SoundEffect.Sarcophagus
+            game.animations[player].append(Animation.Top)
+
 
             return super().play(player, game, index, bonus) + f"\nTop: {card.name}"
         else:
