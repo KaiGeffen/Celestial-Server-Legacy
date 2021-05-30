@@ -121,6 +121,27 @@ class GameMatch:
                     self.game = ServerController(self.stored_deck, deck)
                 self.game.start()
 
+                # Print out what's happening
+                def deck_to_string(d):
+                    s = ''
+                    for card in d:
+                        s += card.name + ', '
+                    return s
+                if player == 0:
+                    d1 = deck_to_string(deck)
+                    d2 = deck_to_string(self.stored_deck)
+                else:
+                    d1 = deck_to_string(self.stored_deck)
+                    d2 = deck_to_string(deck)
+
+                s = "Game started between ips:"
+                if self.ws1 is not None:
+                    s += f" {self.ws1.remote_address} "
+                if self.ws2 is not None:
+                    s += f" {self.ws2.remote_address} "
+                s += f"\nDecks:\n{d1}\n{d2}\n"
+                print(s)
+
     # Opponent plays cards until they don't have priority
     async def opponent_acts(self):
         async with self.lock:
@@ -188,13 +209,12 @@ async def serveMain(ws, path):
     # Listen to the ws and respond accordingly
     try:
         async for message in ws:
-            print(message)
             data = json.loads(message)
-            print(data)
+            print(f"{ws.remote_address}: {data}")
 
             if data["type"] == "init":
                 deck = CardCodec.decode_deck(data["value"])
-                print(deck)
+                # print(deck)
 
                 await match.add_deck(player, deck)
 
