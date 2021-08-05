@@ -237,8 +237,11 @@ class ServerController:
 
         cards_playable = list(map(player_can_play,
                                   list(range(len(self.model.hand[player])))))
+        costs = []
+        for card in self.model.hand[player]:
+            costs.append(card.get_cost(player, self.model))
 
-        return self.model.get_client_model(player, cards_playable)
+        return self.model.get_client_model(player, cards_playable, costs=costs)
 
     """SUB-PHASES"""
     def do_upkeep_statuses(self, player):

@@ -249,7 +249,7 @@ class ServerModel:
     # Get a model for the given player (So they see themselves as Player 1) also, sort the deck to hide ordering
     # If this is a recap state, story is visible and this state's recap is shallow
     # (Doesn't remember recap states recursively)
-    def get_client_model(self, player, cards_playable=[False]*6, is_recap=False):
+    def get_client_model(self, player, cards_playable=[False]*6, costs=[None]*6, is_recap=False):
         # How the deck is sorted (Cost, with same cards grouped) - used to sort player 1's deck below
         def deck_sort(card):
             rand_from_name = int.from_bytes(card.name.encode(), 'little') % 1000 / 1000
@@ -282,7 +282,8 @@ class ServerModel:
             'winner': None if self.get_winner() is None else self.get_winner() ^ player,
             'score': self.score[::slice_step],
             'sound_effect': self.sound_effect,
-            'animations': self.animations[::slice_step]
+            'animations': self.animations[::slice_step],
+            'costs': costs
         }
 
     # Get a view of the story that the given player can see
