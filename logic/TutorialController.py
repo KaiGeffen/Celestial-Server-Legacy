@@ -8,8 +8,8 @@ class TutorialController(ServerController):
         # NOTE The last cards are the top of the deck, which isn't shuffled for tutorial
         player_deck = [dash, dove, gift, dove, gift, dash, dove, dash,
                     dove, dove, dash, dove, dash, dove, dove]
-        ai_deck = [drown, gift, drown, drown, gift, drown, drown, drown,
-                   gift, drown, drown, drown, drown, drown, drown]
+        ai_deck = [dove, gift, dove, dove, gift, dove, dove, dove,
+                   gift, dove, dove, dove, dove, dove, dove]
         self.model = ServerModel(player_deck, ai_deck, shuffle=False)
 
     # Ensure that player has priority
