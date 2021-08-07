@@ -3,7 +3,7 @@ import SoundEffect
 
 
 class Card:
-    def __init__(self, name, cost=0, points=0, qualities=[], text='', spring=False, pile_highlight=False, dynamic_text=''):
+    def __init__(self, name, cost=0, points=0, qualities=[], text='', spring=False, pile_highlight=False, dynamic_text='', id=-1):
         self.name = name
         self.cost = cost
         self.points = points
@@ -12,6 +12,7 @@ class Card:
         self.spring = spring
         self.pile_highlight = pile_highlight
         self.dynamic_text = dynamic_text
+        self.id = id
 
     # Who is playing, the game model, index of this card in story, auras this round
     # Returns a text recap of playing this card, affects the score as it goes

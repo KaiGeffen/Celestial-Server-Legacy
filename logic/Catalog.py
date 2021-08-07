@@ -603,6 +603,12 @@ full_catalog = [
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
 
+# Set the id of each card, temporary solution TODO When making new cards set the ids
+i = 0
+for card in all_cards:
+    card.id = i
+    i += 1
+
 import random
 # Get a random deck for the computer opponent
 def get_computer_deck():
