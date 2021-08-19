@@ -105,7 +105,7 @@ class ServerModel:
             amt -= 1
 
             self.sound_effect = SoundEffect.Discard
-            self.animations[player].append(('Deck', 'Discard', CardCodec.encode_card(card)))
+            self.animations[player].append(('Hand', 'Discard', CardCodec.encode_card(card)))
 
         return card
 
