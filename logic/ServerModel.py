@@ -93,8 +93,7 @@ class ServerModel:
 
             # TODO Remove sfx
             self.sound_effect = SoundEffect.Draw
-            self.animations[player].append(Animation.Draw)
-
+            self.animations[player].append(('Deck', 'Hand', len(self.hand[player]) - 1))
         return card
 
     def discard(self, player, amt=1, index=0):
@@ -106,7 +105,7 @@ class ServerModel:
             amt -= 1
 
             self.sound_effect = SoundEffect.Discard
-            self.animations[player].append(Animation.Discard)
+            self.animations[player].append(('Deck', 'Discard', CardCodec.encode_card(card)))
 
         return card
 
@@ -145,7 +144,7 @@ class ServerModel:
                     self.deck[player].remove(card)
 
                     self.sound_effect = SoundEffect.Draw
-                    self.animations[player].append(Animation.TutorDeck)
+                    self.animations[player].append(('Deck', 'Hand', len(self.hand[player]) - 1))
                     return card
 
             for card in self.pile[player][::-1]:
@@ -156,7 +155,7 @@ class ServerModel:
                     self.pile[player].remove(card)
 
                     self.sound_effect = SoundEffect.Draw
-                    self.animations[player].append(Animation.TutorDiscard)
+                    self.animations[player].append(('Discard', 'Hand', len(self.hand[player]) - 1))
                     return card
 
         return None
@@ -167,7 +166,7 @@ class ServerModel:
             self.hand[player].append(card)
 
             self.sound_effect = SoundEffect.Create
-            self.animations[player].append(Animation.Create)
+            self.animations[player].append(('Create', 'Hand', len(self.hand[player]) - 1))
 
             return card
 
@@ -204,7 +203,7 @@ class ServerModel:
             card = self.deck[player].pop()
             self.pile[player].append(card)
 
-            self.animations[player].append(Animation.Mill)
+            self.animations[player].append(('Deck', 'Discard', CardCodec.encode_card(card)))
 
             return card
 
@@ -225,7 +224,7 @@ class ServerModel:
         self.pile[player] = []
 
         if self.deck[player]:
-            self.animations[player].append(Animation.Shuffle)
+            self.animations[player].append(('Shuffle', 'Deck', '-1'))
 
     # Create the given card in the player's hand, if possible
     def create_card(self, player, card):
