@@ -10,13 +10,13 @@ class Camera(Card):
     def on_upkeep(self, player, game, index):
         game.vision[player ^ 1] += 4
 camera = Camera(name="Camera", cost=2, qualities=[Quality.FLEETING],
-                text="2:0, fleeting, at the start of each round, give your opponent vision 4")
+                text="2:0, Fleeting, at the start of each round, give your opponent vision 4")
 class BrokenBone(Card):
     def play(self, player, game, index, bonus):
         game.sound_effect = SoundEffect.BoneSnap
         return super().play(player, game, index, bonus)
-broken_bone = BrokenBone(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], text="1:0, fleeting")
-robot = Card(name='Robot', qualities=[Quality.FLEETING], text="0:X, fleeting")
+broken_bone = BrokenBone(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], text="1:0, Fleeting")
+robot = Card(name='Robot', qualities=[Quality.FLEETING], text="0:X, Fleeting")
 class WantedPoster(Card):
     def play(self, player, game, index, bonus):
         bonus += 2 * game.pile[player ^ 1].count(bandit)

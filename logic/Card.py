@@ -285,7 +285,7 @@ class Card:
         for card in game.hand[player]:
             if card.name == 'Robot':
                 card.points += amt
-                card.dynamic_text = f'0:{card.points}, fleeting'
+                card.dynamic_text = f'0:{card.points}, Fleeting'
 
                 game.sound_effect = SoundEffect.Build
                 return f'\nBuild +{amt}'
