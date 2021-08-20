@@ -1,3 +1,4 @@
+import CardCodec
 from logic.Effects import Status, Quality
 import SoundEffect
 
@@ -252,6 +253,7 @@ class Card:
 
                 card = game.pile[player].pop()
                 recap += f'\n{card.name}'
+                game.animations[player].append(('Discard', 'Gone', CardCodec.encode_card(card)))
 
         if any_seen:
             return recap

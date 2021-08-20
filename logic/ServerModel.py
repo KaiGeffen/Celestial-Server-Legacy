@@ -166,7 +166,7 @@ class ServerModel:
             self.hand[player].append(card)
 
             self.sound_effect = SoundEffect.Create
-            self.animations[player].append(('Create', 'Hand', len(self.hand[player]) - 1))
+            self.animations[player].append(('Gone', 'Hand', len(self.hand[player]) - 1))
 
             return card
 
@@ -174,15 +174,16 @@ class ServerModel:
 
     # Create a copy of the given card in player's pile
     def create_in_pile(self, player, card):
+        self.animations[player].append(('Gone', 'Discard', CardCodec.encode_card(card)))
         self.pile[player].append(card)
 
     # Player cycles the given card, won't draw the same card, assumes card is in player's hand
-    def cycle(self, player, card):
-        self.hand[player].remove(card)
-        drawn_card = self.draw(player)
-        self.pile[player].append(card)
-
-        return drawn_card
+    # def cycle(self, player, card):
+    #     self.hand[player].remove(card)
+    #     drawn_card = self.draw(player)
+    #     self.pile[player].append(card)
+    #
+    #     return drawn_card
 
     # Remove from the game the card in your hand with the lowest cost, leftmost for tiebreaker
     def oust(self, player):
@@ -191,6 +192,9 @@ class ServerModel:
             for i in range(len(self.hand[player])):
                 if self.hand[player][i].cost is cost:
                     card = self.hand[player][i]
+
+                    self.animations[player].append(('Hand', 'Gone', CardCodec.encode_card(card)))
+
                     del self.hand[player][i]
                     return card
             cost += 1
@@ -210,9 +214,9 @@ class ServerModel:
         return None
 
     # Counter the next card on the stack for which function returns true
-    def counter(self, function):
-        card = self.story.counter(function)
-        return card
+    # def counter(self, function):
+    #     card = self.story.counter(function)
+    #     return card
 
     # Shuffle the player's pile into their deck, optionally save the shuffled cards if they are known info
     def shuffle(self, player, remember=True):
