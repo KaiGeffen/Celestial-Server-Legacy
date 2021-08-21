@@ -310,7 +310,7 @@ class Card:
 
 class FireCard(Card):
     def play(self, player, game, index, bonus):
-        game.sound_effect = SoundEffect.Fire
+        # game.sound_effect = SoundEffect.Fire
         bonus = bonus - index
         return super().play(player, game, index, bonus)
 

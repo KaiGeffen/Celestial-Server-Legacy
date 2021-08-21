@@ -92,7 +92,7 @@ class ServerModel:
             amt -= 1
 
             # TODO Remove sfx
-            self.sound_effect = SoundEffect.Draw
+            # self.sound_effect = SoundEffect.Draw
             self.animations[player].append(('Deck', 'Hand', len(self.hand[player]) - 1))
         return card
 
@@ -104,7 +104,7 @@ class ServerModel:
 
             amt -= 1
 
-            self.sound_effect = SoundEffect.Discard
+            # self.sound_effect = SoundEffect.Discard
             self.animations[player].append(('Hand', 'Discard', CardCodec.encode_card(card)))
 
         return card
@@ -143,7 +143,7 @@ class ServerModel:
                     self.hand[player].append(card)
                     self.deck[player].remove(card)
 
-                    self.sound_effect = SoundEffect.Draw
+                    # self.sound_effect = SoundEffect.Draw
                     self.animations[player].append(('Deck', 'Hand', len(self.hand[player]) - 1))
                     return card
 
@@ -154,7 +154,7 @@ class ServerModel:
                     self.hand[player].append(card)
                     self.pile[player].remove(card)
 
-                    self.sound_effect = SoundEffect.Draw
+                    # self.sound_effect = SoundEffect.Draw
                     self.animations[player].append(('Discard', 'Hand', len(self.hand[player]) - 1))
                     return card
 
