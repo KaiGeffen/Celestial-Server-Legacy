@@ -582,6 +582,8 @@ class Chimney(Card):
             card = game.hand[player^1].pop(0)
             game.deck[player^1].append(card)
 
+            game.animations[player^1].append(('Hand', 'Deck', CardCodec.encode_card(card)))
+
             recap += f'\nTop'
 
         return recap
