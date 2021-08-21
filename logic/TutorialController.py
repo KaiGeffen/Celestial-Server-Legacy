@@ -6,7 +6,7 @@ from logic.Catalog import *
 class TutorialController(ServerController):
     def __init__(self):
         # NOTE The last cards are the top of the deck, which isn't shuffled for tutorial
-        player_deck = [gift, dove, dash, dove, gift, dove, dove, dash,
+        player_deck = [gift, gift, dove, dash, gift, dove, dove, dash,
                     dove, dove, dash, dove, dash, dove, dove]
         ai_deck = [dove, gift, dove, dove, gift, dove, dove, dove,
                    gift, dove, dove, dove, dove, dove, dove]
