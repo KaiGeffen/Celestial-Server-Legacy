@@ -159,7 +159,7 @@ class AI(Card):
                 amt += card.points
 
         return max(self.cost - amt, 0)
-ai = AI(name="AI", cost=8, points=4, text="8:4, draw 1. Costs X less where X is total robot points in hand")
+ai = AI(name="AI", cost=8, points=5, text="8:5, draw 1. Costs X less where X is total robot points in hand")
 class Sine(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.starve(4, game, player)
@@ -615,29 +615,97 @@ for card in all_cards:
 import random
 # Get a random deck for the computer opponent
 def get_computer_deck():
+    # Not too strong, aiming for C tier core set decks
+    # 2 each of anubis, aggro, uprising, oak, stalker
+
     # New deck using web-app cards:
     possible_decks = [
         [
+            # Standard anubis
+            crossed_bones, crossed_bones, crossed_bones, drown, drown,
+            swift, swift, dash,
+            gift, fruiting,
+            dinosaur_bones, dinosaur_bones,
+            tumulus, tumulus,
+            anubis,
+        ], [
+            # All in anubis
+            stars, stars,
+            crossed_bones, crossed_bones, drown, drown, drown,
+            dinosaur_bones, dinosaur_bones, dinosaur_bones, dinosaur_bones,
+            tumulus,
+            sarcophagus,
+            anubis, anubis,
+        ], [
+            # Aggro Anubis
+            stars,
             crossed_bones, crossed_bones, crossed_bones, crossed_bones, crossed_bones,
-            swift, swift, swift,
+            dash, dash, swift, swift,
+            gift, gift,
+            mine, mine,
+            anubis
+        ], [
+            # Standard oak
+            stars, stars, stars,
+            dove, dove, dove,
+            cosmos, swift,
+            gift, gift, fruiting, fruiting,
+            dinosaur_bones,
+            anubis,
+            oak,
+        ], [
+            # Sarco oak
+            stars, stars, stars,
+            dove, drown, drown,
+            cosmos, gears,
+            gift, fruiting,
+            stalker, uprising, sarcophagus, sarcophagus,
+            oak,
+        ], [
+            # Uprising
+            cog, cog,
+            dove, dove, crossed_bones,
+            gears, gears, gears, swift, dash,
+            gift, gift, gift,
+            uprising, uprising,
+        ], [
+            # Uprising + Factory
+            cog, cog, cog,
+            dove, dove, dove, crossed_bones,
+            cosmos, swift, dash,
+            factory, gift, gift,
+            uprising, stalker,
+        ], [
+            # Aggro
+            stars,
+            dove, crossed_bones, crossed_bones, crossed_bones, crossed_bones,
+            gears, swift, swift, dash, dash,
+            gift, gift, gift,
+            mine,
+        ], [
+            # Bad stalker
+            stars, stars,
+            dove, dove, dove,
+            swift, swift,
+            fruiting, fruiting,
+            chimney, chimney, chimney,
+            stalker, stalker, sarcophagus,
+        ], [
+            # Stalker oak
+            stars, stars, stars,
+            dove, dove, dove,
+            cosmos,
+            fruiting, fruiting,
+            chimney, chimney, chimney,
+            stalker, stalker, sarcophagus,
+            oak
+        ], [
+            # Aggro to late hyperthin
+            dove, dove, dove, dove, dove, dove,
+            dash, dash,
             gift, gift, gift,
             dinosaur_bones, dinosaur_bones,
-            tumulus, tumulus
-        ], [
-            stars,
-            crossed_bones, crossed_bones, crossed_bones, crossed_bones,
-            swift, swift, swift,
-            gift, gift,
-            dinosaur_bones, dinosaur_bones, mine, mine,
-            oak
-        ], [
-            stars,
-            crossed_bones, crossed_bones, crossed_bones, drown, drown, drown,
-            swift, swift, fishing_boat,
-            gift, gift,
-            dinosaur_bones,
-            sarcophagus,
-            oak
+            oak, oak,
         ]
     ]
 

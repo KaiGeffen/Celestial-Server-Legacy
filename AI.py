@@ -15,16 +15,19 @@ def get_action(model) -> int:
     time.sleep(.9)
 
     # If we've played points this round and opponent hasn't, don't play more
-    we_played_points = False
     opponent_has_played = False
+    expected_points = 0
     for act in model.story.acts:
         if act.owner == 0:
-            if act.card.points > 0:
-                we_played_points = True
+            expected_points += act.card.points
         else:
             opponent_has_played = True
 
-    if we_played_points and not opponent_has_played:
+    if expected_points > 0 and not opponent_has_played:
+        return 10
+
+    # If we've played lots of points, stop
+    if expected_points > model.max_mana[0] and len(model.hand) <= 4:
         return 10
 
     # Don't consider any of the restricted cards, which is the first X cards
@@ -38,7 +41,17 @@ def get_action(model) -> int:
     for possible_turn in powerset(range(amt_restricted, len(model.hand))):
         total_cost = 0
         for card_num in possible_turn:
-            total_cost += model.hand[card_num].cost
+            card = model.hand[card_num]
+
+            cost = card.cost
+            if card.name == 'Stalker':
+                cost = model.opp_hand
+
+            total_cost += cost
+
+            # Some cards should only be played early
+            if (card.name == 'Dash' or card.name == 'Factory' or card.name == 'Cosmos') and len(model.story.acts) > 1:
+                total_cost -= 1000
 
         score = model.mana - total_cost
         # Prefer playing more cards where possible
@@ -55,8 +68,16 @@ def get_action(model) -> int:
         # Sort best_possible based on cost, to avoid swift, reset, and encourage playing finals last
         def get_cost(card):
             return model.hand[card].cost
+
+        def uprising_last(x):
+            card = model.hand[x]
+
+            if card.name == 'Uprising':
+                return 10
+            else:
+                return 1
         result = list(best_possible)
-        # result.sort(key=get_cost)
+        result.sort(key=uprising_last)
 
         # The first card of the best possible turn (In terms of mana wasted)
         return result[0]
