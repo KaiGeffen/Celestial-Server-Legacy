@@ -110,7 +110,8 @@ class Card:
 
     # Add X mana next turn
     def inspire(self, amt, game, player):
-        game.sound_effect = SoundEffect.Inspire
+        game.animations[player].append(('Status', 'Story', 0))
+
         return self.add_status(amt, game, player, Status.INSPIRE)
 
     # Lose X mana next turn
@@ -119,12 +120,13 @@ class Card:
 
     # Next card gives +X points
     def nourish(self, amt, game, player):
-        game.sound_effect = SoundEffect.Nourish
+        game.animations[player].append(('Status', 'Story', 2))
+
         return self.add_status(amt, game, player, Status.NOURISH)
 
     # Next card gives -X points
     def starve(self, amt, game, player):
-        return self.add_status(amt, game, player, Status.STARVE)
+        game.animations[player].append(('Status', 'Story', 3))
 
     # Your x leftmost cards you can't play next round
     def restrict(self, amt, game, player):
