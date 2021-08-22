@@ -111,14 +111,13 @@ class ServerController:
         print(self.model.animations)
 
         # Add the set aside cards to the deck
-        for card in set_aside_cards:
-            self.model.deck[player].append(card)
+        for i in range(len(set_aside_cards)):
+            self.model.deck[player].append(set_aside_cards[i])
+            # Animate the card moving from mulliganed back to deck
+            self.model.animations[player].append(('Mulligan', 'Deck', i))
 
         # Shuffle the deck, don't remember what was shuffled
         self.model.shuffle(player, remember=False)
-
-        # Delete the shuffle animation, because it is handled client-side
-        self.model.animations[player].pop()
 
         self.model.mulligans_complete[player] = True
 
