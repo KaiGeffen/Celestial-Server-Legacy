@@ -247,6 +247,7 @@ class ServerModel:
         slice_step = 1 if player == 0 else -1
         relative_recap = self.recap if player == 0 else self.recap.get_flipped()
 
+        print(self.hide_opp_mulligan_animations(self.animations[::slice_step]))
         return {
             'hand': CardCodec.encode_deck(self.hand[player]),
             'opp_hand': len(self.hand[player ^ 1]),
@@ -270,9 +271,21 @@ class ServerModel:
             'winner': None if self.get_winner() is None else self.get_winner() ^ player,
             'score': self.score[::slice_step],
             'sound_effect': self.sound_effect,
-            'animations': self.animations[::slice_step],
+            'animations': self.hide_opp_mulligan_animations(self.animations[::slice_step]),
             'costs': costs
         }
+
+
+    # Hide all information except the shuffle about the opponent's mulligan
+    def hide_opp_mulligan_animations(self, animations):
+        opp_animations = animations[1]
+
+        for anim in opp_animations:
+            print(anim[0])
+            if anim[0] == 'Mulligan':
+                just_shuffle = [('Shuffle', 'Deck', '-1')]
+                return [animations[0], just_shuffle]
+        return animations
 
     # Get a view of the story that the given player can see
     def get_relative_story(self, player, total_vision):
