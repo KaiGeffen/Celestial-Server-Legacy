@@ -127,6 +127,7 @@ class Card:
     # Next card gives -X points
     def starve(self, amt, game, player):
         game.animations[player].append(('Status', 'Story', 3))
+        return self.add_status(amt, game, player, Status.STARVE)
 
     # Your x leftmost cards you can't play next round
     def restrict(self, amt, game, player):
