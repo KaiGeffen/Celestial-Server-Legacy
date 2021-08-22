@@ -97,18 +97,30 @@ class ServerController:
 
     # The given player is redrawing the cards specified by mulligans
     def do_mulligan(self, player, mulligans):
-        # Draw as many cards as were mulliganed
-        self.model.draw(player, mulligans.count(True))
-
-        # Discard each card that player is mulliganing
-        for i in range(3)[::-1]:
-            if mulligans[i]:
-                self.model.shuffle_into_deck(player, index=i)
-
-        self.model.mulligans_complete[player] = True
         # TODO Lock are necessary to do this right, since everywhere else only 1 player has control at a time, but not here
         self.model.version_incr()
-        # self.model.sound_effect = SoundEffect.Shuffle
+
+        # Set aside each mulliganed card
+        set_aside_cards = []
+        for i in range(3)[::-1]:
+            if mulligans[i]:
+                set_aside_cards.append(self.model.hand[player].pop(i))
+
+        # Draw as many cards as were mulliganed
+        self.model.draw(player, mulligans.count(True))
+        print(self.model.animations)
+
+        # Add the set aside cards to the deck
+        for card in set_aside_cards:
+            self.model.deck[player].append(card)
+
+        # Shuffle the deck, don't remember what was shuffled
+        self.model.shuffle(player, remember=False)
+
+        # Delete the shuffle animation, because it is handled client-side
+        self.model.animations[player].pop()
+
+        self.model.mulligans_complete[player] = True
 
     """PHASES"""
     # Begin the game

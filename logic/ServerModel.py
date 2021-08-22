@@ -91,8 +91,6 @@ class ServerModel:
 
             amt -= 1
 
-            # TODO Remove sfx
-            # self.sound_effect = SoundEffect.Draw
             self.animations[player].append(('Deck', 'Hand', len(self.hand[player]) - 1))
         return card
 
@@ -116,19 +114,6 @@ class ServerModel:
             self.deck[player].insert(0, card)
 
             amt -= 1
-
-        return card
-
-    # Shuffle X cards from player's hand into their deck
-    def shuffle_into_deck(self, player, amt=1, index=0):
-        card = None
-        while amt > 0 and len(self.hand[player]) > index:
-            card = self.hand[player].pop(index)
-            self.deck[player].append(card)
-
-            amt -= 1
-
-        self.shuffle(player, remember=False)
 
         return card
 
