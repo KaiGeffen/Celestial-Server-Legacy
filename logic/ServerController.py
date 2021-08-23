@@ -108,7 +108,6 @@ class ServerController:
 
         # Draw as many cards as were mulliganed
         self.model.draw(player, mulligans.count(True))
-        print(self.model.animations)
 
         # Add the set aside cards to the deck
         for i in range(len(set_aside_cards)):

@@ -17,6 +17,10 @@ class TutorialController(ServerController):
         super().start()
         self.model.priority = 0
 
+    # Overwrite the mulligan in order to not shuffle the deck
+    def do_mulligan(self, player, mulligans):
+        self.model.mulligans_complete[player] = True
+
     # TODO Don't copy so much, call something
     # Perform the takedown phase
     def do_takedown(self):
