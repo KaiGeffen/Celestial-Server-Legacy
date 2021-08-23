@@ -210,7 +210,7 @@ async def serveMain(ws, path):
     try:
         async for message in ws:
             data = json.loads(message)
-            print(f"{ws.remote_address}: {data}")
+            # print(f"{ws.remote_address}: {data}")
 
             if data["type"] == "init":
                 deck = CardCodec.decode_deck(data["value"])
