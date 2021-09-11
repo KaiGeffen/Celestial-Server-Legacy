@@ -17,15 +17,12 @@ DELIM_FULL_STATE = 'ª'
 
 # Encode / Decode methods for sending the decklist to server
 def encode_card(card):
-    card_id = 0
     for catalog_entry in all_cards:
         if card.name == catalog_entry.name:
             if card.dynamic_text:
-                return str(card_id) + DELIM_DYN_TEXT + card.dynamic_text
+                return str(card.id) + DELIM_DYN_TEXT + card.dynamic_text
             else:
-                return str(card_id)
-        else:
-            card_id += 1
+                return str(card.id)
     print(f"Encoding error for card {card}")
     raise Exception('Card encoding broken')
 
@@ -38,7 +35,12 @@ def decode_card(s):
     card_id = int(sections[0])
     dynamic_text = sections[1] if len(sections) > 1 else None
 
-    card = all_cards.__getitem__(card_id)
+    card = None
+    for c in all_cards:
+        if card_id == c.id:
+            card = c
+            break
+
     if dynamic_text:
         card = copy.deepcopy(card)
         card.text = dynamic_text
