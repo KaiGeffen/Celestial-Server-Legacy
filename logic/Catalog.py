@@ -198,6 +198,15 @@ class Oak(Card):
         return super().play(player, game, index, bonus) + self.gentle(game, player)
 oak = Oak(name="Oak", cost=8, points=8,
           text="8:8, gentle (If you win this round, convert to nourish any points not needed to win)", id=23)
+class Bounty(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        for player in (0, 1):
+            recap += self.nourish(3, game, player)
+
+        return recap
+bounty = Bounty(name="Bounty", cost=3, points=3, text="3:3, both players Nourish 3", id=48)
 
 """Earth"""
 class CrossedBones(Card):
@@ -486,11 +495,8 @@ class Uprising(Card):
         return super().play(player, game, index, bonus + index)
 uprising = Uprising(name="Uprising", cost=6, points=3, text="6:3, worth 1 more for each card before this in the story", id=18)
 class Juggle(Card):
-    def on_play(self, player, game):
-        amt = min(3, len(game.hand[player]))
-
-        self.bottom(amt, game, player)
-        self.draw(amt, game, player)
+    def pile_upkeep(self, player, game, index):
+        game.vision[player] += 1
 juggle = Juggle(name="Juggle", cost=1, points=1,
                 text="1:1. When played, put up to 3 cards from your hand on the bottom of your deck, then draw that many", id=30)
 class Paranoia(Card):
@@ -601,7 +607,9 @@ full_catalog = [
 
     bee, nectar, bandit, spy, night_vision, disintegrate, juggle, sine,
     fishing_boat, raise_dead, bastet, imprison, crypt, stable, boar, paranoia,
-    pelican, beekeep, lotus, eagle, ecology, horus, icarus, enrage
+    pelican, beekeep, lotus, eagle, ecology, horus, icarus, enrage,
+
+    bounty
     ]
 
 non_collectibles = [hidden_card] + tokens
