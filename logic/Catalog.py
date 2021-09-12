@@ -156,6 +156,14 @@ class Gift(Card):
 
         return recap
 gift = Gift(name="Gift", cost=3, points=3, text="3:3, both players draw 1", id=12)
+class Symbiosis(Card):
+    def play(self, player, game, index, bonus):
+        nourished = Status.NOURISH in game.status[player]
+        recap = super().play(player, game, index, bonus)
+        if nourished:
+            recap += super().discard(1, game, player^1)
+        return recap
+symbiosis = Symbiosis(name="Symbiosis", cost=6, points=6, id=57)
 
 """Machines"""
 class Cog(Card):
@@ -684,7 +692,8 @@ full_catalog = [
     fishing_boat, raise_dead, bastet, imprison, crypt, stable, boar, paranoia,
     pelican, beekeep, lotus, eagle, ecology, horus, icarus, enrage,
 
-    bounty, desert, scarab, phoenix, vulture, generator, pocket_watch, become_machine, sun
+    bounty, desert, scarab, phoenix, vulture, generator, pocket_watch, become_machine, sun,
+    symbiosis
     ]
 
 non_collectibles = [hidden_card] + tokens
