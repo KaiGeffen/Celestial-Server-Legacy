@@ -189,12 +189,33 @@ class Sine(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.starve(4, game, player)
 sine = Sine(name="Sine", cost=2, points=4, text="2:4, starve 4 (Your next card gives -4 points)", id=31)
+
 class Generator(Card):
     def pile_upkeep(self, player, game, index):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
             super().build(1, game, player)
 generator = Generator(name="Generator", cost=4, points=4, id=53)
+class BecomeMachine(Card):
+    def play(self, player, game, index, bonus):
+        result = super().play(player, game, index, bonus)
+
+        index = 0
+        for act in game.story.acts:
+            if act.owner == player:
+                amt = act.card.cost
+                card = Card(name='Robot', points=amt, qualities=[Quality.FLEETING], dynamic_text=f'0:{amt}, Fleeting',
+                            id=1003)
+                # The full act with which to replace player's final act
+                replacement_act = Act(card=card,
+                                      owner=player,
+                                      source=Source.PILE)
+
+                game.story.replace_act(index, replacement_act)
+
+            index += 1
+        return result
+become_machine = BecomeMachine(name="Become Machine", cost=1, points=1, qualities=[Quality.FLEETING], id=55)
 
 """Nature"""
 class Stars(Card):
@@ -645,6 +666,12 @@ class PocketWatch(Card):
         recap += self.draw(2, game, player)
         return recap
 pocket_watch = PocketWatch(name="Pocket Watch", cost=4, points=1, id=54)
+class Sun(Card):
+    def pile_upkeep(self, player, game, index):
+        # Only do it if this is the top card of the discard pile
+        if index == len(game.pile[player]) - 1:
+            super().inspire(2, game, player)
+sun = Sun(name="Sun", cost=8, points=8, id=56)
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
@@ -657,7 +684,7 @@ full_catalog = [
     fishing_boat, raise_dead, bastet, imprison, crypt, stable, boar, paranoia,
     pelican, beekeep, lotus, eagle, ecology, horus, icarus, enrage,
 
-    bounty, desert, scarab, phoenix, vulture, generator, pocket_watch
+    bounty, desert, scarab, phoenix, vulture, generator, pocket_watch, become_machine, sun
     ]
 
 non_collectibles = [hidden_card] + tokens
