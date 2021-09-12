@@ -635,7 +635,16 @@ class Chimney(Card):
         return recap
 chimney = Chimney(name="Chimney", cost=5, points=2, text="5:2, your opponent puts the leftmost card in their hand on top of their deck.", id=16)
 
+class PocketWatch(Card):
+    def get_cost(self, player, game):
+        cost = max(0, self.cost - game.amt_passes[player])
+        return cost
 
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+        recap += self.draw(2, game, player)
+        return recap
+pocket_watch = PocketWatch(name="Pocket Watch", cost=4, points=1, id=54)
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
@@ -648,7 +657,7 @@ full_catalog = [
     fishing_boat, raise_dead, bastet, imprison, crypt, stable, boar, paranoia,
     pelican, beekeep, lotus, eagle, ecology, horus, icarus, enrage,
 
-    bounty, desert, scarab, phoenix, vulture, generator
+    bounty, desert, scarab, phoenix, vulture, generator, pocket_watch
     ]
 
 non_collectibles = [hidden_card] + tokens

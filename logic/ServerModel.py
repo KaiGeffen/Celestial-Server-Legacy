@@ -66,6 +66,9 @@ class ServerModel:
         # Whether each player has completed the mulligan phase at the start of the game
         self.mulligans_complete = [False, False]
 
+        # The number of times each player has passed in this round
+        self.amt_passes = [0, 0]
+
     def version_incr(self):
         self.version_no += 1
         self.animations = [[], []]

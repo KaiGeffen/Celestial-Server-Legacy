@@ -42,6 +42,7 @@ class ServerController:
 
         if choice == PASS:
             self.model.passes += 1
+            self.model.amt_passes[player] += 1
 
             self.model.switch_priority()
 
@@ -50,6 +51,7 @@ class ServerController:
             # If both player's have passed in sequence, end turn and start another
             if self.model.passes == 2:
                 self.model.passes = 0
+                self.model.amt_passes = [0, 0]
 
                 self.do_takedown()
 
