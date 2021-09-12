@@ -44,6 +44,20 @@ class Enrage(Card):
         return recap
 enrage = Enrage(name="Enrage", cost=8, points=2,
                 text="8:2, give each card later in the story -X, where X is its cost.\nWhen played, give each card ealier in the story -X.", id=47)
+class Desert(Card):
+    def play(self, player, game, index, bonus):
+
+
+        if game.story.acts:
+            act = game.story.acts.pop()
+            super().create(act.card, game, act.owner)
+        else:
+            bonus += 3
+
+        recap = super().play(player, game, index, bonus)
+
+        return recap
+desert = Desert(name="Desert", cost=2, points=0, text="2:0, return the last in the story to its owner's hand", id=49)
 
 """BIRD"""
 class Dove(Card):
@@ -98,6 +112,16 @@ class Eagle(SightCard):
         return super().play(player, game, index, bonus) + self.nourish(2, game, player)
 eagle = Eagle(amt=4, name="Eagle", cost=6, points=6,
                     text="6:6, nourish 2. When played, gain sight 4 and transform each card in your hand into a Dove.", id=43)
+class Vulture(Card):
+    def pile_upkeep(self, player, game, index):
+        # Only do it if this is the top card of the discard pile
+        if index == len(game.pile[player]) - 1:
+            super().create(dove, game, player)
+vulture = Vulture(name="Vulture", cost=3, points=3, id=52)
+class Phoenix(Card):
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus) + self.create(dove, game, player)
+phoenix = Phoenix(name="Phoenix", cost=5, points=5, id=51)
 
 """Discard"""
 class BoneKnife(Card):
@@ -165,6 +189,12 @@ class Sine(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.starve(4, game, player)
 sine = Sine(name="Sine", cost=2, points=4, text="2:4, starve 4 (Your next card gives -4 points)", id=31)
+class Generator(Card):
+    def pile_upkeep(self, player, game, index):
+        # Only do it if this is the top card of the discard pile
+        if index == len(game.pile[player]) - 1:
+            super().build(1, game, player)
+generator = Generator(name="Generator", cost=4, points=4, id=53)
 
 """Nature"""
 class Stars(Card):
@@ -278,6 +308,12 @@ class FishingBoat(Card):
 fishing_boat = FishingBoat(name="Fishing Boat", cost=2, text="2:0, tutor a 1 3 times", id=32)
 
 """Death"""
+class Scarab(Card):
+    def pile_upkeep(self, player, game, index):
+        # Only do it if this is the top card of the discard pile
+        if index == len(game.pile[player]) - 1:
+            game.vision[player] += 1
+scarab = Scarab(name="Scarab", cost=0, points=0, id=50)
 class Drown(Card):
     def play(self, player, game, index, bonus):
         game.sound_effect = SoundEffect.Drown
@@ -495,8 +531,11 @@ class Uprising(Card):
         return super().play(player, game, index, bonus + index)
 uprising = Uprising(name="Uprising", cost=6, points=3, text="6:3, worth 1 more for each card before this in the story", id=18)
 class Juggle(Card):
-    def pile_upkeep(self, player, game, index):
-        game.vision[player] += 1
+    def on_play(self, player, game):
+        amt = min(3, len(game.hand[player]))
+
+        self.bottom(amt, game, player)
+        self.draw(amt, game, player)
 juggle = Juggle(name="Juggle", cost=1, points=1,
                 text="1:1. When played, put up to 3 cards from your hand on the bottom of your deck, then draw that many", id=30)
 class Paranoia(Card):
@@ -609,7 +648,7 @@ full_catalog = [
     fishing_boat, raise_dead, bastet, imprison, crypt, stable, boar, paranoia,
     pelican, beekeep, lotus, eagle, ecology, horus, icarus, enrage,
 
-    bounty
+    bounty, desert, scarab, phoenix, vulture, generator
     ]
 
 non_collectibles = [hidden_card] + tokens
