@@ -121,7 +121,7 @@ vulture = Vulture(name="Vulture", cost=3, points=3, id=52)
 class Phoenix(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.create(dove, game, player)
-phoenix = Phoenix(name="Phoenix", cost=5, points=5, id=51)
+phoenix = Phoenix(name="Phoenix", cost=5, points=5, qualities=[Quality.FLEETING], id=51)
 
 """Discard"""
 class BoneKnife(Card):
@@ -262,10 +262,10 @@ class Bounty(Card):
         recap = super().play(player, game, index, bonus)
 
         for player in (0, 1):
-            recap += self.nourish(3, game, player)
+            recap += self.nourish(2, game, player)
 
         return recap
-bounty = Bounty(name="Bounty", cost=3, points=3, text="3:3, both players Nourish 3", id=48)
+bounty = Bounty(name="Bounty", cost=3, points=3, text="3:3, both players Nourish 2", id=48)
 
 """Earth"""
 class CrossedBones(Card):
