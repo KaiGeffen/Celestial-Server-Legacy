@@ -224,6 +224,23 @@ class BecomeMachine(Card):
             index += 1
         return result
 become_machine = BecomeMachine(name="Become Machine", cost=1, points=1, qualities=[Quality.FLEETING], id=55)
+class Cogsplosion(Card):
+    def play(self, player, game, index, bonus):
+        index = -1
+        for card in game.hand[player]:
+            index += 1
+
+            if card.name == 'Robot':
+                bonus += card.points
+
+                return super().play(player, game, index, bonus) + self.discard(1, game, player, index=index)
+
+        return ''
+cogsplosion = Cogsplosion(name="Cogsplosion", cost=4, id=59)
+class Anvil(Card):
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus) + self.build(2, game, player)
+anvil = Anvil(name="Anvil", cost=4, points=3, id=60)
 
 """Nature"""
 class Stars(Card):
@@ -267,6 +284,33 @@ class Bounty(Card):
         return recap
 bounty = Bounty(name="Bounty", cost=3, points=3, text="3:3, both players Nourish 2", id=48)
 
+class Cornucopia(Card):
+    def get_cost(self, player, game):
+
+        seen_costs = []
+        for i in range(len(game.story.acts)):
+            act = game.story.acts[i]
+
+            # Skip cards that you can't see
+            if act.owner == player:
+                pass
+            # Can see it because have vision
+            elif i + 1 <= game.vision[player]:
+                pass
+            # Can see it because it's visible
+            elif Quality.VISIBLE in act.card.qualities:
+                pass
+            else:
+                continue
+
+            cost = act.card.cost
+            if cost not in seen_costs:
+                seen_costs.append(cost)
+
+        return max(0, self.cost - len(seen_costs))
+    def play(self, player, game, index, bonus):
+        return super().play(player, game, index, bonus) + self.nourish(5, game, player)
+cornucopia = Cornucopia(name="Cornucopia", cost=6, points=0, id=61)
 """Earth"""
 class CrossedBones(Card):
     def play(self, player, game, index, bonus):
@@ -337,12 +381,12 @@ class FishingBoat(Card):
 fishing_boat = FishingBoat(name="Fishing Boat", cost=2, text="2:0, tutor a 1 3 times", id=32)
 
 """Death"""
-class Scarab(Card):
+class Scarab(SightCard):
     def pile_upkeep(self, player, game, index):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
             game.vision[player] += 1
-scarab = Scarab(name="Scarab", cost=0, points=0, id=50)
+scarab = Scarab(amt=4, name="Scarab", cost=0, points=0, id=50)
 class Drown(Card):
     def play(self, player, game, index, bonus):
         game.sound_effect = SoundEffect.Drown
@@ -680,6 +724,33 @@ class Sun(Card):
         if index == len(game.pile[player]) - 1:
             super().add_mana(2, game, player)
 sun = Sun(name="Sun", cost=8, points=8, id=56)
+class Sickness(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+        recap += self.starve(4, game, player ^ 1)
+        recap += self.create(sickness, game, player ^ 1)
+        return recap
+sickness = Sickness(name="Sickness", cost=3, points=0, qualities=[Quality.FLEETING], id=58)
+class Axolotl(Card):
+    def pile_upkeep(self, player, game, index):
+        # Only do it if this is the top card of the discard pile
+        if index == len(game.pile[player]) - 1:
+            super().create(axolotl, game, player)
+axolotl = Axolotl(name="Axolotl", cost=1, points=1, id=63)
+
+class Paramountcy(Card):
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
+
+        # Up to the number of spaces left, pop from discard pile and add to story
+        space = 12 - (index + 1 + len(game.story.acts))
+        print(space)
+        for _ in range(min(space, 5)):
+            if game.pile[player]:
+                card = game.pile[player].pop()
+                game.story.add_act(card, player, Source.PILE)
+paramountcy = Paramountcy(name="Paramountcy", cost=9, points=0, id=62)
+
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
@@ -693,7 +764,9 @@ full_catalog = [
     pelican, beekeep, lotus, eagle, ecology, horus, icarus, enrage,
 
     bounty, desert, scarab, phoenix, vulture, generator, pocket_watch, become_machine, sun,
-    symbiosis
+    symbiosis,
+    sickness, cogsplosion, anvil,
+    paramountcy, axolotl, cornucopia
     ]
 
 non_collectibles = [hidden_card] + tokens
