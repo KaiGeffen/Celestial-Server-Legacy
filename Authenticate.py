@@ -13,6 +13,7 @@ CLIENT_ID = '574352055172-n1nqdc2nvu3172levk2kl5jf7pbkp4ig.apps.googleuserconten
 
 @route('/tokensignin', method = 'POST')
 def process(token):
+    print('Well Im in process')
     token = request.query['idtoken']
     return token + 'hewwo uwu'
     # Verify the given id, might be None
@@ -31,7 +32,7 @@ def get_id(token):
 
 
 def run_auth_server():
-    run(host=os.getenv('HOSTNAME'), port=PORT, debug=True)
+    run(host='0.0.0.0', port=PORT, debug=True)
 
 run_auth_server()
 print('Ran main')
