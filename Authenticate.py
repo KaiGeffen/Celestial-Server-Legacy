@@ -13,6 +13,7 @@ CLIENT_ID = '574352055172-n1nqdc2nvu3172levk2kl5jf7pbkp4ig.apps.googleuserconten
 
 @route('/tokensignin', method = 'POST')
 def process():
+    return request.query
     print(request.query)
     print('Well Im in process')
     token = request.body.read().decode().split('=', 1)[1]
@@ -40,8 +41,9 @@ def get_id(token):
 def run_auth_server():
     run(host='0.0.0.0', port=PORT, debug=True)
 
+print('Gonna run auth server...')
 run_auth_server()
-print('Ran main')
+
 
 id = '40e6215d-b5c6-4896-987c-f30f3678f608'
 # Interact with the psql
