@@ -13,7 +13,7 @@ CLIENT_ID = '574352055172-n1nqdc2nvu3172levk2kl5jf7pbkp4ig.apps.googleuserconten
 
 @route('/tokensignin', method = 'POST')
 def process():
-    return request.query
+    return 'me small'
     print(request.query)
     print('Well Im in process')
     token = request.body.read().decode().split('=', 1)[1]
