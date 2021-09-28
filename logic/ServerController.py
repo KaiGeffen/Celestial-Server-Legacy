@@ -10,8 +10,9 @@ from logic.Story import Source
 
 
 DRAW_PER_TURN = 2
-START_HAND = 3 - DRAW_PER_TURN
-HAND_CAP = 6
+START_HAND_REAL = 4
+START_HAND = START_HAND_REAL - DRAW_PER_TURN
+HAND_CAP = 7
 
 MANA_GAIN_PER_TURN = 1
 START_MANA = 1 - MANA_GAIN_PER_TURN
@@ -104,7 +105,7 @@ class ServerController:
 
         # Set aside each mulliganed card
         set_aside_cards = []
-        for i in range(3)[::-1]:
+        for i in range(START_HAND_REAL)[::-1]:
             if mulligans[i]:
                 set_aside_cards.append(self.model.hand[player].pop(i))
 

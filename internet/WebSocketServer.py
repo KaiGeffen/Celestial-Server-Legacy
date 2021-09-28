@@ -92,7 +92,7 @@ class GameMatch:
             await self.notify_state()
 
             if self.vs_ai:
-                self.game.do_mulligan(1, (False, False, False))
+                self.game.do_mulligan(1, (False, False, False, False))
 
     # Do the given action, if it is valid inform others of changed state, otherwise signal error to player
     async def do_action(self, player, action, version):

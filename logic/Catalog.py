@@ -134,7 +134,7 @@ class Stalker(Card):
         opp = (player + 1) % 2
 
         return len(game.hand[opp])
-stalker = Stalker(name="Stalker", cost=6, points=4, text="X:4, X is cards in opponent's hand", id=19)
+stalker = Stalker(name="Stalker", cost=7, points=4, id=19)
 class Imprison(Card):
     def play(self, player, game, index, bonus):
         opp = (player + 1) % 2
@@ -321,7 +321,7 @@ class CrossedBones(Card):
             recap += self.create_in_pile(broken_bone, game, player)
 
         return recap
-crossed_bones = CrossedBones(name="Crossed Bones", cost=1, points=2, qualities=[Quality.FLEETING],
+crossed_bones = CrossedBones(name="Crossed Bones", cost=1, points=1, qualities=[Quality.FLEETING],
                              text="1:2, becomes 2x 1:0 fleeting broken bones after resolving", id=3)
 class Mine(Card):
     def play(self, player, game, index, bonus):
@@ -340,8 +340,7 @@ class DinosaurBones(Card):
             recap += self.create_in_pile(broken_bone, game, player)
 
         return recap
-dinosaur_bones = DinosaurBones(name="Dinosaur Bones", cost=4, points=5, qualities=[Quality.FLEETING],
-                               text="4:5, becomes 3x 1:0 fleeting broken bones after resolving", id=14)
+dinosaur_bones = DinosaurBones(name="Dinosaur Bones", cost=4, points=4, qualities=[Quality.FLEETING], id=14)
 class Bastet(Card):
     def __init__(self, points):
         text = f"2:{points}, this card retains all changes to points as it resolves (For example, if this card was nourished by 3, it stays a 2:4 once it is in the discard pile)"
@@ -407,11 +406,11 @@ class RaiseDead(Card):
 raise_dead = RaiseDead(name="Raise Dead", cost=2, points=2, text="2:2 put the top card of your pile on top of deck", id=33)
 class Tumulus(Card):
     def play(self, player, game, index, bonus):
-        if len(game.pile[player]) >= 8:
+        if len(game.pile[player]) >= 10:
             bonus += 2
 
         return super().play(player, game, index, bonus)
-tumulus = Tumulus(name="Tumulus", cost=5, points=4, text="5:4, +2 if your pile has at least 8 cards in it", id=17)
+tumulus = Tumulus(name="Tumulus", cost=5, points=4, id=17)
 class Sarcophagus(Card):
     def play(self, player, game, index, bonus):
         recap = ''
@@ -442,11 +441,11 @@ sarcophagus = Sarcophagus(name="Sarcophagus", cost=6,
                           text="6:X, put the highest cost card from your pile on top of your deck, X is its cost", id=20)
 class Anubis(Card):
     def get_cost(self, player, game):
-        if len(game.pile[player]) >= 12:
+        if len(game.pile[player]) >= 15:
             return 0
         else:
             return self.cost
-anubis = Anubis(name="Anubis", cost=7, points=7, text="7:7, costs 0 if you have at least 12 cards in your pile", id=21)
+anubis = Anubis(name="Anubis", cost=7, points=7, id=21)
 class Crypt(Card):
     def play(self, player, game, index, bonus):
         result = super().play(player, game, index, bonus)
