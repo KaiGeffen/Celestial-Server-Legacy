@@ -1,3 +1,20 @@
 # cocos2d~=0.6.9
 # pyglet~=1.5.15
 websockets~=8.1
+
+# Modules for authentication
+bottle~=0.12
+google~=3.0.0
+google-auth~=2.1.0
+requests~=2.26
+psycopg2~=2.9.1
+soupsieve~=2.2.1
+beautifulsoup4~=4.10.0
+idna~=3.2
+rsa~=4.7.2
+charset-normalizer~=2.0.6
+pyasn1~=0.4.8
+pyasn1-modules~=0.2.8
+certifi~=2021.5.30
+urllib3~=1.26.7
+cachetools~=4.2.2
