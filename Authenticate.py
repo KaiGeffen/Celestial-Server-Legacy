@@ -31,7 +31,7 @@ def get_id(token):
 
 
 def run_auth_server():
-    run(host=os.getenv('HOSTNAME'), port=INTERNAL_PORT, debug=True)
+    run(host=os.getenv('HOSTNAME'), port=PORT, debug=True)
 
 run_auth_server()
 print('Ran main')
