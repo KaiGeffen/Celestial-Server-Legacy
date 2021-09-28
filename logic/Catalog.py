@@ -14,8 +14,8 @@ camera = Camera(name="Camera", cost=2, qualities=[Quality.FLEETING],
 class BrokenBone(Card):
     def play(self, player, game, index, bonus):
         game.sound_effect = SoundEffect.BoneSnap
-        return super().play(player, game, index, bonus)
-broken_bone = BrokenBone(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], text="1:0, Fleeting", id=1002)
+        return super().play(player, game, index, bonus) + self.draw(1, game, player)
+broken_bone = BrokenBone(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], id=1002)
 robot = Card(name='Robot', qualities=[Quality.FLEETING], text="0:X, Fleeting", id=1003)
 class WantedPoster(Card):
     def play(self, player, game, index, bonus):
