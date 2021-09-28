@@ -5,7 +5,8 @@ from bottle import run, post, request, response, get, route
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
-PORT = 6161
+from internet.Settings import *
+
 
 # The id for the google_api for oauth2
 CLIENT_ID = '574352055172-n1nqdc2nvu3172levk2kl5jf7pbkp4ig.apps.googleusercontent.com'
@@ -28,7 +29,7 @@ def get_id(token):
 
 
 def run_auth_server():
-    run(host='localhost', port=PORT, debug=False)
+    run(host=LOCAL, port=INTERAL_PORT, debug=False)
 
 run_auth_server()
 print('Ran main')
