@@ -252,7 +252,7 @@ cogsplosion = Cogsplosion(name="Cogsplosion", cost=4, id=59)
 class Anvil(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.build(2, game, player)
-anvil = Anvil(name="Anvil", cost=4, points=3, id=60)
+anvil = Anvil(name="Anvil", cost=3, points=2, id=60)
 
 """Nature"""
 class Stars(Card):

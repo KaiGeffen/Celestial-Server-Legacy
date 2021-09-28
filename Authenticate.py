@@ -22,6 +22,10 @@ def process():
     if userid is None:
         return 'That id is FAKE'
     return get_user_data(userid)
+@route('<foo>', method = 'POST')
+def process(foo):
+    print('I saw ' + foo)
+    return 'bar'
 
 def get_id(token):
     try:
