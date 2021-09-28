@@ -29,7 +29,7 @@ def get_id(token):
 
 
 def run_auth_server():
-    run(host=LOCAL, port=INTERNAL_PORT, debug=False)
+    run(host="127.0.0.1", port=INTERNAL_PORT, debug=False)
 
 run_auth_server()
 print('Ran main')
