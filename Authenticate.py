@@ -11,8 +11,10 @@ from internet.Settings import *
 # The id for the google_api for oauth2
 CLIENT_ID = '574352055172-n1nqdc2nvu3172levk2kl5jf7pbkp4ig.apps.googleusercontent.com'
 
-@route('/<token>', method = 'POST')
+@route('/tokensignin', method = 'POST')
 def process(token):
+    token = request.query['idtoken']
+    return token + 'hewwo uwu'
     # Verify the given id, might be None
     userid = get_id(token)
     if userid is None:
@@ -29,7 +31,7 @@ def get_id(token):
 
 
 def run_auth_server():
-    run(host="127.0.0.1", port=INTERNAL_PORT, debug=False)
+    run(host="127.0.0.1", port=INTERNAL_PORT, debug=True)
 
 run_auth_server()
 print('Ran main')
