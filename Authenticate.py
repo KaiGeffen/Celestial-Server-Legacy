@@ -12,7 +12,7 @@ from internet.Settings import *
 CLIENT_ID = '574352055172-n1nqdc2nvu3172levk2kl5jf7pbkp4ig.apps.googleusercontent.com'
 
 @route('/tokensignin', method = 'POST')
-def process(token):
+def process():
     print('Well Im in process')
     token = request.query['idtoken']
     return token + 'hewwo uwu'
