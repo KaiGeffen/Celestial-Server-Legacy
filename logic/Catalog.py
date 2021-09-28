@@ -123,6 +123,18 @@ class Phoenix(Card):
         return super().play(player, game, index, bonus) + self.create(dove, game, player)
 phoenix = Phoenix(name="Phoenix", cost=5, points=5, qualities=[Quality.FLEETING], id=51)
 
+class Heron(Card):
+    def play(self, player, game, index, bonus):
+        amt_fleeting = 0
+        for card in game.hand[player]:
+            if Quality.FLEETING in card.qualities:
+                amt_fleeting += 1
+
+        super().play(player, game, index, bonus)
+
+        self.inspire(amt_fleeting, game, player)
+heron = Heron(name="Heron", cost=5, points=4, qualities=[Quality.FLEETING], id=65)
+
 """Discard"""
 class BoneKnife(Card):
     def play(self, player, game, index, bonus):
@@ -321,8 +333,7 @@ class CrossedBones(Card):
             recap += self.create_in_pile(broken_bone, game, player)
 
         return recap
-crossed_bones = CrossedBones(name="Crossed Bones", cost=1, points=1, qualities=[Quality.FLEETING],
-                             text="1:2, becomes 2x 1:0 fleeting broken bones after resolving", id=3)
+crossed_bones = CrossedBones(name="Crossed Bones", cost=1, points=1, qualities=[Quality.FLEETING], id=3)
 class Mine(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -367,6 +378,19 @@ class NightVision(SightCard):
 
         return recap
 night_vision = NightVision(amt=3, name="Night Vision", cost=1, points=0, text="1:0, tutor 2. On play, sight 3", id=28)
+
+class FishBones(Card):
+    def play(self, player, game, index, bonus):
+        recap = super().play(player, game, index, bonus)
+
+        recap += '\nBury:'
+        for _ in range(3):
+            recap += self.create_in_pile(broken_bone, game, player)
+
+        recap += self.draw(2, game, player)
+
+        return recap
+fish_bones = FishBones(name="Fish Bones", cost=2, points=0, qualities=[Quality.FLEETING], id=64)
 
 """Ships"""
 class FishingBoat(Card):
@@ -765,7 +789,7 @@ full_catalog = [
     bounty, desert, scarab, phoenix, vulture, generator, pocket_watch, become_machine, sun,
     symbiosis,
     sickness, cogsplosion, anvil,
-    paramountcy, axolotl, cornucopia
+    paramountcy, axolotl, cornucopia, fish_bones, heron
     ]
 
 non_collectibles = [hidden_card] + tokens
