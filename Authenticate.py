@@ -14,7 +14,7 @@ CLIENT_ID = '574352055172-n1nqdc2nvu3172levk2kl5jf7pbkp4ig.apps.googleuserconten
 @route('/tokensignin', method = 'POST')
 def process():
     print('Well Im in process')
-    token = request.body.read().split('=', 1)[1]
+    token = request.body.read().decode().split('=', 1)[1]
     print(token)
     return token + 'hewwo uwu'
     # Verify the given id, might be None
