@@ -75,6 +75,7 @@ id = '40e6215d-b5c6-4896-987c-f30f3678f608'
 def get_user_data(id):
     try:
         # Connect to an existing database
+        print(os.environ['DB_PWD'][2])
         connection = psycopg2.connect(user="doadmin",
                                       password=os.environ["DB_PWD"],
                                       host="app-8058d91d-8288-43bb-a12e-e1eb61ce00e3-do-user-8861671-0.b.db.ondigitalocean.com",
