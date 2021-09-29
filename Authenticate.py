@@ -22,7 +22,9 @@ async def authenticate(ws):
 
         if data["type"] == "send_token":
             token = data['value']
-            user_data = get_id(token)
+            uuid = get_id(token)
+            user_data = get_user_data(uuid)
+
             message = json.dumps({"type": "send_user_data", "value": user_data})
             print(message)
             await asyncio.wait([ws.send(message)])
