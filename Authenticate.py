@@ -14,7 +14,7 @@ async def authenticate(ws):
     # Send a request for token
     message = json.dumps({"type": "request_token"})
     print(message)
-    await asyncio.wait(ws.send(message))
+    await asyncio.wait([ws.send(message)])
 
     # Listen to responses
     async for message in ws:
@@ -25,7 +25,7 @@ async def authenticate(ws):
             user_data = get_id(token)
             message = json.dumps({"type": "send_user_data", "value": user_data})
             print(message)
-            await asyncio.wait(ws.send(message))
+            await asyncio.wait([ws.send(message)])
 
 
 
