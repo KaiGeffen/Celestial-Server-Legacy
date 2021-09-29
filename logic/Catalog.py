@@ -14,7 +14,7 @@ camera = Camera(name="Camera", cost=2, qualities=[Quality.FLEETING],
 class BrokenBone(Card):
     def play(self, player, game, index, bonus):
         game.sound_effect = SoundEffect.BoneSnap
-        return super().play(player, game, index, bonus) + self.draw(1, game, player)
+        return super().play(player, game, index, bonus)# + self.draw(1, game, player)
 broken_bone = BrokenBone(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], id=1002)
 robot = Card(name='Robot', qualities=[Quality.FLEETING], text="0:X, Fleeting", id=1003)
 class WantedPoster(Card):
@@ -146,7 +146,7 @@ class Stalker(Card):
         opp = (player + 1) % 2
 
         return len(game.hand[opp])
-stalker = Stalker(name="Stalker", cost=7, points=4, id=19)
+stalker = Stalker(name="Stalker", cost=6, points=4, id=19)
 class Imprison(Card):
     def play(self, player, game, index, bonus):
         opp = (player + 1) % 2
@@ -333,7 +333,7 @@ class CrossedBones(Card):
             recap += self.create_in_pile(broken_bone, game, player)
 
         return recap
-crossed_bones = CrossedBones(name="Crossed Bones", cost=1, points=1, qualities=[Quality.FLEETING], id=3)
+crossed_bones = CrossedBones(name="Crossed Bones", cost=1, points=2, qualities=[Quality.FLEETING], id=3)
 class Mine(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -351,7 +351,7 @@ class DinosaurBones(Card):
             recap += self.create_in_pile(broken_bone, game, player)
 
         return recap
-dinosaur_bones = DinosaurBones(name="Dinosaur Bones", cost=4, points=4, qualities=[Quality.FLEETING], id=14)
+dinosaur_bones = DinosaurBones(name="Dinosaur Bones", cost=4, points=5, qualities=[Quality.FLEETING], id=14)
 class Bastet(Card):
     def __init__(self, points):
         text = f"2:{points}, this card retains all changes to points as it resolves (For example, if this card was nourished by 3, it stays a 2:4 once it is in the discard pile)"
@@ -430,7 +430,7 @@ class RaiseDead(Card):
 raise_dead = RaiseDead(name="Raise Dead", cost=2, points=2, text="2:2 put the top card of your pile on top of deck", id=33)
 class Tumulus(Card):
     def play(self, player, game, index, bonus):
-        if len(game.pile[player]) >= 10:
+        if len(game.pile[player]) >= 8:
             bonus += 2
 
         return super().play(player, game, index, bonus)
@@ -465,7 +465,7 @@ sarcophagus = Sarcophagus(name="Sarcophagus", cost=6,
                           text="6:X, put the highest cost card from your pile on top of your deck, X is its cost", id=20)
 class Anubis(Card):
     def get_cost(self, player, game):
-        if len(game.pile[player]) >= 15:
+        if len(game.pile[player]) >= 12:
             return 0
         else:
             return self.cost
