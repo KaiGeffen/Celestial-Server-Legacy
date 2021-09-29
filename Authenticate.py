@@ -87,7 +87,9 @@ def get_user_data(id):
         # Check if user has an entry
         # Postgres uuid requires 32 (hex) digits, so add trailing 0s to get that many digits
         num_digits = len(str(id))
-        select_query = f"SELECT * from players where id = '{id}{'0' * 32 - num_digits}'"
+        padded_id = str(id) + '0' * (32 - num_digits)
+        print(padded_id)
+        select_query = f"SELECT * from players where id = '{padded_id}'"
         cursor.execute(select_query)
         count = cursor.rowcount
         if count > 0:
