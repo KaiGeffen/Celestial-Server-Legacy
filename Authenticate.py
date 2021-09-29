@@ -25,26 +25,30 @@ async def authenticate(ws):
 
         if data["type"] == "send_token":
             token = data['value']
-            uuid = get_id(token)
-            user_data = get_user_data(uuid)
+            (uuid, email) = get_id_email(token)
+
+            if uuid is None:
+                user_data = None
+            else:
+                user_data = get_user_data(uuid, email)
 
             message = json.dumps({"type": "send_user_data", "value": user_data})
             print(message)
             await asyncio.wait([ws.send(message)])
 
 
-def get_id(token):
+def get_id_email(token):
     try:
         idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
         print(idinfo['email'])
-        return idinfo['sub']
+        return (idinfo['sub'], idinfo['email'])
 
     except ValueError:
-        return None
+        return (None, None)
 
 # Interact with the psql
 # Get the user data for the given user id, create it first if they don't yet have an account
-def get_user_data(id):
+def get_user_data(id, email):
     try:
         # Connect to an existing database
         connection = psycopg2.connect(user="doadmin",
@@ -76,8 +80,8 @@ def get_user_data(id):
             # If they don't create one, then return the basic entry
             print("User doesn't yet exist")
 
-            basic_entry = f"('{padded_id}', 0, '{{}}', 0, 0)"
-            insert_query = f"INSERT INTO players (ID, IGC, DECKS, WINS, LOSSES) VALUES {basic_entry}"
+            basic_entry = f"('{padded_id}', '{email}', 0, '{{}}', 0, 0)"
+            insert_query = f"INSERT INTO players (ID, EMAIL, IGC, DECKS, WINS, LOSSES) VALUES {basic_entry}"
             cursor.execute(insert_query)
             connection.commit()
 
