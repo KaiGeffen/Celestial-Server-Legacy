@@ -5,6 +5,7 @@ import websockets
 import ssl
 import pathlib
 import os
+import Authenticate
 
 from internet.Settings import *
 import CardCodec
@@ -186,7 +187,10 @@ async def serveMain(ws, path):
     # Remove leading /
     path = path[1:]
 
-    if path == 'ai':
+    if path == 'tokensignin':
+      await Authenticate.authenticate(ws)
+      return
+    elif path == 'ai':
         player = 0
         match = GameMatch(ws)
         await match.add_ai_opponent()

@@ -1,1 +1,1 @@
-web: python3 Authenticate.py
+web: python3 WS.py

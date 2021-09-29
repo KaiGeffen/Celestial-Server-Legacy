@@ -1,11 +1,33 @@
 import os
+import asyncio
 import psycopg2
+import json
 
 from bottle import run, post, request, response, get, route
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
 from internet.Settings import *
+
+
+async def authenticate(ws):
+    # Send a request for token
+    message = json.dumps({"type": "request_token"})
+    print(message)
+    await asyncio.wait(ws.send(message))
+
+    # Listen to responses
+    async for message in ws:
+        data = json.loads(message)
+
+        if data["type"] == "send_token":
+            token = data['value']
+            user_data = get_id(token)
+            message = json.dumps({"type": "send_user_data", "value": user_data})
+            print(message)
+            await asyncio.wait(ws.send(message))
+
+
 
 
 # The id for the google_api for oauth2
@@ -42,7 +64,7 @@ def run_auth_server():
     run(host='0.0.0.0', port=PORT, debug=True)
 
 print('Gonna run auth server...')
-run_auth_server()
+# run_auth_server()
 
 
 id = '40e6215d-b5c6-4896-987c-f30f3678f608'
