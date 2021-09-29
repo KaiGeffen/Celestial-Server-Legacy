@@ -53,9 +53,10 @@ def process(foo):
     print('I saw ' + foo)
     return 'bar'
 
-def get_id(token):
+def get_id_email(token):
     try:
         idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
+        print(idinfo['email'])
         return idinfo['sub']
 
     except ValueError:
