@@ -9,6 +9,9 @@ from google.auth.transport import requests
 
 from internet.Settings import *
 
+# The id for the google_api for oauth2
+CLIENT_ID = '574352055172-n1nqdc2nvu3172levk2kl5jf7pbkp4ig.apps.googleusercontent.com'
+
 
 async def authenticate(ws):
     # Send a request for token
@@ -30,30 +33,7 @@ async def authenticate(ws):
             await asyncio.wait([ws.send(message)])
 
 
-
-
-# The id for the google_api for oauth2
-CLIENT_ID = '574352055172-n1nqdc2nvu3172levk2kl5jf7pbkp4ig.apps.googleusercontent.com'
-
-@route('/tokensignin', method = 'POST')
-def process():
-    return 'me small'
-    print(request.query)
-    print('Well Im in process')
-    token = request.body.read().decode().split('=', 1)[1]
-    print(token)
-    return token + 'hewwo uwu'
-    # Verify the given id, might be None
-    userid = get_id(token)
-    if userid is None:
-        return 'That id is FAKE'
-    return get_user_data(userid)
-@route('<foo>', method = 'POST')
-def process(foo):
-    print('I saw ' + foo)
-    return 'bar'
-
-def get_id_email(token):
+def get_id(token):
     try:
         idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
         print(idinfo['email'])
@@ -62,15 +42,6 @@ def get_id_email(token):
     except ValueError:
         return None
 
-
-def run_auth_server():
-    run(host='0.0.0.0', port=PORT, debug=True)
-
-print('Gonna run auth server...')
-# run_auth_server()
-
-
-id = '40e6215d-b5c6-4896-987c-f30f3678f608'
 # Interact with the psql
 # Get the user data for the given user id, create it first if they don't yet have an account
 def get_user_data(id):
