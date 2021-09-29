@@ -109,8 +109,12 @@ def get_user_data(id):
             cursor.execute(insert_query)
             connection.commit()
 
-            print("Created the basic entry: " + basic_entry)
-            return basic_entry
+            # Fetch this user's fresh data
+            cursor.execute(select_query)
+            user_data = cursor.fetchone()
+
+            print("Created the basic entry: " + user_data)
+            return user_data
 
     except (Exception, psycopg2.Error) as error:
         print("Error while connecting to PostgreSQL", error)
