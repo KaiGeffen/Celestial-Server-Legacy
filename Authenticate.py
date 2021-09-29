@@ -89,7 +89,7 @@ def get_user_data(id):
         num_digits = len(str(id))
         padded_id = str(id) + '0' * (32 - num_digits)
         print(padded_id)
-        select_query = f"SELECT * from players where id = '{padded_id}';"
+        select_query = f"SELECT * from players where id = '{padded_id}'"
         cursor.execute(select_query)
         count = cursor.rowcount
         if count > 0:
@@ -105,7 +105,7 @@ def get_user_data(id):
             print("User doesn't yet exist")
 
             basic_entry = f"('{padded_id}', 0, '{{}}', 0, 0)"
-            insert_query = f"""INSERT INTO players (ID, IGC, DECKS, WINS, LOSSES) VALUES {basic_entry};"""
+            insert_query = f"INSERT INTO players (ID, IGC, DECKS, WINS, LOSSES) VALUES {basic_entry}"
             cursor.execute(insert_query)
             connection.commit()
 
@@ -113,7 +113,7 @@ def get_user_data(id):
             cursor.execute(select_query)
             user_data = cursor.fetchone()
 
-            print("Created the basic entry: " + user_data)
+            print(f"Created the basic entry: {user_data}")
             return user_data
 
     except (Exception, psycopg2.Error) as error:
