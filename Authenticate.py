@@ -75,7 +75,6 @@ id = '40e6215d-b5c6-4896-987c-f30f3678f608'
 def get_user_data(id):
     try:
         # Connect to an existing database
-        print(os.environ['DB_PWD'][2])
         connection = psycopg2.connect(user="doadmin",
                                       password=os.environ["DB_PWD"],
                                       host="app-8058d91d-8288-43bb-a12e-e1eb61ce00e3-do-user-8861671-0.b.db.ondigitalocean.com",
@@ -86,7 +85,9 @@ def get_user_data(id):
         cursor = connection.cursor()
 
         # Check if user has an entry
-        select_query = f"SELECT * from players where id = '{id}'"
+        # Postgres uuid requires 32 (hex) digits, so add trailing 0s to get that many digits
+        num_digits = len(str(id))
+        select_query = f"SELECT * from players where id = '{id}{'0' * 32 - num_digits}'"
         cursor.execute(select_query)
         count = cursor.rowcount
         if count > 0:
