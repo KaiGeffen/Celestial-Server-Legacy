@@ -49,8 +49,16 @@ class Desert(Card):
 
 
         if game.story.acts:
+            # The index of the card popped from the story
+            story_index = index + len(game.story.acts)
             act = game.story.acts.pop()
+
             super().create(act.card, game, act.owner)
+            game.animations[act.owner].pop()
+            game.sound_effect = None
+
+            hand_index = len(game.hand[act.owner]) - 1
+            game.animations[act.owner].append(('Story', 'Hand', hand_index, story_index))
         else:
             bonus += 3
 
