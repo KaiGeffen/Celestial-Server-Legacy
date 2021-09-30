@@ -149,10 +149,8 @@ class ServerController:
             # TODO make deterministic?
             self.model.priority = random.choice([0, 1])
 
-        # Each player draws, resets their mana, performs upkeep statuses, and card effects
+        # Each player resets their mana, performs upkeep statuses, card effects, then draws for the round
         for player in (0, 1):
-            self.model.draw(player, DRAW_PER_TURN)
-
             self.model.max_mana[player] += MANA_GAIN_PER_TURN
             if self.model.max_mana[player] > MANA_CAP:
                 self.model.max_mana[player] = MANA_CAP
@@ -179,6 +177,9 @@ class ServerController:
 
                 if not card_was_removed:
                     index += 1
+
+            # Draw cards for turn
+            self.model.draw(player, DRAW_PER_TURN)
 
             # Guarantees - Guarantees about state of the game
             self.model.mana[player] = max(self.model.mana[player], 0)
