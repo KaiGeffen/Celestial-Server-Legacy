@@ -110,7 +110,7 @@ class Card:
 
     # Add X mana next turn
     def inspire(self, amt, game, player):
-        game.animations[player].append(('Status', 'Story', 0))
+        game.animations[player].append(('Status', 'Status', 0))
 
         return self.add_status(amt, game, player, Status.INSPIRE)
 
@@ -120,13 +120,13 @@ class Card:
 
     # Next card gives +X points
     def nourish(self, amt, game, player):
-        game.animations[player].append(('Status', 'Story', 2))
+        game.animations[player].append(('Status', 'Status', 2))
 
         return self.add_status(amt, game, player, Status.NOURISH)
 
     # Next card gives -X points
     def starve(self, amt, game, player):
-        game.animations[player].append(('Status', 'Story', 3))
+        game.animations[player].append(('Status', 'Status', 3))
         return self.add_status(amt, game, player, Status.STARVE)
 
     # Your x leftmost cards you can't play next round

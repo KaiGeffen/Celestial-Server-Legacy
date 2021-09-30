@@ -775,11 +775,15 @@ class Paramountcy(Card):
 
         # Up to the number of spaces left, pop from discard pile and add to story
         space = 12 - (index + 1 + len(game.story.acts))
-        print(space)
-        for _ in range(min(space, 5)):
+        for i in range(min(space, 5)):
             if game.pile[player]:
                 card = game.pile[player].pop()
                 game.story.add_act(card, player, Source.PILE)
+
+                story_index = len(game.story.acts) - 1
+                game.animations[player].append(('Discard', 'Story', story_index))
+
+
 paramountcy = Paramountcy(name="Paramountcy", cost=9, points=0, id=62)
 
 
