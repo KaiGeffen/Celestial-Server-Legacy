@@ -125,6 +125,7 @@ class Vulture(Card):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
             super().create(dove, game, player)
+            return True
 vulture = Vulture(name="Vulture", cost=3, points=3, id=52)
 class Phoenix(Card):
     def play(self, player, game, index, bonus):
@@ -223,6 +224,7 @@ class Generator(Card):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
             super().build(1, game, player)
+            return True
 generator = Generator(name="Generator", cost=4, points=4, id=53)
 class BecomeMachine(Card):
     def play(self, player, game, index, bonus):
@@ -417,6 +419,7 @@ class Scarab(SightCard):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
             game.vision[player] += 1
+            return True
 scarab = Scarab(amt=4, name="Scarab", cost=0, points=0, id=50)
 class Drown(Card):
     def play(self, player, game, index, bonus):
@@ -754,6 +757,7 @@ class Sun(Card):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
             super().add_mana(2, game, player)
+            return True
 sun = Sun(name="Sun", cost=8, points=8, id=56)
 class Sickness(Card):
     def play(self, player, game, index, bonus):
@@ -767,6 +771,7 @@ class Axolotl(Card):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
             super().create(axolotl, game, player)
+            return True
 axolotl = Axolotl(name="Axolotl", cost=1, points=1, id=63)
 
 class Paramountcy(Card):

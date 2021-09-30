@@ -1,4 +1,5 @@
 import random
+import CardCodec
 
 from logic.ServerModel import ServerModel
 
@@ -173,10 +174,12 @@ class ServerController:
             while index < len(self.model.pile[player]):
                 card = self.model.pile[player][index]
 
-                card_was_removed = card.pile_upkeep(player, self.model, index)
+                # NOTE This now
+                something_activated = card.pile_upkeep(player, self.model, index)
+                # if something_activated:
+                #     self.model.animations[player].append(('Discard', 'Discard', CardCodec.encode_card(card)))
 
-                if not card_was_removed:
-                    index += 1
+                index += 1
 
             # Draw cards for turn
             self.model.draw(player, DRAW_PER_TURN)
