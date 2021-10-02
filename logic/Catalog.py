@@ -239,7 +239,7 @@ class BecomeMachine(Card):
                 self.transform(index, card, game)
 
             index += 1
-become_machine = BecomeMachine(name="Become Machine", cost=1, points=1, qualities=[Quality.FLEETING], id=55)
+become_machine = BecomeMachine(name="Become Machine", cost=1, points=0, qualities=[Quality.FLEETING], id=55)
 class Cogsplosion(Card):
     def play(self, player, game, index, bonus):
         index = -1
