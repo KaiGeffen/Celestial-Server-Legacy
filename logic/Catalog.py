@@ -236,15 +236,9 @@ class BecomeMachine(Card):
                 amt = act.card.cost
                 card = Card(name='Robot', points=amt, qualities=[Quality.FLEETING], dynamic_text=f'0:{amt}, Fleeting',
                             id=1003)
-                # The full act with which to replace player's final act
-                replacement_act = Act(card=card,
-                                      owner=player,
-                                      source=Source.PILE)
-
-                game.story.replace_act(index, replacement_act)
+                self.transform(index, card, game)
 
             index += 1
-        return result
 become_machine = BecomeMachine(name="Become Machine", cost=1, points=1, qualities=[Quality.FLEETING], id=55)
 class Cogsplosion(Card):
     def play(self, player, game, index, bonus):
