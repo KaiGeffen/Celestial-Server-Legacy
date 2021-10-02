@@ -148,7 +148,7 @@ class BoneKnife(Card):
     def play(self, player, game, index, bonus):
         opp = (player + 1) % 2
         return super().play(player, game, index, bonus) + self.discard(1, game, opp)
-bone_knife = BoneKnife(name="Bone Knife", text="0:0, opponent discards 1", id=1)
+bone_knife = BoneKnife(name="Bone Knife", cost=1, id=1)
 class Stalker(Card):
     def get_cost(self, player, game):
         opp = (player + 1) % 2
@@ -184,6 +184,15 @@ class Symbiosis(Card):
             recap += super().discard(1, game, player^1)
         return recap
 symbiosis = Symbiosis(name="Symbiosis", cost=6, points=6, id=57)
+
+class Nightmare(Card):
+    def play(self, player, game, index, bonus):
+        if len(game.hand[player]) > len(game.hand[player^1]):
+            bonus += 4
+
+        super().play(player, game, index, bonus)
+nightmare = Nightmare(name="Nightmare", cost=3, points=0, qualities=[Quality.VISIBLE], id=68)
+
 
 """Machines"""
 class Cog(Card):
@@ -789,7 +798,7 @@ full_catalog = [
     symbiosis,
     sickness, cogsplosion, anvil,
     paramountcy, axolotl, cornucopia, fish_bones, heron,
-    kneel, conquer
+    kneel, conquer, nightmare
     ]
 
 non_collectibles = [hidden_card] + tokens
