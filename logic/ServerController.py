@@ -164,10 +164,12 @@ class ServerController:
             while index < len(self.model.hand[player]):
                 card = self.model.hand[player][index]
 
-                card_was_removed = card.on_upkeep(player, self.model, index)
+                something_activated = card.on_upkeep(player, self.model, index)
 
-                if not card_was_removed:
-                    index += 1
+                if something_activated:
+                    self.model.animations[player].append(('Hand', 'Hand', index, CardCodec.encode_card(card)))
+
+                index += 1
 
             # Each card in pile has a chance to do an upkeep effect
             index = 0
@@ -176,8 +178,8 @@ class ServerController:
 
                 # NOTE This now
                 something_activated = card.pile_upkeep(player, self.model, index)
-                # if something_activated:
-                #     self.model.animations[player].append(('Discard', 'Discard', CardCodec.encode_card(card)))
+                if something_activated:
+                    self.model.animations[player].append(('Discard', 'Discard', CardCodec.encode_card(card)))
 
                 index += 1
 

@@ -9,6 +9,7 @@ import Animation
 class Camera(Card):
     def on_upkeep(self, player, game, index):
         game.vision[player ^ 1] += 4
+        return True
 camera = Camera(name="Camera", cost=2, qualities=[Quality.FLEETING],
                 text="2:0, Fleeting, at the start of each round, give your opponent vision 4", id=1001)
 class BrokenBone(Card):
