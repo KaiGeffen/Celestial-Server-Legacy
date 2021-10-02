@@ -82,8 +82,7 @@ class Swift(Card):
                 bonus += 1
 
         return super().play(player, game, index, bonus)
-swift = Swift(name="Swift", cost=2, points=2, qualities=[Quality.VISIBLE],
-              text="2:2, visible, if the next card costs 1, +1", id=7)
+swift = Swift(name="Swift", cost=2, points=2, qualities=[Quality.VISIBLE], id=7)
 class Pelican(Card):
     def play(self, player, game, index, bonus):
         amt = 0
@@ -95,7 +94,7 @@ class Pelican(Card):
         recap += self.oust(amt, game, player)
 
         return recap
-pelican = Pelican(name="Pelican", cost=4, points=4, text="4:4, oust each 0 or 1 cost card from your hand, +1 for each", id=40)
+pelican = Pelican(name="Pelican", cost=4, points=3, id=40)
 class Icarus(Card):
     def get_cost(self, player, game):
         amt = 0
@@ -420,7 +419,7 @@ class Drown(Card):
         game.sound_effect = SoundEffect.Drown
         return super().play(player, game, index, bonus) + self.mill(3, game, player)
 drown = Drown(name="Drown", cost=1, points=1, text="1:1, mill yourself 3 (Top 3 cards of deck go to pile)", id=5)
-class RaiseDead(Card):
+class Unearth(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
 
@@ -432,7 +431,7 @@ class RaiseDead(Card):
             game.animations[player].append(('Discard', 'Deck', CardCodec.encode_card(card)))
 
         return recap
-raise_dead = RaiseDead(name="Raise Dead", cost=2, points=2, text="2:2 put the top card of your pile on top of deck", id=33)
+unearth = Unearth(name="Unearth", cost=2, points=2, id=33)
 class Tumulus(Card):
     def play(self, player, game, index, bonus):
         if len(game.pile[player]) >= 8:
@@ -767,6 +766,13 @@ class Paramountcy(Card):
 
 paramountcy = Paramountcy(name="Paramountcy", cost=9, points=0, id=62)
 
+class Conquer(Card):
+    def play(self, player, game, index, bonus):
+        if not game.story.is_empty():
+            bonus += game.story.acts[0].card.cost
+
+        return super().play(player, game, index, bonus)
+conquer = Conquer(name="Conquer", cost=5, points=2, qualities=[Quality.VISIBLE], id=67)
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
@@ -776,14 +782,14 @@ full_catalog = [
     chimney, tumulus, uprising, stalker, sarcophagus, anubis, ai, oak,
 
     bee, nectar, bandit, spy, night_vision, disintegrate, juggle, sine,
-    fishing_boat, raise_dead, bastet, imprison, crypt, stable, boar, paranoia,
+    fishing_boat, unearth, bastet, imprison, crypt, stable, boar, paranoia,
     pelican, beekeep, lotus, eagle, ecology, horus, icarus, enrage,
 
     bounty, desert, scarab, phoenix, vulture, generator, pocket_watch, become_machine, sun,
     symbiosis,
     sickness, cogsplosion, anvil,
     paramountcy, axolotl, cornucopia, fish_bones, heron,
-    kneel
+    kneel, conquer
     ]
 
 non_collectibles = [hidden_card] + tokens
