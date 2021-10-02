@@ -324,8 +324,8 @@ class Cornucopia(Card):
 
         return max(0, self.cost - len(seen_costs))
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.nourish(5, game, player)
-cornucopia = Cornucopia(name="Cornucopia", cost=6, points=0, id=61)
+        return super().play(player, game, index, bonus) + self.nourish(2, game, player)
+cornucopia = Cornucopia(name="Cornucopia", cost=6, points=2, id=61)
 """Earth"""
 class CrossedBones(Card):
     def play(self, player, game, index, bonus):
