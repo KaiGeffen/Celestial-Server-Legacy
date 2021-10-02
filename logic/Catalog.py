@@ -15,7 +15,7 @@ camera = Camera(name="Camera", cost=2, qualities=[Quality.FLEETING],
 class BrokenBone(Card):
     def play(self, player, game, index, bonus):
         game.sound_effect = SoundEffect.BoneSnap
-        return super().play(player, game, index, bonus)# + self.draw(1, game, player)
+        return super().play(player, game, index, bonus) + self.draw(1, game, player)
 broken_bone = BrokenBone(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], id=1002)
 robot = Card(name='Robot', qualities=[Quality.FLEETING], text="0:X, Fleeting", id=1003)
 class WantedPoster(Card):
@@ -23,8 +23,7 @@ class WantedPoster(Card):
         bonus += 2 * game.pile[player ^ 1].count(bandit)
 
         return super().play(player, game, index, bonus)
-wanted_poster = WantedPoster(name="Wanted Poster", cost=1, qualities=[Quality.FLEETING],
-                             text="1:0, fleeting, +2 for each Bandit in your opponent's discard pile", id=1004)
+wanted_poster = WantedPoster(name="Wanted Poster", cost=1, qualities=[Quality.FLEETING], id=1004)
 
 tokens = [camera, broken_bone, robot, wanted_poster]
 
@@ -156,7 +155,7 @@ class Stalker(Card):
         opp = (player + 1) % 2
 
         return len(game.hand[opp])
-stalker = Stalker(name="Stalker", cost=6, points=4, id=19)
+stalker = Stalker(name="Stalker", cost=6, points=3, id=19)
 class Imprison(Card):
     def play(self, player, game, index, bonus):
         opp = (player + 1) % 2
@@ -338,7 +337,7 @@ class CrossedBones(Card):
             recap += self.create_in_pile(broken_bone, game, player)
 
         return recap
-crossed_bones = CrossedBones(name="Crossed Bones", cost=1, points=2, qualities=[Quality.FLEETING], id=3)
+crossed_bones = CrossedBones(name="Crossed Bones", cost=1, points=1, qualities=[Quality.FLEETING], id=3)
 class Mine(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -356,7 +355,7 @@ class DinosaurBones(Card):
             recap += self.create_in_pile(broken_bone, game, player)
 
         return recap
-dinosaur_bones = DinosaurBones(name="Dinosaur Bones", cost=4, points=5, qualities=[Quality.FLEETING], id=14)
+dinosaur_bones = DinosaurBones(name="Dinosaur Bones", cost=4, points=4, qualities=[Quality.FLEETING], id=14)
 class Bastet(Card):
     def __init__(self, points):
         text = f"2:{points}, this card retains all changes to points as it resolves (For example, if this card was nourished by 3, it stays a 2:4 once it is in the discard pile)"
@@ -503,6 +502,13 @@ class Crypt(Card):
                 self.transform(index_final_owned_card, replacement_card, game)
 crypt = Crypt(name="Crypt", cost=2, points=2,
               text="2:2, your last unsprung card this round transforms into the first card in your pile with the same cost as it", id=36)
+
+class Kneel(Card):
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
+        self.discard(1, game, player)
+        self.tutor(7, game, player)
+kneel = Kneel(name="Kneel", cost=0, points=0, qualities=[Quality.FLEETING], id=66)
 
 """INSECTS"""
 bee = Card(name="Bee", cost=0, points=1, qualities=[Quality.VISIBLE], text="0:1, visible", id=24)
@@ -776,7 +782,8 @@ full_catalog = [
     bounty, desert, scarab, phoenix, vulture, generator, pocket_watch, become_machine, sun,
     symbiosis,
     sickness, cogsplosion, anvil,
-    paramountcy, axolotl, cornucopia, fish_bones, heron
+    paramountcy, axolotl, cornucopia, fish_bones, heron,
+    kneel
     ]
 
 non_collectibles = [hidden_card] + tokens
