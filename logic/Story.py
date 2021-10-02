@@ -5,6 +5,7 @@ from logic.Recap import Recap
 from logic.Effects import Quality
 
 
+# TODO Remove source
 # How an act was added to the story
 # Played from hand, sprung from hand, etc
 class Source(Enum):
@@ -18,7 +19,7 @@ class Story:
         self.acts = []
         self.recap = Recap()
 
-    def add_act(self, card, owner, source):
+    def add_act(self, card, owner, source=Source.HAND):
         act = Act(card, owner, source)
         self.acts.append(act)
 
@@ -129,7 +130,7 @@ class Story:
 
 
 class Act:
-    def __init__(self, card, owner, source):
+    def __init__(self, card, owner, source=Source.HAND):
         self.card = card
         self.owner = owner
         self.source = source

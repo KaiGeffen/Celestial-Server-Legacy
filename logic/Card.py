@@ -1,6 +1,7 @@
 import CardCodec
 from logic.Effects import Status, Quality
 import SoundEffect
+from logic.Story import Act
 
 
 class Card:
@@ -300,7 +301,19 @@ class Card:
         else:
             return ''
 
+    # Transform the card in the story at index into the given card
+    def transform(self, index, card, game):
+        print(len(game.story.acts))
+        if index + 1 <= len(game.story.acts):
+            act = game.story.acts[index]
+            game.story.replace_act(index, Act(
+                card=card,
+                owner=act.owner
+            ))
 
+            # Add an animation
+            print(act.card)
+            game.animations[act.owner].append(('Transform', 'Story', index, CardCodec.encode_card(act.card)))
 
 
     """UTILITY CHECKS"""

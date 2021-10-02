@@ -682,30 +682,14 @@ class Boar(Card):
 boar = Boar(name="Boar", cost=3, points=4, text="3:4, discard your X leftmost cards, where X is the number of cards later in the story.", id=38)
 class Disintegrate(Card):
     def play(self, player, game, index, bonus):
-        result = super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 
-        replaced_card = None
-        owner = None
-        index = 0
+        target_index = 0
         for act in game.story.acts:
             if act.card.cost == 1:
-                replaced_card = act.card
-                owner = act.owner
-                break
-
-            index += 1
-
-        if replaced_card is not None:
-            # The full act with which to replace player's final act
-            replacement_act = Act(card=broken_bone,
-                                  owner=owner,
-                                  source=Source.PILE)
-
-            game.story.replace_act(index, replacement_act)
-
-            result += f'\n{broken_bone.name} replaced {replaced_card.name}'
-
-        return result
+                self.transform(target_index, broken_bone, game)
+                return
+            target_index += 1
 disintegrate = Disintegrate(name="Disintegrate", cost=1, points=1,
               text="1:1, transform the next 1-cost card in the story into a Broken Bone.", id=29)
 class Ecology(Card):
