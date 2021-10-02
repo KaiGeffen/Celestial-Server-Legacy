@@ -489,7 +489,7 @@ class Crypt(Card):
         final_card = None
         index = 0
         for act in game.story.acts:
-            if act.owner == player and act.source != Source.SPRING:
+            if act.owner == player:
                 index_final_owned_card = index
                 final_card = act.card
 
@@ -505,16 +505,7 @@ class Crypt(Card):
                     break
 
             if replacement_card is not None:
-                # The full act with which to replace player's final act
-                replacement_act = Act(card=replacement_card,
-                                      owner=player,
-                                      source=Source.PILE)
-
-                game.story.replace_act(index_final_owned_card, replacement_act)
-
-                result += f'\n{replacement_card.name} replaced {final_card.name}'
-
-        return result
+                self.transform(index_final_owned_card, replacement_card, game)
 crypt = Crypt(name="Crypt", cost=2, points=2,
               text="2:2, your last unsprung card this round transforms into the first card in your pile with the same cost as it", id=36)
 
