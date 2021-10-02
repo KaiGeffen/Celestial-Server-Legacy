@@ -35,6 +35,12 @@ async def authenticate(ws):
             message = json.dumps({"type": "send_user_data", "value": user_data})
             print(message)
             await asyncio.wait([ws.send(message)])
+        elif data["type"] == "open_pack":
+            # Check if they have the funds
+            # If not, return error
+            # If they do, return a pack of cards
+            pass
+
 
 
 def get_id_email(token):
