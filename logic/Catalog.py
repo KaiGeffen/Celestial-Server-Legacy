@@ -740,7 +740,7 @@ class Sun(Card):
     def pile_upkeep(self, player, game, index):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
-            super().add_mana(2, game, player)
+            super().add_mana(1, game, player)
             return True
 sun = Sun(name="Sun", cost=8, points=8, id=56)
 class Sickness(Card):
