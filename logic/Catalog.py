@@ -806,7 +806,7 @@ all_cards = full_catalog + non_collectibles
 
 import random
 # Get a random deck for the computer opponent
-def get_computer_deck():
+def get_computer_deck(i = None):
     # Not too strong, aiming for C tier core set decks
     # 2 each of anubis, aggro, uprising, oak, stalker
 
@@ -900,5 +900,11 @@ def get_computer_deck():
             oak, oak,
         ]
     ]
+
+    if i is not None:
+        try:
+            return possible_decks[i]
+        except:
+            print('Invalid ai deck: ' + i)
 
     return random.choice(possible_decks)

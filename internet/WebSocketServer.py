@@ -6,6 +6,7 @@ import ssl
 import pathlib
 import os
 import Authenticate
+import re
 
 from internet.Settings import *
 import CardCodec
@@ -107,8 +108,8 @@ class GameMatch:
             ws = self.ws1 if player == 0 else self.ws2
             await notify_error(ws)
 
-    async def add_ai_opponent(self):
-        await self.add_deck(1, get_computer_deck())
+    async def add_ai_opponent(self, i=None):
+        await self.add_deck(1, get_computer_deck(i))
         self.vs_ai = True
 
     async def add_deck(self, player, deck):
@@ -194,6 +195,11 @@ async def serveMain(ws, path):
         player = 0
         match = GameMatch(ws)
         await match.add_ai_opponent()
+    elif path.startswith('ai-'):
+        player = 0
+        match = GameMatch(ws)
+        i = path[3:]
+        await match.add_ai_opponent(i)
     elif path == 'tutorial':
       player = 0
       match = TutorialMatch(ws)
