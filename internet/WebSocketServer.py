@@ -112,6 +112,10 @@ class GameMatch:
         await self.add_deck(1, get_computer_deck(i))
         self.vs_ai = True
 
+    async def add_specific_ai_opponent(self, deck_code):
+        await self.add_deck(1, CardCodec.decode_deck(deck_code))
+        self.vs_ai = True
+
     async def add_deck(self, player, deck):
         async with self.lock:
             if self.stored_deck is None:
@@ -200,6 +204,11 @@ async def serveMain(ws, path):
         match = GameMatch(ws)
         i = path[3:]
         await match.add_ai_opponent(i)
+    elif path.startswith('ai:'):
+        player = 0
+        match = GameMatch(ws)
+        deck_code = path[3:]
+        await match.add_specific_ai_opponent(deck_code)
     elif path == 'tutorial':
       player = 0
       match = TutorialMatch(ws)
