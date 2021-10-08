@@ -1,4 +1,3 @@
-import CardCodec
 from logic.Card import *
 from logic.Effects import Status, Quality
 from logic.Story import Source, Act
@@ -521,59 +520,6 @@ class Nectar(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.nourish(1, game, player)
 nectar = Nectar(name="Nectar", cost=1, text="1:0, nourish 1 (Your next card gives +1 points)", id=25, rarity=0)
-# class Beekeep(Card):
-#     def __init__(self, stored=None):
-#         self.stored = stored
-#
-#         name = "Beekeep"
-#         cost = 5
-#         points = 5
-#
-#         stats = f"{cost}:{points}"
-#         text = f"{stats}, remove from the game and note all 0-cost cards in your discard pile. This card's effect becomes to add to your discard pile a copy of each of the noted cards."
-#
-#         if stored:
-#             converted_list = [card.name for card in stored]
-#             joined_string = ", ".join(converted_list)
-#
-#             dynamic_text = f"{stats}, add a copy of each of these cards to your discard pile:\n{joined_string}"
-#             qualities = []
-#         else:
-#             dynamic_text = ""
-#             qualities = [Quality.FLEETING]
-#
-#         super().__init__(name=name, cost=cost, points=points, qualities=qualities, text=text, dynamic_text=dynamic_text, id=41)
-#
-#     def play(self, player, game, index, bonus):
-#         if self.stored:
-#             recap = super().play(player, game, index, bonus)
-#
-#             for card in self.stored:
-#                 recap += self.create_in_pile(card, game, player)
-#
-#             return recap
-#
-#         else:
-#             cards = []
-#             card_names = []
-#             for card in game.pile[player]:
-#                 if card.cost == 0:
-#                     cards.append(card)
-#                     card_names.append(card.name)
-#
-#             # Remove from pile all 0 cost cards
-#             game.pile[player] = list(filter(lambda card: card.cost != 0, game.pile[player]))
-#
-#             new_beekeep = Beekeep(stored=cards)
-#             self.create_in_pile(new_beekeep, game, player)
-#
-#             # Form the recap
-#             recap = super().play(player, game, index, bonus)
-#             if cards:
-#                 recap += "\nStored: " + "\n".join(card_names)
-#
-#             return recap
-# beekeep = Beekeep()
 
 """Other"""
 class Hurricane(Card):
@@ -745,9 +691,12 @@ full_catalog = [
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
 
-common_cards = [
 
-]
+common_cards = list(filter(lambda card: card.rarity == 0, full_catalog))
+uncommon_cards = list(filter(lambda card: card.rarity == 1, full_catalog))
+rare_cards = list(filter(lambda card: card.rarity == 2, full_catalog))
+legend_cards = list(filter(lambda card: card.rarity == 3, full_catalog))
+
 
 import random
 # Get a random deck for the computer opponent
