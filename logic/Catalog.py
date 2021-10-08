@@ -42,8 +42,7 @@ class Enrage(Card):
 
         game.sound_effect = SoundEffect.Yell
         return recap
-enrage = Enrage(name="Enrage", cost=8, points=2,
-                text="8:2, give each card later in the story -X, where X is its cost.\nWhen played, give each card ealier in the story -X.", id=47)
+enrage = Enrage(name="Enrage", cost=8, points=2, id=47, rarity=2)
 class Desert(Card):
     def play(self, player, game, index, bonus):
 
@@ -65,7 +64,7 @@ class Desert(Card):
         recap = super().play(player, game, index, bonus)
 
         return recap
-desert = Desert(name="Desert", cost=2, points=0, text="2:0, return the last in the story to its owner's hand", id=49)
+desert = Desert(name="Desert", cost=2, points=0, id=49, rarity=0)
 
 """BIRD"""
 class Dove(Card):
@@ -94,7 +93,7 @@ class Pelican(Card):
         recap += self.oust(amt, game, player)
 
         return recap
-pelican = Pelican(name="Pelican", cost=4, points=3, id=40)
+pelican = Pelican(name="Pelican", cost=4, points=3, id=40, rarity=0)
 class Icarus(Card):
     def get_cost(self, player, game):
         amt = 0
@@ -108,7 +107,7 @@ class Icarus(Card):
             return 0
         else:
             return self.cost
-icarus = Icarus(name="Icarus", cost=7, points=7, text="7:7, costs 0 if you have 5 cards in story", id=46)
+icarus = Icarus(name="Icarus", cost=7, points=7, id=46, rarity=3)
 class Eagle(SightCard):
     def on_play(self, player, game):
         game.hand[player] = [dove] * len(game.hand[player])
@@ -117,8 +116,7 @@ class Eagle(SightCard):
 
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.nourish(2, game, player)
-eagle = Eagle(amt=4, name="Eagle", cost=6, points=6,
-                    text="6:6, nourish 2. When played, gain sight 4 and transform each card in your hand into a Dove.", id=43)
+eagle = Eagle(amt=4, name="Eagle", cost=6, points=6, id=43, rarity=2)
 class Vulture(Card):
     def pile_upkeep(self, player, game, index):
         # Only do it if this is the top card of the discard pile
@@ -129,7 +127,7 @@ vulture = Vulture(name="Vulture", cost=3, points=3, id=52)
 class Phoenix(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.create(dove, game, player)
-phoenix = Phoenix(name="Phoenix", cost=5, points=5, qualities=[Quality.FLEETING], id=51)
+phoenix = Phoenix(name="Phoenix", cost=5, points=5, qualities=[Quality.FLEETING], id=51, rarity=0)
 
 class Heron(Card):
     def play(self, player, game, index, bonus):
@@ -141,7 +139,7 @@ class Heron(Card):
         super().play(player, game, index, bonus)
 
         self.inspire(amt_fleeting, game, player)
-heron = Heron(name="Heron", cost=5, points=4, qualities=[Quality.FLEETING], id=65)
+heron = Heron(name="Heron", cost=5, points=4, qualities=[Quality.FLEETING], id=65, rarity=1)
 
 """Discard"""
 class BoneKnife(Card):
@@ -166,7 +164,7 @@ class Imprison(Card):
         recap += f'\n+{len(game.hand[opp])} opp'
 
         return recap
-imprison = Imprison(name="Imprison", cost=2, text="2:0, reset, then give opponent 1 point for each card in their hand", id=35)
+imprison = Imprison(name="Imprison", cost=2, id=35, rarity=1)
 class Gift(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -183,7 +181,7 @@ class Symbiosis(Card):
         if nourished:
             recap += super().discard(1, game, player^1)
         return recap
-symbiosis = Symbiosis(name="Symbiosis", cost=6, points=6, id=57)
+symbiosis = Symbiosis(name="Symbiosis", cost=6, points=6, id=57, rarity=0)
 
 class Nightmare(Card):
     def play(self, player, game, index, bonus):
@@ -191,7 +189,7 @@ class Nightmare(Card):
             bonus += 4
 
         super().play(player, game, index, bonus)
-nightmare = Nightmare(name="Nightmare", cost=3, points=0, qualities=[Quality.VISIBLE], id=68)
+nightmare = Nightmare(name="Nightmare", cost=3, points=0, qualities=[Quality.VISIBLE], id=68, rarity=1)
 
 
 """Machines"""
@@ -233,7 +231,7 @@ class Generator(Card):
         if index == len(game.pile[player]) - 1:
             super().build(1, game, player)
             return True
-generator = Generator(name="Generator", cost=4, points=4, id=53)
+generator = Generator(name="Generator", cost=4, points=4, id=53, rarity=1)
 class BecomeMachine(Card):
     def play(self, player, game, index, bonus):
         result = super().play(player, game, index, bonus)
@@ -247,7 +245,7 @@ class BecomeMachine(Card):
                 self.transform(index, card, game)
 
             index += 1
-become_machine = BecomeMachine(name="Become Machine", cost=1, points=0, qualities=[Quality.FLEETING], id=55)
+become_machine = BecomeMachine(name="Become Machine", cost=1, points=0, qualities=[Quality.FLEETING], id=55, rarity=1)
 class Cogsplosion(Card):
     def play(self, player, game, index, bonus):
         index = -1
@@ -260,11 +258,11 @@ class Cogsplosion(Card):
                 return super().play(player, game, index, bonus) + self.discard(1, game, player, index=index)
 
         return ''
-cogsplosion = Cogsplosion(name="Cogsplosion", cost=4, id=59)
+cogsplosion = Cogsplosion(name="Cogsplosion", cost=4, id=59, rarity=2)
 class Anvil(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.build(2, game, player)
-anvil = Anvil(name="Anvil", cost=3, points=2, id=60)
+anvil = Anvil(name="Anvil", cost=3, points=2, id=60, rarity=0)
 
 """Nature"""
 class Stars(Card):
@@ -292,7 +290,7 @@ class Lotus(Card):
             recap += self.reset(game)
 
         return recap
-lotus = Lotus(name="Lotus", cost=5, text="5:0, inspire 2, final: reset", id=42)
+lotus = Lotus(name="Lotus", cost=5, id=42, rarity=2)
 class Oak(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.gentle(game, player)
@@ -334,7 +332,7 @@ class Cornucopia(Card):
         return max(0, self.cost - len(seen_costs))
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.nourish(2, game, player)
-cornucopia = Cornucopia(name="Cornucopia", cost=6, points=2, id=61)
+cornucopia = Cornucopia(name="Cornucopia", cost=6, points=2, id=61, rarity=2)
 """Earth"""
 class CrossedBones(Card):
     def play(self, player, game, index, bonus):
@@ -368,7 +366,7 @@ class Bastet(Card):
     def __init__(self, points):
         text = f"2:{points}, this card retains all changes to points as it resolves (For example, if this card was nourished by 3, it stays a 2:4 once it is in the discard pile)"
         super().__init__("Bastet", cost=2, points=points, qualities=[Quality.FLEETING],
-                         text=text, dynamic_text=text, id=34)
+                         text=text, dynamic_text=text, id=34, rarity=2)
 
     def play(self, player, game, index, bonus):
         points = self.points + bonus
@@ -389,7 +387,7 @@ class NightVision(SightCard):
         recap += self.tutor(2, game, player)
 
         return recap
-night_vision = NightVision(amt=3, name="Night Vision", cost=1, points=0, text="1:0, tutor 2. On play, sight 3", id=28)
+night_vision = NightVision(amt=3, name="Night Vision", cost=1, points=0, id=28, rarity=0)
 
 class FishBones(Card):
     def play(self, player, game, index, bonus):
@@ -402,7 +400,7 @@ class FishBones(Card):
         recap += self.draw(2, game, player)
 
         return recap
-fish_bones = FishBones(name="Fish Bones", cost=2, points=0, qualities=[Quality.FLEETING], id=64)
+fish_bones = FishBones(name="Fish Bones", cost=2, points=0, qualities=[Quality.FLEETING], id=64, rarity=0)
 
 """Ships"""
 class FishingBoat(Card):
@@ -422,7 +420,7 @@ class Scarab(SightCard):
         if index == len(game.pile[player]) - 1:
             game.vision[player] += 1
             return True
-scarab = Scarab(amt=4, name="Scarab", cost=0, points=0, id=50)
+scarab = Scarab(amt=4, name="Scarab", cost=0, points=0, id=50, rarity=0)
 class Drown(Card):
     def play(self, player, game, index, bonus):
         game.sound_effect = SoundEffect.Drown
@@ -440,7 +438,7 @@ class Unearth(Card):
             game.animations[player].append(('Discard', 'Deck', CardCodec.encode_card(card)))
 
         return recap
-unearth = Unearth(name="Unearth", cost=2, points=2, id=33)
+unearth = Unearth(name="Unearth", cost=2, points=2, id=33, rarity=0)
 class Tumulus(Card):
     def play(self, player, game, index, bonus):
         if len(game.pile[player]) >= 8:
@@ -508,75 +506,74 @@ class Crypt(Card):
 
             if replacement_card is not None:
                 self.transform(index_final_owned_card, replacement_card, game)
-crypt = Crypt(name="Crypt", cost=2, points=2,
-              text="2:2, your last unsprung card this round transforms into the first card in your pile with the same cost as it", id=36)
+crypt = Crypt(name="Crypt", cost=2, points=2, id=36, rarity=2)
 
 class Kneel(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.discard(1, game, player)
         self.tutor(7, game, player)
-kneel = Kneel(name="Kneel", cost=0, points=0, qualities=[Quality.FLEETING], id=66)
+kneel = Kneel(name="Kneel", cost=0, points=0, qualities=[Quality.FLEETING], id=66, rarity=0)
 
 """INSECTS"""
-bee = Card(name="Bee", cost=0, points=1, qualities=[Quality.VISIBLE], text="0:1, visible", id=24)
+# bee = Card(name="Bee", cost=0, points=1, qualities=[Quality.VISIBLE], text="0:1, visible", id=24)
 class Nectar(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.nourish(1, game, player)
-nectar = Nectar(name="Nectar", cost=1, text="1:0, nourish 1 (Your next card gives +1 points)", id=25)
-class Beekeep(Card):
-    def __init__(self, stored=None):
-        self.stored = stored
-
-        name = "Beekeep"
-        cost = 5
-        points = 5
-
-        stats = f"{cost}:{points}"
-        text = f"{stats}, remove from the game and note all 0-cost cards in your discard pile. This card's effect becomes to add to your discard pile a copy of each of the noted cards."
-
-        if stored:
-            converted_list = [card.name for card in stored]
-            joined_string = ", ".join(converted_list)
-
-            dynamic_text = f"{stats}, add a copy of each of these cards to your discard pile:\n{joined_string}"
-            qualities = []
-        else:
-            dynamic_text = ""
-            qualities = [Quality.FLEETING]
-
-        super().__init__(name=name, cost=cost, points=points, qualities=qualities, text=text, dynamic_text=dynamic_text, id=41)
-
-    def play(self, player, game, index, bonus):
-        if self.stored:
-            recap = super().play(player, game, index, bonus)
-
-            for card in self.stored:
-                recap += self.create_in_pile(card, game, player)
-
-            return recap
-
-        else:
-            cards = []
-            card_names = []
-            for card in game.pile[player]:
-                if card.cost == 0:
-                    cards.append(card)
-                    card_names.append(card.name)
-
-            # Remove from pile all 0 cost cards
-            game.pile[player] = list(filter(lambda card: card.cost != 0, game.pile[player]))
-
-            new_beekeep = Beekeep(stored=cards)
-            self.create_in_pile(new_beekeep, game, player)
-
-            # Form the recap
-            recap = super().play(player, game, index, bonus)
-            if cards:
-                recap += "\nStored: " + "\n".join(card_names)
-
-            return recap
-beekeep = Beekeep()
+nectar = Nectar(name="Nectar", cost=1, text="1:0, nourish 1 (Your next card gives +1 points)", id=25, rarity=0)
+# class Beekeep(Card):
+#     def __init__(self, stored=None):
+#         self.stored = stored
+#
+#         name = "Beekeep"
+#         cost = 5
+#         points = 5
+#
+#         stats = f"{cost}:{points}"
+#         text = f"{stats}, remove from the game and note all 0-cost cards in your discard pile. This card's effect becomes to add to your discard pile a copy of each of the noted cards."
+#
+#         if stored:
+#             converted_list = [card.name for card in stored]
+#             joined_string = ", ".join(converted_list)
+#
+#             dynamic_text = f"{stats}, add a copy of each of these cards to your discard pile:\n{joined_string}"
+#             qualities = []
+#         else:
+#             dynamic_text = ""
+#             qualities = [Quality.FLEETING]
+#
+#         super().__init__(name=name, cost=cost, points=points, qualities=qualities, text=text, dynamic_text=dynamic_text, id=41)
+#
+#     def play(self, player, game, index, bonus):
+#         if self.stored:
+#             recap = super().play(player, game, index, bonus)
+#
+#             for card in self.stored:
+#                 recap += self.create_in_pile(card, game, player)
+#
+#             return recap
+#
+#         else:
+#             cards = []
+#             card_names = []
+#             for card in game.pile[player]:
+#                 if card.cost == 0:
+#                     cards.append(card)
+#                     card_names.append(card.name)
+#
+#             # Remove from pile all 0 cost cards
+#             game.pile[player] = list(filter(lambda card: card.cost != 0, game.pile[player]))
+#
+#             new_beekeep = Beekeep(stored=cards)
+#             self.create_in_pile(new_beekeep, game, player)
+#
+#             # Form the recap
+#             recap = super().play(player, game, index, bonus)
+#             if cards:
+#                 recap += "\nStored: " + "\n".join(card_names)
+#
+#             return recap
+# beekeep = Beekeep()
 
 """Other"""
 class Hurricane(Card):
@@ -586,52 +583,7 @@ hurricane = Hurricane(name="Hurricane", cost=4, text="4:0, reset", id=13)
 class Spy(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.create(camera, game, player ^ 1)
-spy = Spy(name="Spy", cost=1, text="1:0, create a 2:0 camera in opponent's hand which gives you sight each upkeep", id=27)
-class Stable(Card):
-    def __init__(self, stored=None):
-        self.stored = stored
-
-        name = "Stable"
-        cost = 3
-        points = 3
-
-        stats = f"{cost}:{points}"
-        text = f"{stats}, remove from the game and note the top card of your discard pile. This card's effect becomes to add a copy of the noted card to your hand."
-
-        if stored:
-            dynamic_text = f"{stats}, add a copy of {stored.name} to your hand"
-            if stored.dynamic_text:
-                dynamic_text += f" ({stored.dynamic_text})"
-            else:
-                dynamic_text += f" ({stored.text})"
-            qualities = []
-        else:
-            dynamic_text = ""
-            qualities = [Quality.FLEETING]
-
-        super().__init__(name=name, cost=cost, points=points, qualities=qualities, text=text, dynamic_text=dynamic_text, id=37)
-
-    def play(self, player, game, index, bonus):
-        if self.stored:
-            return super().play(player, game, index, bonus) + self.create(self.stored, game, player)
-
-        else:
-            card = None
-            if game.pile[player]:
-                card = game.pile[player].pop()
-
-            if card is not None:
-                new_stable = Stable(stored=card)
-                game.pile[player].append(new_stable)
-
-                return super().play(player, game, index, bonus) + f"\nStored: {card.name}"
-            else:
-                # Need to add it since it's fleeting while not filled
-                new_stable = Stable(stored=None)
-                game.pile[player].append(new_stable)
-
-                return super().play(player, game, index, bonus)
-stable = Stable()
+spy = Spy(name="Spy", cost=1, id=27, rarity=1)
 class Uprising(Card):
     def play(self, player, game, index, bonus):
         game.sound_effect = SoundEffect.Crowd
@@ -643,8 +595,7 @@ class Juggle(Card):
 
         self.bottom(amt, game, player)
         self.draw(amt, game, player)
-juggle = Juggle(name="Juggle", cost=1, points=1,
-                text="1:1. When played, put up to 3 cards from your hand on the bottom of your deck, then draw that many", id=30)
+juggle = Juggle(name="Juggle", cost=1, points=1, id=30, rarity=2)
 class Paranoia(Card):
     def on_play(self, player, game):
         amt = game.story.get_length()
@@ -652,8 +603,7 @@ class Paranoia(Card):
 
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus)
-paranoia = Paranoia(name="Paranoia", cost=3, points=3,
-                    text="3:3, sight N (This round the first 4 cards of story are visible to you) (N is the number of cards before this in the story)", id=39)
+paranoia = Paranoia(name="Paranoia", cost=3, points=3, id=39, rarity=1)
 class Horus(Card):
     def get_cost(self, player, game):
 
@@ -669,17 +619,11 @@ class Horus(Card):
             return 0
         else:
             return self.cost
-horus = Horus(name="Horus", cost=7, points=7,
-              text="7:7, costs 0 if you can see at least 3 of your opponent's cards in the story", id=45)
+horus = Horus(name="Horus", cost=7, points=7, id=45, rarity=3)
 class Bandit(Card):
     def play(self, player, game, index, bonus):
         return super().play(player, game, index, bonus) + self.create(wanted_poster, game, player ^ 1)
-bandit = Bandit(name="Bandit", cost=1, points=2, text="1:2, create a ${146} in your opponent's hand", id=26)
-class Boar(Card):
-    def play(self, player, game, index, bonus):
-        amt = game.story.get_length()
-        return super().play(player, game, index, bonus) + self.discard(amt, game, player)
-boar = Boar(name="Boar", cost=3, points=4, text="3:4, discard your X leftmost cards, where X is the number of cards later in the story.", id=38)
+bandit = Bandit(name="Bandit", cost=1, points=2, id=26, rarity=0)
 class Disintegrate(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
@@ -690,8 +634,7 @@ class Disintegrate(Card):
                 self.transform(target_index, broken_bone, game)
                 return
             target_index += 1
-disintegrate = Disintegrate(name="Disintegrate", cost=1, points=1,
-              text="1:1, transform the next 1-cost card in the story into a Broken Bone.", id=29)
+disintegrate = Disintegrate(name="Disintegrate", cost=1, points=1, id=29, rarity=0)
 class Ecology(Card):
     def on_play(self, player, game):
         game.mana[player] += 10
@@ -708,9 +651,7 @@ class Ecology(Card):
     #         recap += f"\nTop: {rightmost_card.name}"
     #
     #     return recap
-ecology = Ecology(name="Ecology", cost=7, points=0,
-                  text="7:2.\nWhen played, gain 10 mana this round.", id=44)
-                  # text="8:6, Tutor X, where X is the number of cards before this in the story. Then create a copy of the rightmost card in your hand and put it on top of your deck.")
+ecology = Ecology(name="Ecology", cost=7, points=0, id=44, rarity=1)
 class Chimney(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
@@ -735,28 +676,28 @@ class PocketWatch(Card):
         recap = super().play(player, game, index, bonus)
         recap += self.draw(2, game, player)
         return recap
-pocket_watch = PocketWatch(name="Pocket Watch", cost=4, points=1, id=54)
+pocket_watch = PocketWatch(name="Pocket Watch", cost=4, points=1, id=54, rarity=1)
 class Sun(Card):
     def pile_upkeep(self, player, game, index):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
             super().add_mana(1, game, player)
             return True
-sun = Sun(name="Sun", cost=8, points=8, id=56)
+sun = Sun(name="Sun", cost=8, points=8, id=56, rarity=2)
 class Sickness(Card):
     def play(self, player, game, index, bonus):
         recap = super().play(player, game, index, bonus)
         recap += self.starve(4, game, player ^ 1)
         recap += self.create(sickness, game, player ^ 1)
         return recap
-sickness = Sickness(name="Sickness", cost=3, points=0, qualities=[Quality.FLEETING], id=58)
+sickness = Sickness(name="Sickness", cost=3, points=0, qualities=[Quality.FLEETING], id=58, rarity=1)
 class Axolotl(Card):
     def pile_upkeep(self, player, game, index):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
             super().create(axolotl, game, player)
             return True
-axolotl = Axolotl(name="Axolotl", cost=1, points=1, id=63)
+axolotl = Axolotl(name="Axolotl", cost=1, points=1, id=63, rarity=0)
 
 class Paramountcy(Card):
     def play(self, player, game, index, bonus):
@@ -773,7 +714,7 @@ class Paramountcy(Card):
                 game.animations[player].append(('Discard', 'Story', story_index))
 
 
-paramountcy = Paramountcy(name="Paramountcy", cost=9, points=0, id=62)
+paramountcy = Paramountcy(name="Paramountcy", cost=9, points=0, id=62, rarity=3)
 
 class Conquer(Card):
     def play(self, player, game, index, bonus):
@@ -781,7 +722,7 @@ class Conquer(Card):
             bonus += game.story.acts[0].card.cost
 
         return super().play(player, game, index, bonus)
-conquer = Conquer(name="Conquer", cost=5, points=2, qualities=[Quality.VISIBLE], id=67)
+conquer = Conquer(name="Conquer", cost=5, points=2, qualities=[Quality.VISIBLE], id=67, rarity=1)
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
@@ -790,9 +731,9 @@ full_catalog = [
     gears, cosmos, factory, fruiting, gift, hurricane, dinosaur_bones, mine,
     chimney, tumulus, uprising, stalker, sarcophagus, anubis, ai, oak,
 
-    bee, nectar, bandit, spy, night_vision, disintegrate, juggle, sine,
-    fishing_boat, unearth, bastet, imprison, crypt, stable, boar, paranoia,
-    pelican, beekeep, lotus, eagle, ecology, horus, icarus, enrage,
+    nectar, bandit, spy, night_vision, disintegrate, juggle, sine,
+    fishing_boat, unearth, bastet, imprison, crypt, paranoia,
+    pelican, lotus, eagle, ecology, horus, icarus, enrage,
 
     bounty, desert, scarab, phoenix, vulture, generator, pocket_watch, become_machine, sun,
     symbiosis,
@@ -803,6 +744,10 @@ full_catalog = [
 
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
+
+common_cards = [
+
+]
 
 import random
 # Get a random deck for the computer opponent

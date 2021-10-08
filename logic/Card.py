@@ -5,7 +5,7 @@ from logic.Story import Act
 
 
 class Card:
-    def __init__(self, name, cost=0, points=0, qualities=[], text='', spring=False, pile_highlight=False, dynamic_text='', id=-1):
+    def __init__(self, name, cost=0, points=0, qualities=[], text='', spring=False, pile_highlight=False, dynamic_text='', id=-1, rarity=None):
         self.name = name
         self.cost = cost
         self.points = points
@@ -15,6 +15,7 @@ class Card:
         self.pile_highlight = pile_highlight
         self.dynamic_text = dynamic_text
         self.id = id
+        self.rarity = rarity
 
     # Who is playing, the game model, index of this card in story, auras this round
     # Returns a text recap of playing this card, affects the score as it goes

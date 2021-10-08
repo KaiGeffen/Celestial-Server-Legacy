@@ -2,6 +2,7 @@ import os
 import asyncio
 import psycopg2
 import json
+import random
 
 from bottle import run, post, request, response, get, route
 from google.oauth2 import id_token
@@ -11,7 +12,8 @@ from internet.Settings import *
 
 # The id for the google_api for oauth2
 CLIENT_ID = '574352055172-n1nqdc2nvu3172levk2kl5jf7pbkp4ig.apps.googleusercontent.com'
-
+COST_PACK = 100
+IGC_INDEX = 2
 
 async def authenticate(ws):
     # Send a request for token
@@ -22,6 +24,9 @@ async def authenticate(ws):
     # Listen to responses
     async for message in ws:
         data = json.loads(message)
+
+        # Data about this user, stored locally for session
+        user_data = None
 
         if data["type"] == "send_token":
             token = data['value']
@@ -37,9 +42,16 @@ async def authenticate(ws):
             await asyncio.wait([ws.send(message)])
         elif data["type"] == "open_pack":
             # Check if they have the funds
+            have_funds = user_data[IGC_INDEX] >= COST_PACK
+
             # If not, return error
-            # If they do, return a pack of cards
-            pass
+            if not have_funds:
+                message = json.dumps({"type": "error"})
+            else:
+                pack = get_random_pack()
+                message = json.dumps({"type": "pack", "value": pack})
+            await asyncio.wait([ws.send(message)])
+
 
 
 
@@ -54,6 +66,7 @@ def get_id_email(token):
 
 # Interact with the psql
 # Get the user data for the given user id, create it first if they don't yet have an account
+# Returns a tuple if there is data, None otherwise
 def get_user_data(id, email):
     try:
         # Connect to an existing database
@@ -105,3 +118,22 @@ def get_user_data(id, email):
             cursor.close()
             connection.close()
             print("PostgreSQL connection is closed")
+
+# Random a full random pack of cards (4 cards common+, then 3 options for the last card)
+def get_random_pack():
+    pack = []
+    for x in range(4):
+        pack.append(get_random_pack_common_plus())
+
+    # Roll for what rarity the 5th card is
+    rarity = get_pack_rarity()
+
+
+    return pack
+
+COMMON_IS_WILD_CHANCE = 1/4
+def get_random_pack_common_plus():
+    if random.random() <= COMMON_IS_WILD_CHANCE:
+        return get_random_pack_wild()
+    else:
+        return random.choice()
