@@ -2,14 +2,14 @@ import os
 import asyncio
 import psycopg2
 import json
-import random
-import CardCodec
 
 from bottle import run, post, request, response, get, route
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
 from internet.Settings import *
+from logic.Pack import get_random_pack
+
 
 # The id for the google_api for oauth2
 CLIENT_ID = '574352055172-n1nqdc2nvu3172levk2kl5jf7pbkp4ig.apps.googleusercontent.com'
@@ -28,6 +28,8 @@ async def authenticate(ws):
 
         # Data about this user, stored locally for session
         user_data = None
+        # The last pack this user opened
+        pack = None
 
         if data["type"] == "send_token":
             token = data['value']
@@ -50,8 +52,15 @@ async def authenticate(ws):
                 message = json.dumps({"type": "error"})
             else:
                 pack = get_random_pack()
+
+                # Subtract funds, add these cards to user inventory
+                adjust_user_data_opened_pack(id, pack)
+
                 message = json.dumps({"type": "pack", "value": pack})
             await asyncio.wait([ws.send(message)])
+        elif data["type"] == "make_choice":
+            # Adjust the inventory to reflect if user chose a card besides the first option
+            pass
 
 
 
@@ -119,51 +128,3 @@ def get_user_data(id, email):
             cursor.close()
             connection.close()
             print("PostgreSQL connection is closed")
-
-
-from logic.Catalog import common_cards, uncommon_cards, rare_cards, legend_cards
-# Random a full random pack of cards (4 cards common+, then 3 options for the last card)
-# print(common_cards)
-# print(list(common_cards))
-def get_random_pack():
-    pack = []
-    for x in range(4):
-        pack.append(get_random_pack_common_plus())
-
-    # Get the remaining 3 choice cards
-    pack += get_choice_cards()
-
-    return pack
-
-
-COMMON_IS_WILD_CHANCE = 1/4
-def get_random_pack_common_plus():
-    if random.random() <= COMMON_IS_WILD_CHANCE:
-        return get_random_pack_wild()
-    else:
-        return random.choice(common_cards).name
-
-
-# 2/3 to get unc, if not then 1/8 to get legend and 7/8 to get rare
-UNCOMMON_CHANCE = 2/3
-LEGEND_CHANCE = 1/8
-def get_random_pack_wild():
-    if random.random() <= UNCOMMON_CHANCE:
-        pool = uncommon_cards
-    elif random.random() <= LEGEND_CHANCE:
-        pool = legend_cards
-    else:
-        pool = rare_cards
-
-    return random.choice(pool).name
-
-def get_choice_cards():
-    if random.random() <= UNCOMMON_CHANCE:
-        return map(lambda c: c.name, random.sample(uncommon_cards, 3))
-    elif random.random() <= LEGEND_CHANCE:
-        return map(lambda c: c.name, random.sample(legend_cards, 3))
-    else:
-        return map(lambda c: c.name, random.sample(rare_cards, 3))
-
-
-print(get_random_pack())
