@@ -49,7 +49,10 @@ def decode_card(s):
 
 def decode_deck(deck_codes):
     if deck_codes:
-        cards = deck_codes.split(DELIM2)
+        if DELIM2 in deck_codes:
+            cards = deck_codes.split(DELIM2)
+        else:
+            cards = deck_codes.split(':')
         return list(map(decode_card, cards))
     else:
         return []
