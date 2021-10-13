@@ -49,7 +49,7 @@ def decode_card(s):
 
 def decode_deck(deck_codes):
     if deck_codes:
-        if DELIM2 in deck_codes:
+        if DELIM2 in deck_codes or DELIM_DYN_TEXT in deck_codes:
             cards = deck_codes.split(DELIM2)
         else:
             cards = deck_codes.split(':')
