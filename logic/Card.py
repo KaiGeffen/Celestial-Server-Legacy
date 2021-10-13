@@ -313,7 +313,6 @@ class Card:
             ))
 
             # Add an animation
-            print(act.card)
             game.animations[act.owner].append(('Transform', 'Story', index, CardCodec.encode_card(act.card)))
 
 
