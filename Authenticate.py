@@ -45,7 +45,7 @@ async def authenticate(ws):
             await asyncio.wait([ws.send(message)])
         elif data["type"] == "open_pack":
             # Check if they have the funds
-            have_funds = user_data[IGC_INDEX] >= COST_PACK
+            have_funds = True#user_data[IGC_INDEX] >= COST_PACK
 
             # If not, return error
             if not have_funds:
