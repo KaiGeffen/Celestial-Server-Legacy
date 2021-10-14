@@ -151,7 +151,7 @@ def adjust_user_data_opened_pack(uuid, pack):
 
         update_query = "UPDATE players\n"
         update_query += f"SET igc = igc - {COST_PACK}, inventory[{pack[0]}] = coalesce(inventory[{pack[0]}], 0) + 1, inventory[{pack[1]}] = coalesce(inventory[{pack[1]}], 0) + 1, inventory[{pack[2]}] = coalesce(inventory[{pack[2]}], 0) + 1, inventory[{pack[3]}] = coalesce(inventory[{pack[3]}], 0) + 1, inventory[{pack[4]}] = coalesce(inventory[{pack[4]}], 0) + 1\n"
-        update_query += f"WHERE id = {uuid};"
+        update_query += f"WHERE id = '{uuid}';"
 
         cursor.execute(update_query)
 
@@ -181,7 +181,7 @@ def adjust_user_data_chosen_card(uuid, chosen_card, default_card):
 
         update_query = "UPDATE players\n"
         update_query += f"inventory[{chosen_card}] = coalesce(inventory[{chosen_card}], 0) + 1, inventory[{default_card}] = coalesce(inventory[{default_card}], 0) - 1\n"
-        update_query += f"WHERE id = {uuid};"
+        update_query += f"WHERE id = '{uuid}';"
 
         cursor.execute(update_query)
 
