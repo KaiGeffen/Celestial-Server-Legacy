@@ -66,7 +66,7 @@ class GameMatch:
 
     async def notify_exit(self):
         # Don't inform after the game has ended, since users will naturally dc
-        if self.game.model.get_winner() is not None:
+        if self.game is None or self.game.model.get_winner() is not None:
             return
 
         messages = []
@@ -188,6 +188,8 @@ PWD_MATCHES = {}
 matches_lock = asyncio.Lock()
 async def serveMain(ws, path):
     global PWD_MATCHES
+    print(path)
+    print(PWD_MATCHES)
 
     # Remove leading /
     path = path[1:]
@@ -229,7 +231,7 @@ async def serveMain(ws, path):
     try:
         async for message in ws:
             data = json.loads(message)
-            # print(f"{ws.remote_address}: {data}")
+            print(f"{ws.remote_address}: {data}")
 
             if data["type"] == "init":
                 deck = CardCodec.decode_deck(data["value"])
