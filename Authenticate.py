@@ -156,6 +156,7 @@ def adjust_user_data_opened_pack(uuid, pack):
         print(update_query)
 
         cursor.execute(update_query)
+        connection.commit()
 
     except (Exception, psycopg2.Error) as error:
         print("Error while connecting to PostgreSQL", error)
@@ -186,6 +187,7 @@ def adjust_user_data_chosen_card(uuid, chosen_card, default_card):
         update_query += f"WHERE id = '{uuid}';"
 
         cursor.execute(update_query)
+        connection.commit()
 
     except (Exception, psycopg2.Error) as error:
         print("Error while connecting to PostgreSQL", error)
