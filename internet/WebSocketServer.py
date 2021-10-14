@@ -70,9 +70,9 @@ class GameMatch:
             return
 
         messages = []
-        if self.ws1 is not None:
+        if self.ws1 is not None and not self.ws1.closed:
             messages.append(self.ws1.send(json.dumps({"type": "dc"})))
-        if self.ws2 is not None:
+        if self.ws2 is not None and not self.ws2.closed:
             messages.append(self.ws2.send(json.dumps({"type": "dc"})))
 
         await asyncio.wait(messages)
@@ -188,8 +188,6 @@ PWD_MATCHES = {}
 matches_lock = asyncio.Lock()
 async def serveMain(ws, path):
     global PWD_MATCHES
-    print(path)
-    print(PWD_MATCHES)
 
     # Remove leading /
     path = path[1:]
@@ -231,7 +229,6 @@ async def serveMain(ws, path):
     try:
         async for message in ws:
             data = json.loads(message)
-            print(f"{ws.remote_address}: {data}")
 
             if data["type"] == "init":
                 deck = CardCodec.decode_deck(data["value"])
