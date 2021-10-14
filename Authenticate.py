@@ -43,7 +43,7 @@ async def authenticate(ws):
             message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
             print(message)
             await asyncio.wait([ws.send(message)])
-        elif data["type"] == "open_pack":
+        elif data["type"] == "request_pack":
             print('Someone trying to open a pack.')
             # Check if they have the funds
             have_funds = True#user_data[IGC_INDEX] >= COST_PACK
