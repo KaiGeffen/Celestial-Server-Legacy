@@ -44,6 +44,7 @@ async def authenticate(ws):
             print(message)
             await asyncio.wait([ws.send(message)])
         elif data["type"] == "open_pack":
+            print('Someone trying to open a pack.')
             # Check if they have the funds
             have_funds = True#user_data[IGC_INDEX] >= COST_PACK
 
@@ -147,7 +148,7 @@ def adjust_user_data_opened_pack(uuid, pack):
         cursor = connection.cursor()
 
         update_query = "UPDATE players\n"
-        update_query += f"igc = igc - ${COST_PACK}, inventory[${pack[0]}] = coalesce(inventory[${pack[0]}], 0) + 1, inventory[${pack[1]}] = coalesce(inventory[${pack[1]}], 0) + 1, inventory[${pack[2]}] = coalesce(inventory[${pack[2]}], 0) + 1, inventory[${pack[3]}] = coalesce(inventory[${pack[3]}], 0) + 1, inventory[${pack[4]}] = coalesce(inventory[${pack[4]}], 0) + 1"
+        update_query += f"igc = igc - ${COST_PACK}, inventory[${pack[0]}] = coalesce(inventory[${pack[0]}], 0) + 1, inventory[${pack[1]}] = coalesce(inventory[${pack[1]}], 0) + 1, inventory[${pack[2]}] = coalesce(inventory[${pack[2]}], 0) + 1, inventory[${pack[3]}] = coalesce(inventory[${pack[3]}], 0) + 1, inventory[${pack[4]}] = coalesce(inventory[${pack[4]}], 0) + 1\n"
         update_query += f"WHERE id = ${uuid};"
 
         cursor.execute(update_query)
@@ -177,7 +178,7 @@ def adjust_user_data_chosen_card(uuid, chosen_card, default_card):
         cursor = connection.cursor()
 
         update_query = "UPDATE players\n"
-        update_query += f"inventory[${chosen_card}] = coalesce(inventory[${chosen_card}], 0) + 1, inventory[${default_card}] = coalesce(inventory[${default_card}], 0) - 1"
+        update_query += f"inventory[${chosen_card}] = coalesce(inventory[${chosen_card}], 0) + 1, inventory[${default_card}] = coalesce(inventory[${default_card}], 0) - 1\n"
         update_query += f"WHERE id = ${uuid};"
 
         cursor.execute(update_query)
