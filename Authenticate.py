@@ -41,7 +41,7 @@ async def authenticate(ws):
                 user_data = get_user_data(uuid, email)
             print('User data is: ' + user_data)
 
-            message = json.dumps({"type": "send_user_data", "value": user_data})
+            message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
             print(message)
             await asyncio.wait([ws.send(message)])
         elif data["type"] == "open_pack":
