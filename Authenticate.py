@@ -61,7 +61,7 @@ async def authenticate(ws):
 
                 choice_cards = pack[4:]
 
-                message = json.dumps({"type": "pack", "value": pack})
+                message = json.dumps({"type": "send_pack", "value": pack})
             await asyncio.wait([ws.send(message)])
         elif data["type"] == "make_choice":
             chosen_card = choice_cards[data['value']]
@@ -152,6 +152,8 @@ def adjust_user_data_opened_pack(uuid, pack):
         update_query = "UPDATE players\n"
         update_query += f"SET igc = igc - {COST_PACK}, inventory[{pack[0]}] = coalesce(inventory[{pack[0]}], 0) + 1, inventory[{pack[1]}] = coalesce(inventory[{pack[1]}], 0) + 1, inventory[{pack[2]}] = coalesce(inventory[{pack[2]}], 0) + 1, inventory[{pack[3]}] = coalesce(inventory[{pack[3]}], 0) + 1, inventory[{pack[4]}] = coalesce(inventory[{pack[4]}], 0) + 1\n"
         update_query += f"WHERE id = '{uuid}';"
+
+        print(update_query)
 
         cursor.execute(update_query)
 
