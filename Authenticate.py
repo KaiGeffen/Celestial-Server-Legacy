@@ -109,8 +109,8 @@ def get_user_data(id, email):
             # If they don't create one, then return the basic entry
             print("User doesn't yet exist")
 
-            basic_entry = f"('{padded_id}', '{email}', 0, '{{}}', 0, 0)"
-            insert_query = f"INSERT INTO players (ID, EMAIL, IGC, DECKS, WINS, LOSSES) VALUES {basic_entry}"
+            basic_entry = f"('{padded_id}', '{email}')"
+            insert_query = f"INSERT INTO players (ID, EMAIL) VALUES {basic_entry}"
             cursor.execute(insert_query)
             connection.commit()
 
