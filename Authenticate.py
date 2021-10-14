@@ -35,7 +35,7 @@ async def authenticate(ws):
             token = data['value']
             (uuid, email) = get_id_email(token)
 
-            if uuid is None:
+            if email is None:
                 user_data = None
             else:
                 user_data = get_user_data(uuid, email)
@@ -74,8 +74,13 @@ async def authenticate(ws):
 def get_id_email(token):
     try:
         idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
-        print(idinfo['email'])
-        return (idinfo['sub'], idinfo['email'])
+
+        # Postgres uuid requires 32 (hex) digits, so add trailing 0s to get that many digits
+        id = idinfo['sub']
+        num_digits = len(str(id))
+        padded_id = str(id) + '0' * (32 - num_digits)
+
+        return padded_id, idinfo['email']
 
     except ValueError:
         return (None, None)
@@ -96,10 +101,7 @@ def get_user_data(id, email):
         cursor = connection.cursor()
 
         # Check if user has an entry
-        # Postgres uuid requires 32 (hex) digits, so add trailing 0s to get that many digits
-        num_digits = len(str(id))
-        padded_id = str(id) + '0' * (32 - num_digits)
-        select_query = f"SELECT * from players where id = '{padded_id}'"
+        select_query = f"SELECT * from players where id = '{id}'"
         cursor.execute(select_query)
         count = cursor.rowcount
         if count > 0:
@@ -114,7 +116,7 @@ def get_user_data(id, email):
             # If they don't create one, then return the basic entry
             print("User doesn't yet exist")
 
-            basic_entry = f"('{padded_id}', '{email}')"
+            basic_entry = f"('{id}', '{email}')"
             insert_query = f"INSERT INTO players (ID, EMAIL) VALUES {basic_entry}"
             cursor.execute(insert_query)
             connection.commit()
