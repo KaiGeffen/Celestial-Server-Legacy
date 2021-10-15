@@ -163,33 +163,19 @@ def get_user_data(id, email):
 
 # For user with given id, add the given pack to their inventory
 def adjust_user_data_opened_pack(uuid, pack):
-    try:
-        # Connect to an existing database
-        connection = psycopg2.connect(user="doadmin",
-                                      password=os.environ["DB_PWD"],
-                                      host="app-8058d91d-8288-43bb-a12e-e1eb61ce00e3-do-user-8861671-0.b.db.ondigitalocean.com",
-                                      port="25060",
-                                      database="defaultdb",
-                                      sslmode="require")
+    update_query = "UPDATE players\n"
+    update_query += f"SET igc = igc - {COST_PACK}" \
 
-        cursor = connection.cursor()
+    for i in range(5):
+        val = pack[i]
 
-        update_query = "UPDATE players\n"
-        update_query += f"SET igc = igc - {COST_PACK}, inventory[{pack[0] + 1}] = coalesce(inventory[{pack[0] + 1}], 0) + 1, inventory[{pack[1] + 1}] = coalesce(inventory[{pack[1] + 1}], 0) + 1, inventory[{pack[2] + 1}] = coalesce(inventory[{pack[2] + 1}], 0) + 1, inventory[{pack[3] + 1}] = coalesce(inventory[{pack[3] + 1}], 0) + 1, inventory[{pack[4] + 1}] = coalesce(inventory[{pack[4] + 1}], 0) + 1\n"
-        update_query += f"WHERE id = '{uuid}';"
+        # Must increase by amt of the card in the first 5 because it won't get saved between successive increments
+        amt = pack[:5].count(val)
 
-        print(update_query)
+        update_query += f", inventory[{val + 1}] = coalesce(inventory[{val + 1}], 0) + {amt}"
+    update_query += f"\nWHERE id = '{uuid}';"
 
-        cursor.execute(update_query)
-        connection.commit()
-
-    except (Exception, psycopg2.Error) as error:
-        print("Error while connecting to PostgreSQL", error)
-    finally:
-        if connection:
-            cursor.close()
-            connection.close()
-            print("PostgreSQL connection is closed")
+    update_db(update_query)
 
 # For user with given id, submit their choice (Remove the default chosen card, add the one they chose)
 def adjust_user_data_chosen_card(uuid, chosen_card, default_card):
@@ -224,36 +210,23 @@ def adjust_user_data_chosen_card(uuid, chosen_card, default_card):
 
 # For user with given id, update their user progress
 def adjust_user_progress(uuid, user_progress):
-    try:
-        # Connect to an existing database
-        connection = psycopg2.connect(user="doadmin",
-                                      password=os.environ["DB_PWD"],
-                                      host="app-8058d91d-8288-43bb-a12e-e1eb61ce00e3-do-user-8861671-0.b.db.ondigitalocean.com",
-                                      port="25060",
-                                      database="defaultdb",
-                                      sslmode="require")
+    update_query = "UPDATE players\n"
+    update_query += f"SET userprogress = {user_progress}\n"
+    update_query += f"WHERE id = '{uuid}';"
 
-        cursor = connection.cursor()
-
-        update_query = "UPDATE players\n"
-        update_query += f"SET userprogress = {user_progress}\n"
-        update_query += f"WHERE id = '{uuid}';"
-
-        print(update_query)
-
-        cursor.execute(update_query)
-        connection.commit()
-
-    except (Exception, psycopg2.Error) as error:
-        print("Error while connecting to PostgreSQL", error)
-    finally:
-        if connection:
-            cursor.close()
-            connection.close()
-            print("PostgreSQL connection is closed")
+    update_db(update_query)
 
 # For user with given id, update their decks
 def adjust_decks(uuid, decks):
+    update_query = "UPDATE players\n"
+    update_query += f"SET decks = {decks}\n"
+    update_query += f"WHERE id = '{uuid}';"
+
+    update_db(update_query)
+
+# For user with given id, update their decks
+def update_db(cmd):
+    print(cmd)
     try:
         # Connect to an existing database
         connection = psycopg2.connect(user="doadmin",
@@ -265,13 +238,7 @@ def adjust_decks(uuid, decks):
 
         cursor = connection.cursor()
 
-        update_query = "UPDATE players\n"
-        update_query += f"SET decks = {decks}\n"
-        update_query += f"WHERE id = '{uuid}';"
-
-        print(update_query)
-
-        cursor.execute(update_query)
+        cursor.execute(cmd)
         connection.commit()
 
     except (Exception, psycopg2.Error) as error:
