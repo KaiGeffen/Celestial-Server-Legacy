@@ -86,6 +86,13 @@ async def authenticate(ws):
             message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
             print(message)
             await asyncio.wait([ws.send(message)])
+        elif data["type"] == "send_user_progress":
+            print("Sending user progress!")
+            adjust_user_progress(uuid, data["value"])
+        elif data["type"] == "send_decks":
+            print("Sending decks!")
+            adjust_decks(uuid, data["value"])
+
 
 
 
@@ -203,6 +210,66 @@ def adjust_user_data_chosen_card(uuid, chosen_card, default_card):
         update_query = "UPDATE players\n"
         update_query += f"SET inventory[{chosen_card + 1}] = coalesce(inventory[{chosen_card + 1}], 0) + 1, inventory[{default_card + 1}] = coalesce(inventory[{default_card + 1}], 0) - 1\n"
         update_query += f"WHERE id = '{uuid}';"
+
+        cursor.execute(update_query)
+        connection.commit()
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
+# For user with given id, update their user progress
+def adjust_user_progress(uuid, user_progress):
+    try:
+        # Connect to an existing database
+        connection = psycopg2.connect(user="doadmin",
+                                      password=os.environ["DB_PWD"],
+                                      host="app-8058d91d-8288-43bb-a12e-e1eb61ce00e3-do-user-8861671-0.b.db.ondigitalocean.com",
+                                      port="25060",
+                                      database="defaultdb",
+                                      sslmode="require")
+
+        cursor = connection.cursor()
+
+        update_query = "UPDATE players\n"
+        update_query += f"SET userprogress = {user_progress}\n"
+        update_query += f"WHERE id = '{uuid}';"
+
+        print(update_query)
+
+        cursor.execute(update_query)
+        connection.commit()
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
+# For user with given id, update their decks
+def adjust_decks(uuid, decks):
+    try:
+        # Connect to an existing database
+        connection = psycopg2.connect(user="doadmin",
+                                      password=os.environ["DB_PWD"],
+                                      host="app-8058d91d-8288-43bb-a12e-e1eb61ce00e3-do-user-8861671-0.b.db.ondigitalocean.com",
+                                      port="25060",
+                                      database="defaultdb",
+                                      sslmode="require")
+
+        cursor = connection.cursor()
+
+        update_query = "UPDATE players\n"
+        update_query += f"SET decks = {decks}\n"
+        update_query += f"WHERE id = '{uuid}';"
+
+        print(update_query)
 
         cursor.execute(update_query)
         connection.commit()
