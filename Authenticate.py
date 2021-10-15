@@ -219,7 +219,7 @@ def adjust_user_progress(uuid, user_progress):
 # For user with given id, update their decks
 def adjust_decks(uuid, decks):
     update_query = "UPDATE players\n"
-    update_query += f"SET decks = {decks}\n"
+    update_query += f"SET decks = {decks}\n".replace('[', '{').replace(']', '}')
     update_query += f"WHERE id = '{uuid}';"
 
     update_db(update_query)
