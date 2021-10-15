@@ -87,10 +87,10 @@ async def authenticate(ws):
             print(message)
             await asyncio.wait([ws.send(message)])
         elif data["type"] == "send_user_progress":
-            print("Sending user progress!")
+            print("Received user progress!")
             adjust_user_progress(uuid, data["value"])
         elif data["type"] == "send_decks":
-            print("Sending decks!")
+            print("Received decks!")
             adjust_decks(uuid, data["value"])
 
 
@@ -210,8 +210,10 @@ def adjust_user_data_chosen_card(uuid, chosen_card, default_card):
 
 # For user with given id, update their user progress
 def adjust_user_progress(uuid, user_progress):
+    progress_no_quotes = user_progress.replace("'", "")
+
     update_query = "UPDATE players\n"
-    update_query += f"SET userprogress = {user_progress}\n"
+    update_query += f"SET userprogress = '{progress_no_quotes}'\n"
     update_query += f"WHERE id = '{uuid}';"
 
     update_db(update_query)
