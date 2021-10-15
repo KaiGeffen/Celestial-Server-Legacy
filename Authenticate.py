@@ -26,8 +26,8 @@ async def authenticate(ws):
 
     # Data about this user, stored locally for session
     user_data = None
-    # The last set of choice cards user saw
-    choice_cards = None
+    # The last set of choice cards user saw, should always be set before choice is made
+    choice_cards = [0, 0, 0]
 
     # Listen to responses
     async for message in ws:
@@ -62,7 +62,10 @@ async def authenticate(ws):
                 # then if another is chosen, the inventory is adjusted
                 adjust_user_data_opened_pack(uuid, pack)
 
-                choice_cards = pack[4:]
+                # choice_cards = pack[4:]
+                choice_cards[0] = pack[4]
+                choice_cards[1] = pack[5]
+                choice_cards[2] = pack[6]
 
                 message = json.dumps({"type": "send_pack", "value": pack})
             await asyncio.wait([ws.send(message)])
@@ -72,7 +75,7 @@ async def authenticate(ws):
             chosen_card = choice_cards[data['value']]
 
             # Adjust the inventory to reflect if user chose a card besides the first option
-            adjust_user_data_chosen_card(chosen_card, choice_cards[0])
+            adjust_user_data_chosen_card(uuid, chosen_card, choice_cards[0])
 
             # Get the user's data
             if email is None:
