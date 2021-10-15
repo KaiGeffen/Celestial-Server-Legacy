@@ -210,7 +210,8 @@ def adjust_user_data_chosen_card(uuid, chosen_card, default_card):
 
 # For user with given id, update their user progress
 def adjust_user_progress(uuid, user_progress):
-    progress_no_quotes = str(user_progress).replace("'", "")
+    # SQL db uses curly brace instead of square for arrays
+    progress_no_quotes = str(user_progress).replace("'", "").replace('[', '{').replace(']', '}')
 
     update_query = "UPDATE players\n"
     update_query += f"SET userprogress = '{progress_no_quotes}'\n"
@@ -221,7 +222,8 @@ def adjust_user_progress(uuid, user_progress):
 # For user with given id, update their decks
 def adjust_decks(uuid, decks):
     update_query = "UPDATE players\n"
-    update_query += f"SET decks = {decks}\n"
+    # SQL db uses curly brace instead of square for arrays
+    update_query += f"SET decks = {decks}\n".replace('[', '{').replace(']', '}')
     update_query += f"WHERE id = '{uuid}';"
 
     update_db(update_query)
@@ -239,9 +241,6 @@ def update_db(cmd):
                                       sslmode="require")
 
         cursor = connection.cursor()
-
-        # SQL db uses curly brace instead of square for arrays
-        cmd = cmd.replace('[', '{').replace(']', '}')
 
         cursor.execute(cmd)
         connection.commit()
