@@ -210,7 +210,7 @@ def adjust_user_data_chosen_card(uuid, chosen_card, default_card):
 
 # For user with given id, update their user progress
 def adjust_user_progress(uuid, user_progress):
-    progress_no_quotes = user_progress.replace("'", "")
+    progress_no_quotes = str(user_progress).replace("'", "")
 
     update_query = "UPDATE players\n"
     update_query += f"SET userprogress = '{progress_no_quotes}'\n"
