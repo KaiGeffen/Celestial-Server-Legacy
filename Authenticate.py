@@ -24,24 +24,22 @@ async def authenticate(ws):
     print(message)
     await asyncio.wait([ws.send(message)])
 
+    # Data about this user, stored locally for session
+    user_data = None
+    # The last set of choice cards user saw
+    choice_cards = None
+
     # Listen to responses
     async for message in ws:
         data = json.loads(message)
-
-        # Data about this user, stored locally for session
-        user_data = None
-        # The last set of choice cards user saw
-        choice_cards = None
 
         if data["type"] == "send_token":
             token = data['value']
             (uuid, email) = get_id_email(token)
 
             if email is None:
-                nonlocal user_data
                 user_data = None
             else:
-                nonlocal user_data
                 user_data = get_user_data(uuid, email)
 
             message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
@@ -49,6 +47,7 @@ async def authenticate(ws):
             await asyncio.wait([ws.send(message)])
         elif data["type"] == "request_pack":
             print('Someone trying to open a pack.')
+            print(user_data)
             # Check if they have the funds
             have_funds = True#user_data[IGC_INDEX] >= COST_PACK
 
@@ -63,12 +62,12 @@ async def authenticate(ws):
                 # then if another is chosen, the inventory is adjusted
                 adjust_user_data_opened_pack(uuid, pack)
 
-                nonlocal choice_cards
                 choice_cards = pack[4:]
 
                 message = json.dumps({"type": "send_pack", "value": pack})
             await asyncio.wait([ws.send(message)])
         elif data["type"] == "make_choice":
+            print("Make the choice!")
             print(choice_cards)
             chosen_card = choice_cards[data['value']]
 
