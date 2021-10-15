@@ -221,9 +221,11 @@ def adjust_user_progress(uuid, user_progress):
 
 # For user with given id, update their decks
 def adjust_decks(uuid, decks):
+    decks_no_quotes = str(decks).replace("'", "").replace('[', '{').replace(']', '}')
+
     update_query = "UPDATE players\n"
     # SQL db uses curly brace instead of square for arrays
-    update_query += f"SET decks = {decks}\n".replace('[', '{').replace(']', '}')
+    update_query += f"SET decks = '{decks_no_quotes}'\n"
     update_query += f"WHERE id = '{uuid}';"
 
     update_db(update_query)
