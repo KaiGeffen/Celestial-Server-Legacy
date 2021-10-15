@@ -16,6 +16,8 @@ CLIENT_ID = '574352055172-n1nqdc2nvu3172levk2kl5jf7pbkp4ig.apps.googleuserconten
 COST_PACK = 100
 IGC_INDEX = 2
 
+# NOTE Have to add 1 for working with sql arrays, they start at 1
+
 async def authenticate(ws):
     # Send a request for token
     message = json.dumps({"type": "request_token"})
@@ -150,7 +152,7 @@ def adjust_user_data_opened_pack(uuid, pack):
         cursor = connection.cursor()
 
         update_query = "UPDATE players\n"
-        update_query += f"SET igc = igc - {COST_PACK}, inventory[{pack[0]}] = coalesce(inventory[{pack[0]}], 0) + 1, inventory[{pack[1]}] = coalesce(inventory[{pack[1]}], 0) + 1, inventory[{pack[2]}] = coalesce(inventory[{pack[2]}], 0) + 1, inventory[{pack[3]}] = coalesce(inventory[{pack[3]}], 0) + 1, inventory[{pack[4]}] = coalesce(inventory[{pack[4]}], 0) + 1\n"
+        update_query += f"SET igc = igc - {COST_PACK}, inventory[{pack[0] + 1}] = coalesce(inventory[{pack[0] + 1}], 0) + 1, inventory[{pack[1] + 1}] = coalesce(inventory[{pack[1] + 1}], 0) + 1, inventory[{pack[2] + 1}] = coalesce(inventory[{pack[2] + 1}], 0) + 1, inventory[{pack[3] + 1}] = coalesce(inventory[{pack[3] + 1}], 0) + 1, inventory[{pack[4] + 1}] = coalesce(inventory[{pack[4] + 1}], 0) + 1\n"
         update_query += f"WHERE id = '{uuid}';"
 
         print(update_query)
@@ -183,7 +185,7 @@ def adjust_user_data_chosen_card(uuid, chosen_card, default_card):
         cursor = connection.cursor()
 
         update_query = "UPDATE players\n"
-        update_query += f"inventory[{chosen_card}] = coalesce(inventory[{chosen_card}], 0) + 1, inventory[{default_card}] = coalesce(inventory[{default_card}], 0) - 1\n"
+        update_query += f"SET inventory[{chosen_card + 1}] = coalesce(inventory[{chosen_card + 1}], 0) + 1, inventory[{default_card + 1}] = coalesce(inventory[{default_card + 1}], 0) - 1\n"
         update_query += f"WHERE id = '{uuid}';"
 
         cursor.execute(update_query)
