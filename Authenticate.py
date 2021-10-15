@@ -29,9 +29,9 @@ async def authenticate(ws):
         data = json.loads(message)
 
         # Data about this user, stored locally for session
-        user_data = None
+        user_data
         # The last set of choice cards user saw
-        choice_cards = None
+        choice_cards
 
         if data["type"] == "send_token":
             token = data['value']
@@ -70,6 +70,16 @@ async def authenticate(ws):
 
             # Adjust the inventory to reflect if user chose a card besides the first option
             adjust_user_data_chosen_card(chosen_card, choice_cards[0])
+
+            # Get the user's data
+            if email is None:
+                user_data = None
+            else:
+                user_data = get_user_data(uuid, email)
+
+            message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
+            print(message)
+            await asyncio.wait([ws.send(message)])
 
 
 
