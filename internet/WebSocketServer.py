@@ -58,15 +58,19 @@ class GameMatch:
         # Give the winner igc if they just won, then remove their uuid so they aren't double paid
         winner = self.game.model.get_winner()
         if winner == 0:
-            Authenticate.add_win(self.uuid1)
-            Authenticate.add_loss(self.uuid2)
-            self.uuid1 = None
-            self.uuid2 = None
+            if self.uuid1 is not None:
+                Authenticate.add_win(self.uuid1)
+                self.uuid1 = None
+            if self.uuid2 is not None:
+                Authenticate.add_loss(self.uuid2)
+                self.uuid2 = None
         elif winner == 1:
-            Authenticate.add_win(self.uuid2)
-            Authenticate.add_loss(self.uuid1)
-            self.uuid1 = None
-            self.uuid2 = None
+            if self.uuid1 is not None:
+                Authenticate.add_loss(self.uuid1)
+                self.uuid1 = None
+            if self.uuid2 is not None:
+                Authenticate.add_win(self.uuid2)
+                self.uuid2 = None
 
         messages = []
         if self.ws1 is not None:
