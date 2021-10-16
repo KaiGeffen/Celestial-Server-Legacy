@@ -27,8 +27,14 @@ class GameMatch:
     vs_ai = False
     lock = None
 
-    def __init__(self, ws):
+    # UUIDs for the players to receive currency if they win
+    uuid1 = None
+    uuid2 = None
+
+    def __init__(self, ws, uuid=None):
         self.ws1 = ws
+
+        self.uuid1 = uuid
 
         self.lock = asyncio.Lock()
 
@@ -48,6 +54,15 @@ class GameMatch:
     async def notify_state(self):
         if self.game is None:
             return
+
+        # Give the winner igc if they just won, then remove their uuid so they aren't double paid
+        winner = self.game.model.get_winner()
+        if winner == 0:
+            Authenticate.add_igc(self.uuid1)
+            self.uuid1 = None
+        elif winner == 1:
+            Authenticate.add_igc(self.uuid2)
+            self.uuid2 = None
 
         messages = []
         if self.ws1 is not None:
@@ -77,8 +92,10 @@ class GameMatch:
 
         await asyncio.wait(messages)
 
-    def add_player_2(self, ws):
+    def add_player_2(self, ws, uuid=None):
         self.ws2 = ws
+
+        self.uuid2 = uuid
 
         return self
 
@@ -186,7 +203,7 @@ async def notify_error(ws):
 # A dictionary with paths (passwords) as keys
 PWD_MATCHES = {}
 matches_lock = asyncio.Lock()
-async def serveMain(ws, path):
+async def serveMain(ws, path, uuid = None):
     global PWD_MATCHES
 
     # Remove leading /
@@ -197,16 +214,16 @@ async def serveMain(ws, path):
       return
     elif path == 'ai':
         player = 0
-        match = GameMatch(ws)
+        match = GameMatch(ws, uuid)
         await match.add_ai_opponent()
     elif path.startswith('ai-'):
         player = 0
-        match = GameMatch(ws)
+        match = GameMatch(ws, uuid)
         i = path[3:]
         await match.add_ai_opponent(i)
     elif path.startswith('ai:'):
         player = 0
-        match = GameMatch(ws)
+        match = GameMatch(ws, uuid)
         deck_code = path[3:]
         await match.add_specific_ai_opponent(deck_code)
     elif path == 'tutorial':
@@ -217,11 +234,11 @@ async def serveMain(ws, path):
         async with matches_lock:
             if path not in PWD_MATCHES.keys():
                 player = 0
-                match = GameMatch(ws)
+                match = GameMatch(ws, uuid)
                 PWD_MATCHES[path] = match
             else:
                 player = 1
-                match = PWD_MATCHES.pop(path).add_player_2(ws)
+                match = PWD_MATCHES.pop(path).add_player_2(ws, uuid)
 
     await match.notify_number_players_connected()
 
@@ -232,7 +249,6 @@ async def serveMain(ws, path):
 
             if data["type"] == "init":
                 deck = CardCodec.decode_deck(data["value"])
-                # print(deck)
 
                 await match.add_deck(player, deck)
 
@@ -250,6 +266,10 @@ async def serveMain(ws, path):
             elif data["type"] == "pass_turn":
                 # TODO 10 is the pass action, use the constant for pass to avoid arbitrary literal
                 await match.do_action(player, 10, data["version"])
+            elif data["type"] == "exit_match":
+                break
+            else:
+                print(data["type"])
 
     finally:
         # If this player was searching for an opponent and left, remove their open match

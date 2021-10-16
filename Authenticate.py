@@ -2,6 +2,7 @@ import os
 import asyncio
 import psycopg2
 import json
+import internet.WebSocketServer as game_server
 
 from bottle import run, post, request, response, get, route
 from google.oauth2 import id_token
@@ -15,6 +16,7 @@ from logic.Pack import get_random_pack
 CLIENT_ID = '574352055172-n1nqdc2nvu3172levk2kl5jf7pbkp4ig.apps.googleusercontent.com'
 COST_PACK = 100
 IGC_INDEX = 2
+WIN_AMT = 15
 
 # NOTE Have to add 1 for working with sql arrays, they start at 1
 
@@ -70,8 +72,6 @@ async def authenticate(ws):
                 message = json.dumps({"type": "send_pack", "value": pack})
             await asyncio.wait([ws.send(message)])
         elif data["type"] == "make_choice":
-            print("Make the choice!")
-            print(choice_cards)
             chosen_card = choice_cards[data['value']]
 
             # Adjust the inventory to reflect if user chose a card besides the first option
@@ -84,14 +84,19 @@ async def authenticate(ws):
                 user_data = get_user_data(uuid, email)
 
             message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
-            print(message)
             await asyncio.wait([ws.send(message)])
         elif data["type"] == "send_user_progress":
-            print("Received user progress!")
             adjust_user_progress(uuid, data["value"])
         elif data["type"] == "send_decks":
-            print("Received decks!")
             adjust_decks(uuid, data["value"])
+        elif data["type"] == "find_match":
+            print("Finding a match")
+
+            path = '/' + data["value"]
+            print(path)
+
+            if path != "/tokensignin":
+                await game_server.serveMain(ws, path, uuid)
 
 
 
@@ -227,6 +232,14 @@ def adjust_decks(uuid, decks):
     # SQL db uses curly brace instead of square for arrays
     update_query += f"SET decks = '{decks_no_quotes}'\n"
     update_query += f"WHERE id = '{uuid}';"
+
+    update_db(update_query)
+
+# For user with given id, add them a win's worth of igc
+def add_igc(uuid):
+    update_query = "UPDATE players\n"
+    update_query += f"SET igc = igc + {WIN_AMT}"
+    update_query += f"\nWHERE id = '{uuid}';"
 
     update_db(update_query)
 
