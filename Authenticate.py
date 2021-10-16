@@ -90,15 +90,17 @@ async def authenticate(ws):
         elif data["type"] == "send_decks":
             adjust_decks(uuid, data["value"])
         elif data["type"] == "find_match":
-            print("Finding a match")
-
             path = '/' + data["value"]
-            print(path)
 
             if path != "/tokensignin":
                 await game_server.serveMain(ws, path, uuid)
 
+                # Update the user to reflect their igc
+                # Get the user's data
+                user_data = get_user_data(uuid, '')
 
+                message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
+                await asyncio.wait([ws.send(message)])
 
 
 def get_id_email(token):
@@ -235,10 +237,18 @@ def adjust_decks(uuid, decks):
 
     update_db(update_query)
 
-# For user with given id, add them a win's worth of igc
-def add_igc(uuid):
+# For user with given id, add them a win's worth of igc and record 1 win
+def add_win(uuid):
     update_query = "UPDATE players\n"
-    update_query += f"SET igc = igc + {WIN_AMT}"
+    update_query += f"SET igc = igc + {WIN_AMT}, wins = wins + 1"
+    update_query += f"\nWHERE id = '{uuid}';"
+
+    update_db(update_query)
+
+# For user with given id, record a loss
+def add_loss(uuid):
+    update_query = "UPDATE players\n"
+    update_query += f"SET losses = losses + 1"
     update_query += f"\nWHERE id = '{uuid}';"
 
     update_db(update_query)
