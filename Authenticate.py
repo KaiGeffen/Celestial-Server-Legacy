@@ -32,75 +32,77 @@ async def authenticate(ws):
     choice_cards = [0, 0, 0]
 
     # Listen to responses
-    async for message in ws:
-        data = json.loads(message)
+    try:
+        async for message in ws:
+            data = json.loads(message)
 
-        if data["type"] == "send_token":
-            token = data['value']
-            (uuid, email) = get_id_email(token)
+            if data["type"] == "send_token":
+                token = data['value']
+                (uuid, email) = get_id_email(token)
 
-            if email is None:
-                user_data = None
-            else:
-                user_data = get_user_data(uuid, email)
-
-            message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
-            print(message)
-            await asyncio.wait([ws.send(message)])
-        elif data["type"] == "request_pack":
-            print('Someone trying to open a pack.')
-            print(user_data)
-            # Check if they have the funds
-            have_funds = True#user_data[IGC_INDEX] >= COST_PACK
-
-            # If not, return error
-            if not have_funds:
-                message = json.dumps({"type": "error"})
-            else:
-                pack = get_random_pack()
-
-                # Subtract funds, add these cards to user inventory
-                # The first card of the choosables is picked by default,
-                # then if another is chosen, the inventory is adjusted
-                adjust_user_data_opened_pack(uuid, pack)
-
-                # choice_cards = pack[4:]
-                choice_cards[0] = pack[4]
-                choice_cards[1] = pack[5]
-                choice_cards[2] = pack[6]
-
-                message = json.dumps({"type": "send_pack", "value": pack})
-            await asyncio.wait([ws.send(message)])
-        elif data["type"] == "make_choice":
-            chosen_card = choice_cards[data['value']]
-
-            # Adjust the inventory to reflect if user chose a card besides the first option
-            adjust_user_data_chosen_card(uuid, chosen_card, choice_cards[0])
-
-            # Get the user's data
-            if email is None:
-                user_data = None
-            else:
-                user_data = get_user_data(uuid, email)
-
-            message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
-            await asyncio.wait([ws.send(message)])
-        elif data["type"] == "send_user_progress":
-            adjust_user_progress(uuid, data["value"])
-        elif data["type"] == "send_decks":
-            adjust_decks(uuid, data["value"])
-        elif data["type"] == "find_match":
-            path = '/' + data["value"]
-
-            if path != "/tokensignin":
-                await game_server.serveMain(ws, path, uuid)
-
-                # Update the user to reflect their igc
-                # Get the user's data
-                user_data = get_user_data(uuid, '')
+                if email is None:
+                    user_data = None
+                else:
+                    user_data = get_user_data(uuid, email)
 
                 message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
                 await asyncio.wait([ws.send(message)])
+            elif data["type"] == "request_pack":
+                print('Someone trying to open a pack.')
+                print(user_data)
+                # Check if they have the funds
+                have_funds = True#user_data[IGC_INDEX] >= COST_PACK
+
+                # If not, return error
+                if not have_funds:
+                    message = json.dumps({"type": "error"})
+                else:
+                    pack = get_random_pack()
+
+                    # Subtract funds, add these cards to user inventory
+                    # The first card of the choosables is picked by default,
+                    # then if another is chosen, the inventory is adjusted
+                    adjust_user_data_opened_pack(uuid, pack)
+
+                    # choice_cards = pack[4:]
+                    choice_cards[0] = pack[4]
+                    choice_cards[1] = pack[5]
+                    choice_cards[2] = pack[6]
+
+                    message = json.dumps({"type": "send_pack", "value": pack})
+                await asyncio.wait([ws.send(message)])
+            elif data["type"] == "make_choice":
+                chosen_card = choice_cards[data['value']]
+
+                # Adjust the inventory to reflect if user chose a card besides the first option
+                adjust_user_data_chosen_card(uuid, chosen_card, choice_cards[0])
+
+                # Get the user's data
+                if email is None:
+                    user_data = None
+                else:
+                    user_data = get_user_data(uuid, email)
+
+                message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
+                await asyncio.wait([ws.send(message)])
+            elif data["type"] == "send_user_progress":
+                adjust_user_progress(uuid, data["value"])
+            elif data["type"] == "send_decks":
+                adjust_decks(uuid, data["value"])
+            elif data["type"] == "find_match":
+                path = '/' + data["value"]
+
+                match, player = await game_server.get_match(ws, path, uuid)
+            elif data["type"] == "exit_match":
+                await game_server.match_cleanup(path, match)
+                path = match = None
+            # In all other cases the message has to do with a game action, so it should be handled as a game message
+            else:
+                await game_server.handle_game_messages(data, match, player)
+    finally:
+        # Exit from any games that user was in / matchmaking that user was in
+        if path is not None:
+            await game_server.match_cleanup(path, match)
 
 
 def get_id_email(token):

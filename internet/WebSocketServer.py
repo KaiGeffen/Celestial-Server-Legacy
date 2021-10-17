@@ -98,7 +98,8 @@ class GameMatch:
         if self.ws2 is not None and not self.ws2.closed:
             messages.append(self.ws2.send(json.dumps({"type": "dc"})))
 
-        await asyncio.wait(messages)
+        if messages:
+            await asyncio.wait(messages)
 
     def add_player_2(self, ws, uuid=None):
         self.ws2 = ws
@@ -211,16 +212,43 @@ async def notify_error(ws):
 # A dictionary with paths (passwords) as keys
 PWD_MATCHES = {}
 matches_lock = asyncio.Lock()
-async def serveMain(ws, path, uuid = None):
+async def serveMain(ws, path):
     global PWD_MATCHES
 
     # Remove leading /
     path = path[1:]
 
     if path == 'tokensignin':
-      await Authenticate.authenticate(ws)
-      return
-    elif path == 'ai':
+        await Authenticate.authenticate(ws)
+        return
+    else:
+        match, player = await get_match(ws, path)
+
+    # Listen to the ws and respond accordingly
+    try:
+        async for message in ws:
+            data = json.loads(message)
+
+            await handle_game_messages(data, match, player)
+
+    finally:
+        await match_cleanup(path, match)
+
+
+# Do any cleanup that must happen after a match ends
+async def match_cleanup(path, match):
+    # If this player was searching for an opponent and left, remove their open match
+    async with matches_lock:
+        if path in PWD_MATCHES:
+            print("My opponent left before we got into a game. " + path)
+            PWD_MATCHES.pop(path)
+
+    await match.notify_exit()
+
+
+# Get a match for this websocket / path pair
+async def get_match(ws, path, uuid=None):
+    if path == 'ai':
         player = 0
         match = GameMatch(ws, uuid)
         await match.add_ai_opponent()
@@ -250,44 +278,33 @@ async def serveMain(ws, path, uuid = None):
 
     await match.notify_number_players_connected()
 
-    # Listen to the ws and respond accordingly
-    try:
-        async for message in ws:
-            data = json.loads(message)
+    return match, player
 
-            if data["type"] == "init":
-                deck = CardCodec.decode_deck(data["value"])
+# Handle any messages related to the match occuring
+async def handle_game_messages(data, match, player):
+    if data["type"] == "init":
+        deck = CardCodec.decode_deck(data["value"])
 
-                await match.add_deck(player, deck)
+        await match.add_deck(player, deck)
 
-                await match.notify_state()
+        await match.notify_state()
 
-            elif data["type"] == "mulligan":
-                mulligan = CardCodec.decode_mulligans(data["value"])
-                await match.do_mulligan(player, mulligan)
+    elif data["type"] == "mulligan":
+        mulligan = CardCodec.decode_mulligans(data["value"])
+        await match.do_mulligan(player, mulligan)
 
-                await match.notify_state()
+        await match.notify_state()
 
-            elif data["type"] == "play_card":
-                await match.do_action(player, data["value"], data["version"])
+    elif data["type"] == "play_card":
+        await match.do_action(player, data["value"], data["version"])
 
-            elif data["type"] == "pass_turn":
-                # TODO 10 is the pass action, use the constant for pass to avoid arbitrary literal
-                await match.do_action(player, 10, data["version"])
-            elif data["type"] == "exit_match":
-                break
-            else:
-                print(data["type"])
-
-    finally:
-        # If this player was searching for an opponent and left, remove their open match
-        async with matches_lock:
-            if path in PWD_MATCHES:
-                print("My opponent left before we got into a game. " + path)
-                PWD_MATCHES.pop(path)
-
-        await match.notify_exit()
-
+    elif data["type"] == "pass_turn":
+        # TODO 10 is the pass action, use the constant for pass to avoid arbitrary literal
+        await match.do_action(player, 10, data["version"])
+    # elif data["type"] == "exit_match":
+    #     break
+    else:
+        print(data["type"])
 
 # ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
 # # print(os.getcwd())
