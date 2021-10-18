@@ -15,7 +15,7 @@ from logic.Pack import get_random_pack
 # The id for the google_api for oauth2
 CLIENT_ID = '574352055172-n1nqdc2nvu3172levk2kl5jf7pbkp4ig.apps.googleusercontent.com'
 COST_PACK = 100
-IGC_INDEX = 2
+IGC_INDEX = 1
 WIN_AMT = 15
 
 # NOTE Have to add 1 for working with sql arrays, they start at 1
@@ -23,7 +23,6 @@ WIN_AMT = 15
 async def authenticate(ws):
     # Send a request for token
     message = json.dumps({"type": "request_token"})
-    print(message)
     await asyncio.wait([ws.send(message)])
 
     # Data about this user, stored locally for session
@@ -35,9 +34,6 @@ async def authenticate(ws):
     try:
         async for message in ws:
             data = json.loads(message)
-
-            print(data)
-            print(data["type"])
 
             if data["type"] == "send_token":
                 token = data['value']
@@ -51,10 +47,8 @@ async def authenticate(ws):
                 message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
                 await asyncio.wait([ws.send(message)])
             elif data["type"] == "request_pack":
-                print('Someone trying to open a pack.')
-                print(user_data)
                 # Check if they have the funds
-                have_funds = True#user_data[IGC_INDEX] >= COST_PACK
+                have_funds = user_data[IGC_INDEX] >= COST_PACK
 
                 # If not, return error
                 if not have_funds:
@@ -96,7 +90,6 @@ async def authenticate(ws):
                 path = data["value"]
 
                 match, player = await game_server.get_match(ws, path, uuid)
-                print()
             elif data["type"] == "exit_match":
                 await game_server.match_cleanup(path, match)
                 path = match = None
@@ -144,10 +137,8 @@ def get_user_data(id, email):
         count = cursor.rowcount
         if count > 0:
             # If they do, return that entry
-            print("User exists")
-
             user_data = cursor.fetchone()
-            print(f"Their data is: {user_data}")
+            print(f"Request user data is: {user_data}")
             return user_data
 
         else:
