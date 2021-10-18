@@ -93,7 +93,7 @@ async def authenticate(ws):
             elif data["type"] == "send_decks":
                 adjust_decks(uuid, data["value"])
             elif data["type"] == "find_match":
-                path = '/' + data["value"]
+                path = data["value"]
 
                 match, player = await game_server.get_match(ws, path, uuid)
                 print()
