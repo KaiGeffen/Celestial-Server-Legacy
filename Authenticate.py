@@ -36,6 +36,9 @@ async def authenticate(ws):
         async for message in ws:
             data = json.loads(message)
 
+            print(data)
+            print(data["type"])
+
             if data["type"] == "send_token":
                 token = data['value']
                 (uuid, email) = get_id_email(token)
@@ -93,6 +96,7 @@ async def authenticate(ws):
                 path = '/' + data["value"]
 
                 match, player = await game_server.get_match(ws, path, uuid)
+                print()
             elif data["type"] == "exit_match":
                 await game_server.match_cleanup(path, match)
                 path = match = None
