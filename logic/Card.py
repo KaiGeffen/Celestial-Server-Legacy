@@ -164,10 +164,7 @@ class Card:
 
     # Create in hand a copy of the given card
     def create(self, card, game, player):
-        if game.create(player, card):
-            return f'\nCreate: {card.name}'
-        else:
-            return ''
+        return game.create(player, card)
 
     # Create in pile a copy of the given card
     def create_in_pile(self, card, game, player):
