@@ -129,7 +129,8 @@ class Vulture(Card):
 vulture = Vulture(name="Vulture", cost=3, points=3, id=52)
 class Phoenix(Card):
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.create(dove, game, player)
+        super().play(player, game, index, bonus)
+        self.create(dove, game, player)
 phoenix = Phoenix(name="Phoenix", cost=5, points=5, qualities=[Quality.FLEETING], id=51, rarity=0)
 
 class Heron(Card):
@@ -532,7 +533,8 @@ class Hurricane(Card):
 hurricane = Hurricane(name="Hurricane", cost=4, text="4:0, reset", id=13)
 class Spy(Card):
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.create(camera, game, player ^ 1)
+        super().play(player, game, index, bonus)
+        self.create(camera, game, player ^ 1)
 spy = Spy(name="Spy", cost=1, id=27, rarity=1)
 class Uprising(Card):
     def play(self, player, game, index, bonus):
