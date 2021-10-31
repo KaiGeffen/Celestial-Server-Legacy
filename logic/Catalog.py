@@ -572,7 +572,9 @@ class Horus(Card):
 horus = Horus(name="Horus", cost=7, points=7, id=45, rarity=3)
 class Bandit(Card):
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.create(wanted_poster, game, player ^ 1)
+        super().play(player, game, index, bonus)
+        self.create(wanted_poster, game, player ^ 1)
+        return 'TODO Phase out recap string'
 bandit = Bandit(name="Bandit", cost=1, points=2, id=26, rarity=0)
 class Disintegrate(Card):
     def play(self, player, game, index, bonus):
