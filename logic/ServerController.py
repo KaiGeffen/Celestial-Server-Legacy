@@ -152,9 +152,9 @@ class ServerController:
 
         # Each player resets their mana, performs upkeep statuses, card effects, then draws for the round
         for player in (0, 1):
-            self.model.max_mana[player] += MANA_GAIN_PER_TURN
-            if self.model.max_mana[player] > MANA_CAP:
-                self.model.max_mana[player] = MANA_CAP
+            if self.model.max_mana[player] < MANA_CAP:
+                # Become the lower of mana_cap and incrementing current max mana
+                self.model.max_mana[player] = min(self.model.max_mana[player] + MANA_GAIN_PER_TURN, MANA_CAP)
             self.model.mana[player] = self.model.max_mana[player]
 
             self.do_upkeep_statuses(player)

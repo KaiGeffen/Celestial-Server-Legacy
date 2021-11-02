@@ -14,14 +14,15 @@ camera = Camera(name="Camera", cost=2, qualities=[Quality.FLEETING],
 class BrokenBone(Card):
     def play(self, player, game, index, bonus):
         game.sound_effect = SoundEffect.BoneSnap
-        return super().play(player, game, index, bonus) + self.draw(1, game, player)
+        super().play(player, game, index, bonus)
+        self.draw(1, game, player)
 broken_bone = BrokenBone(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], id=1002)
 robot = Card(name='Robot', qualities=[Quality.FLEETING], text="0:X, Fleeting", id=1003)
 class WantedPoster(Card):
     def play(self, player, game, index, bonus):
         bonus += 2 * game.pile[player ^ 1].count(bandit)
 
-        return super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 wanted_poster = WantedPoster(name="Wanted Poster", cost=1, qualities=[Quality.FLEETING], id=1004)
 
 tokens = [camera, broken_bone, robot, wanted_poster]
@@ -34,13 +35,12 @@ class Enrage(Card):
             act.bonus -= act.card.cost
 
     def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus) + '\nOppress'
+        super().play(player, game, index, bonus) + '\nOppress'
 
         for act in game.story.acts:
             act.bonus -= act.card.cost
 
         game.sound_effect = SoundEffect.Yell
-        return recap
 enrage = Enrage(name="Enrage", cost=8, points=2, id=47, rarity=2)
 class Desert(Card):
     def play(self, player, game, index, bonus):
@@ -64,16 +64,14 @@ class Desert(Card):
         else:
             bonus += 3
 
-        recap = super().play(player, game, index, bonus)
-
-        return recap
+        super().play(player, game, index, bonus)
 desert = Desert(name="Desert", cost=2, points=0, id=49, rarity=0)
 
 """BIRD"""
 class Dove(Card):
     def play(self, player, game, index, bonus):
         game.sound_effect = SoundEffect.Bird
-        return super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 dove = Dove(name="Dove", cost=1, points=1, qualities=[Quality.VISIBLE, Quality.FLEETING],
             text="1:1, visible, fleeting (After resolving, this card is removed from the game instead of moving to your discard pile)",
             id=4)
@@ -83,7 +81,7 @@ class Swift(Card):
             if game.story.acts[0].card.cost == 1:
                 bonus += 1
 
-        return super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 swift = Swift(name="Swift", cost=2, points=2, qualities=[Quality.VISIBLE], id=7)
 class Pelican(Card):
     def play(self, player, game, index, bonus):
@@ -92,10 +90,8 @@ class Pelican(Card):
             if card.cost <= 1:
                 amt += 1
 
-        recap = super().play(player, game, index, bonus + amt)
-        recap += self.oust(amt, game, player)
-
-        return recap
+        super().play(player, game, index, bonus + amt)
+        self.oust(amt, game, player)
 pelican = Pelican(name="Pelican", cost=4, points=3, id=40, rarity=0)
 class Icarus(Card):
     def get_cost(self, player, game):
@@ -118,7 +114,8 @@ class Eagle(SightCard):
         super().on_play(player, game)
 
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.nourish(2, game, player)
+        super().play(player, game, index, bonus)
+        self.nourish(2, game, player)
 eagle = Eagle(amt=4, name="Eagle", cost=6, points=6, id=43, rarity=2)
 class Vulture(Card):
     def pile_upkeep(self, player, game, index):
@@ -149,7 +146,8 @@ heron = Heron(name="Heron", cost=5, points=4, qualities=[Quality.FLEETING], id=6
 class BoneKnife(Card):
     def play(self, player, game, index, bonus):
         opp = (player + 1) % 2
-        return super().play(player, game, index, bonus) + self.discard(1, game, opp)
+        super().play(player, game, index, bonus)
+        self.discard(1, game, opp)
 bone_knife = BoneKnife(name="Bone Knife", cost=1, id=1)
 class Stalker(Card):
     def get_cost(self, player, game):
@@ -161,30 +159,24 @@ class Imprison(Card):
     def play(self, player, game, index, bonus):
         opp = (player + 1) % 2
 
-        recap = super().play(player, game, index, bonus)
-        recap += self.reset(game)
+        super().play(player, game, index, bonus)
+        self.reset(game)
 
         game.score[opp] = len(game.hand[opp])
-        recap += f'\n+{len(game.hand[opp])} opp'
-
-        return recap
 imprison = Imprison(name="Imprison", cost=2, id=35, rarity=1)
 class Gift(Card):
     def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 
         for player in (0, 1):
-            recap += self.draw(1, game, player)
-
-        return recap
+            self.draw(1, game, player)
 gift = Gift(name="Gift", cost=3, points=3, text="3:3, both players draw 1", id=12)
 class Symbiosis(Card):
     def play(self, player, game, index, bonus):
         nourished = Status.NOURISH in game.status[player]
-        recap = super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
         if nourished:
-            recap += super().discard(1, game, player^1)
-        return recap
+            super().discard(1, game, player^1)
 symbiosis = Symbiosis(name="Symbiosis", cost=6, points=6, id=57, rarity=0)
 
 class Nightmare(Card):
@@ -199,22 +191,24 @@ nightmare = Nightmare(name="Nightmare", cost=3, points=0, qualities=[Quality.VIS
 """Machines"""
 class Cog(Card):
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.build(1, game, player)
+        super().play(player, game, index, bonus)
+        self.build(1, game, player)
 cog = Cog(name="Cog", cost=0, text="0:0, build 1 (+1 to a robot in your hand, or make a 0:1 fleeting robot)", id=2)
 class Gears(Card):
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.build(2, game, player)
+        super().play(player, game, index, bonus)
+        self.build(2, game, player)
 gears = Gears(name="Gears", cost=2, text="2:0, build 2", id=8)
 class Factory(Card):
     def play(self, player, game, index, bonus):
         amt = game.story.get_length()
-        return super().play(player, game, index, bonus) + self.build(amt, game, player)
+        super().play(player, game, index, bonus)
+        self.build(amt, game, player)
 factory = Factory(name="Factory", cost=3, text="3:0, build X, where X is number of cards later in the story", id=10)
 class AI(Card):
     def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
-        recap += self.draw(1, game, player)
-        return recap
+        super().play(player, game, index, bonus)
+        self.draw(1, game, player)
 
     def get_cost(self, player, game):
         amt = 0
@@ -226,7 +220,8 @@ class AI(Card):
 ai = AI(name="AI", cost=8, points=5, text="8:5, draw 1. Costs X less where X is total robot points in hand", id=22)
 class Sine(Card):
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.starve(4, game, player)
+        super().play(player, game, index, bonus)
+        self.starve(4, game, player)
 sine = Sine(name="Sine", cost=2, points=4, text="2:4, starve 4 (Your next card gives -4 points)", id=31)
 
 class Generator(Card):
@@ -238,7 +233,7 @@ class Generator(Card):
 generator = Generator(name="Generator", cost=4, points=4, id=53, rarity=1)
 class BecomeMachine(Card):
     def play(self, player, game, index, bonus):
-        result = super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 
         index = 0
         for act in game.story.acts:
@@ -259,19 +254,20 @@ class Cogsplosion(Card):
             if card.name == 'Robot':
                 bonus += card.points
 
-                return super().play(player, game, index, bonus) + self.discard(1, game, player, index=index)
-
-        return ''
+                super().play(player, game, index, bonus)
+                self.discard(1, game, player, index=index)
 cogsplosion = Cogsplosion(name="Cogsplosion", cost=4, id=59, rarity=2)
 class Anvil(Card):
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.build(2, game, player)
+        super().play(player, game, index, bonus)
+        self.build(2, game, player)
 anvil = Anvil(name="Anvil", cost=3, points=2, id=60, rarity=0)
 
 """Nature"""
 class Stars(Card):
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.inspire(1, game, player)
+        super().play(player, game, index, bonus)
+        self.inspire(1, game, player)
 stars = Stars(name="Stars", text="0:0, inspire (Next turn gain 1 temporary mana)", id=0)
 class Cosmos(Card):
     def play(self, player, game, index, bonus):
@@ -279,35 +275,34 @@ class Cosmos(Card):
         for act in game.story.acts:
             if act.owner == player:
                 amt += 1
-        return super().play(player, game, index, bonus) + self.inspire(amt, game, player)
+        super().play(player, game, index, bonus)
+        self.inspire(amt, game, player)
 cosmos = Cosmos(name="Cosmos", cost=2, text="2:0, inspire 1 + 1 for each card you play later this round", id=9)
 class Fruiting(Card):
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.nourish(3, game, player)
+        super().play(player, game, index, bonus)
+        self.nourish(3, game, player)
 fruiting = Fruiting(name="Fruiting", cost=3, text="3:0, nourish 3 (Your next card gives +3 points)", id=11)
 class Lotus(Card):
     def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
-        recap += self.inspire(2, game, player)
+        super().play(player, game, index, bonus)
+        self.inspire(2, game, player)
 
         if self.your_final(game, player):
-            recap += self.reset(game)
-
-        return recap
+            self.reset(game)
 lotus = Lotus(name="Lotus", cost=5, id=42, rarity=2)
 class Oak(Card):
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.gentle(game, player)
+        super().play(player, game, index, bonus)
+        self.gentle(game, player)
 oak = Oak(name="Oak", cost=8, points=8,
           text="8:8, gentle (If you win this round, convert to nourish any points not needed to win)", id=23)
 class Bounty(Card):
     def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 
         for player in (0, 1):
-            recap += self.nourish(2, game, player)
-
-        return recap
+            self.nourish(2, game, player)
 bounty = Bounty(name="Bounty", cost=3, points=3, text="3:3, both players Nourish 2", id=48)
 
 class Cornucopia(Card):
@@ -335,36 +330,29 @@ class Cornucopia(Card):
 
         return max(0, self.cost - len(seen_costs))
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.nourish(2, game, player)
+        super().play(player, game, index, bonus)
+        self.nourish(2, game, player)
 cornucopia = Cornucopia(name="Cornucopia", cost=6, points=2, id=61, rarity=2)
 """Earth"""
 class CrossedBones(Card):
     def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 
-        recap += '\nBury:'
         for _ in range(2):
-            recap += self.create_in_pile(broken_bone, game, player)
-
-        return recap
+            self.create_in_pile(broken_bone, game, player)
 crossed_bones = CrossedBones(name="Crossed Bones", cost=1, points=1, qualities=[Quality.FLEETING], id=3)
 class Mine(Card):
     def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 
-        recap += self.dig(4, game, player)
-
-        return recap
+        self.dig(4, game, player)
 mine = Mine(name="Mine", cost=4, points=4, text="4:4, oust the top 4 cards of your discard pile", id=15)
 class DinosaurBones(Card):
     def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 
-        recap += '\nBury:'
         for _ in range(3):
-            recap += self.create_in_pile(broken_bone, game, player)
-
-        return recap
+            self.create_in_pile(broken_bone, game, player)
 dinosaur_bones = DinosaurBones(name="Dinosaur Bones", cost=4, points=4, qualities=[Quality.FLEETING], id=14)
 class Bastet(Card):
     def __init__(self, points):
@@ -380,41 +368,33 @@ class Bastet(Card):
         bastet = Bastet(points)
         game.pile[player].append(bastet)
 
-        recap = super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 
         game.sound_effect = SoundEffect.Meow
-        return recap
 bastet = Bastet(1)
 class NightVision(SightCard):
     def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
-        recap += self.tutor(2, game, player)
-
-        return recap
+        super().play(player, game, index, bonus)
+        self.tutor(2, game, player)
 night_vision = NightVision(amt=3, name="Night Vision", cost=1, points=0, id=28, rarity=0)
 
 class FishBones(Card):
     def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 
-        recap += '\nBury:'
         for _ in range(3):
-            recap += self.create_in_pile(broken_bone, game, player)
+            self.create_in_pile(broken_bone, game, player)
 
-        recap += self.draw(2, game, player)
-
-        return recap
+        self.draw(2, game, player)
 fish_bones = FishBones(name="Fish Bones", cost=2, points=0, qualities=[Quality.FLEETING], id=64, rarity=0)
 
 """Ships"""
 class FishingBoat(Card):
     def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 
         for i in range(3):
-            recap += self.tutor(1, game, player)
-
-        return recap
+            self.tutor(1, game, player)
 fishing_boat = FishingBoat(name="Fishing Boat", cost=2, text="2:0, tutor a 1 3 times", id=32)
 
 """Death"""
@@ -428,32 +408,28 @@ scarab = Scarab(amt=4, name="Scarab", cost=0, points=0, id=50, rarity=0)
 class Drown(Card):
     def play(self, player, game, index, bonus):
         game.sound_effect = SoundEffect.Drown
-        return super().play(player, game, index, bonus) + self.mill(3, game, player)
+        super().play(player, game, index, bonus)
+        self.mill(3, game, player)
 drown = Drown(name="Drown", cost=1, points=1, text="1:1, mill yourself 3 (Top 3 cards of deck go to pile)", id=5)
 class Unearth(Card):
     def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 
         if game.pile[player]:
             card = game.pile[player].pop()
             game.deck[player].append(card)
 
-            recap += f'\nRaise {card.name}'
             game.animations[player].append(('Discard', 'Deck', CardCodec.encode_card(card)))
-
-        return recap
 unearth = Unearth(name="Unearth", cost=2, points=2, id=33, rarity=0)
 class Tumulus(Card):
     def play(self, player, game, index, bonus):
         if len(game.pile[player]) >= 8:
             bonus += 2
 
-        return super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 tumulus = Tumulus(name="Tumulus", cost=5, points=4, id=17)
 class Sarcophagus(Card):
     def play(self, player, game, index, bonus):
-        recap = ''
-
         highest_cost = -1
         highest_index = None
         for pile_index in range(len(game.pile[player])):
@@ -472,10 +448,9 @@ class Sarcophagus(Card):
             game.sound_effect = SoundEffect.Sarcophagus
             game.animations[player].append(('Discard', 'Deck', CardCodec.encode_card(card)))
 
-
-            return super().play(player, game, index, bonus) + f"\nTop: {card.name}"
+            super().play(player, game, index, bonus)
         else:
-            return super().play(player, game, index, bonus)
+            super().play(player, game, index, bonus)
 sarcophagus = Sarcophagus(name="Sarcophagus", cost=6,
                           text="6:X, put the highest cost card from your pile on top of your deck, X is its cost", id=20)
 class Anubis(Card):
@@ -487,7 +462,7 @@ class Anubis(Card):
 anubis = Anubis(name="Anubis", cost=7, points=7, id=21)
 class Crypt(Card):
     def play(self, player, game, index, bonus):
-        result = super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 
         index_final_owned_card = -1
         final_card = None
@@ -523,13 +498,15 @@ kneel = Kneel(name="Kneel", cost=0, points=0, qualities=[Quality.FLEETING], id=6
 # bee = Card(name="Bee", cost=0, points=1, qualities=[Quality.VISIBLE], text="0:1, visible", id=24)
 class Nectar(Card):
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.nourish(1, game, player)
+        super().play(player, game, index, bonus)
+        self.nourish(1, game, player)
 nectar = Nectar(name="Nectar", cost=1, text="1:0, nourish 1 (Your next card gives +1 points)", id=25, rarity=0)
 
 """Other"""
 class Hurricane(Card):
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.reset(game)
+        super().play(player, game, index, bonus)
+        self.reset(game)
 hurricane = Hurricane(name="Hurricane", cost=4, text="4:0, reset", id=13)
 class Spy(Card):
     def play(self, player, game, index, bonus):
@@ -539,7 +516,7 @@ spy = Spy(name="Spy", cost=1, id=27, rarity=1)
 class Uprising(Card):
     def play(self, player, game, index, bonus):
         game.sound_effect = SoundEffect.Crowd
-        return super().play(player, game, index, bonus + index)
+        super().play(player, game, index, bonus + index)
 uprising = Uprising(name="Uprising", cost=6, points=3, text="6:3, worth 1 more for each card before this in the story", id=18)
 class Juggle(Card):
     def on_play(self, player, game):
@@ -554,7 +531,7 @@ class Paranoia(Card):
         game.vision[player] += amt
 
     def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 paranoia = Paranoia(name="Paranoia", cost=3, points=3, id=39, rarity=1)
 class Horus(Card):
     def get_cost(self, player, game):
@@ -576,7 +553,6 @@ class Bandit(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.create(wanted_poster, game, player ^ 1)
-        return 'TODO Phase out recap string'
 bandit = Bandit(name="Bandit", cost=1, points=2, id=26, rarity=0)
 class Disintegrate(Card):
     def play(self, player, game, index, bonus):
@@ -592,33 +568,16 @@ disintegrate = Disintegrate(name="Disintegrate", cost=1, points=1, id=29, rarity
 class Ecology(Card):
     def on_play(self, player, game):
         game.mana[player] += 10
-
-    # def play(self, player, game, index, bonus):
-    #     recap = super().play(player, game, index, bonus)
-    #
-    #     recap += self.tutor(index, game, player)
-    #
-    #     if len(game.hand[player]) > 0:
-    #         rightmost_card = game.hand[player][-1]
-    #
-    #         game.deck[player].append(rightmost_card)
-    #         recap += f"\nTop: {rightmost_card.name}"
-    #
-    #     return recap
 ecology = Ecology(name="Ecology", cost=7, points=0, id=44, rarity=1)
 class Chimney(Card):
     def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 
         if game.hand[player^1]:
             card = game.hand[player^1].pop(0)
             game.deck[player^1].append(card)
 
             game.animations[player^1].append(('Hand', 'Deck', CardCodec.encode_card(card)))
-
-            recap += f'\nTop'
-
-        return recap
 chimney = Chimney(name="Chimney", cost=5, points=2, text="5:2, your opponent puts the leftmost card in their hand on top of their deck.", id=16)
 
 class PocketWatch(Card):
@@ -627,9 +586,8 @@ class PocketWatch(Card):
         return cost
 
     def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
-        recap += self.draw(2, game, player)
-        return recap
+        super().play(player, game, index, bonus)
+        self.draw(2, game, player)
 pocket_watch = PocketWatch(name="Pocket Watch", cost=4, points=1, id=54, rarity=1)
 class Sun(Card):
     def pile_upkeep(self, player, game, index):
@@ -640,10 +598,9 @@ class Sun(Card):
 sun = Sun(name="Sun", cost=8, points=8, id=56, rarity=2)
 class Sickness(Card):
     def play(self, player, game, index, bonus):
-        recap = super().play(player, game, index, bonus)
-        recap += self.starve(4, game, player ^ 1)
-        recap += self.create(sickness, game, player ^ 1)
-        return recap
+        super().play(player, game, index, bonus)
+        self.starve(4, game, player ^ 1)
+        self.create(sickness, game, player ^ 1)
 sickness = Sickness(name="Sickness", cost=3, points=0, qualities=[Quality.FLEETING], id=58, rarity=1)
 class Axolotl(Card):
     def pile_upkeep(self, player, game, index):
@@ -675,8 +632,29 @@ class Conquer(Card):
         if not game.story.is_empty():
             bonus += game.story.acts[0].card.cost
 
-        return super().play(player, game, index, bonus)
+        super().play(player, game, index, bonus)
 conquer = Conquer(name="Conquer", cost=5, points=2, qualities=[Quality.VISIBLE], id=67, rarity=1)
+
+
+class KingOfTheDead(Card):
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
+
+        new_pile = []
+        amt = 0
+        for card in game.pile[player]:
+            if Quality.FLEETING in card.qualities:
+                game.animations[player].append(('Discard', 'Gone', CardCodec.encode_card(card)))
+
+                amt += 1
+            else:
+                new_pile.append(card)
+
+        game.pile[player] = new_pile
+
+        game.max_mana[player] = round(amt / 2 + 0.1)
+
+king_of_the_dead = KingOfTheDead(name="King of the Dead", cost=5, points=0, qualities=[Quality.FLEETING], id=69)
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
@@ -693,7 +671,9 @@ full_catalog = [
     symbiosis,
     sickness, cogsplosion, anvil,
     paramountcy, axolotl, cornucopia, fish_bones, heron,
-    kneel, conquer, nightmare
+    kneel, conquer, nightmare,
+
+    king_of_the_dead
     ]
 
 non_collectibles = [hidden_card] + tokens
