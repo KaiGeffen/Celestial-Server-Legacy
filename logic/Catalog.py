@@ -653,6 +653,19 @@ class Swamp(Card):
         self.nourish(amt, game, player)
 swamp = Swamp(name="Swamp", cost=0, points=0, qualities=[Quality.FLEETING], id=72, rarity=0)
 
+class Carrion(Card):
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
+
+        # Nourish amount is the number of Fleeting cards in the top 3 of the discard pile
+        amt = sum(Quality.FLEETING in card.qualities for card in game.pile[player][-3:])
+
+        # Remove the top 3 cards of discard pile from the game
+        self.dig(3, game, player)
+
+        self.nourish(amt, game, player)
+carrion = Carrion(name="Carrion", cost=2, points=0, id=74, rarity=2)
+
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
 full_catalog = [
@@ -670,7 +683,7 @@ full_catalog = [
     paramountcy, axolotl, cornucopia, fish_bones, heron,
     kneel, conquer, nightmare,
 
-    clone, swamp
+    clone, swamp, carrion
     ]
 
 non_collectibles = [hidden_card] + tokens
