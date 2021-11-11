@@ -640,14 +640,23 @@ class Clone(Card):
     def on_play(self, player, game):
         # Gets the length before this card is a part of the story
         index = game.story.get_length()
-        print(index)
 
         recap = game.recap.story
-        print(len(recap))
         if len(recap) >= index + 1:
             return recap[index][0]
 
 clone = Clone(name="Clone", cost=5, points=5, id=70)
+
+class Buoy(Card):
+    def on_draw(self, player, game):
+
+        game.story.add_act(dove, player, Source.PILE)
+
+        story_index = len(game.story.acts) - 1
+        game.animations[player].append(('Hand', 'Story', story_index))
+
+
+bouy = Buoy(name="Buoy", cost=2, points=1, id=76)
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
@@ -666,7 +675,7 @@ full_catalog = [
     paramountcy, axolotl, cornucopia, fish_bones, heron,
     kneel, conquer, nightmare,
 
-    clone
+    clone, bouy
     ]
 
 non_collectibles = [hidden_card] + tokens

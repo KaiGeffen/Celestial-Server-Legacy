@@ -53,6 +53,10 @@ class Card:
     def on_play(self, player, game):
         pass
 
+    # Handle any effects that happen immediately after the card is drawn
+    def on_draw(self, player, game):
+        pass
+
     # Handle anything that happens when flow is triggered by another card in your hand
     def on_flow(self, player, game):
         # False signifies that nothing happened for the flow, cards with effects return true in their overriding methods
