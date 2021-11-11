@@ -82,7 +82,7 @@ class Swift(Card):
                 bonus += 1
 
         super().play(player, game, index, bonus)
-swift = Swift(name="Swift", cost=2, points=2, qualities=[Quality.VISIBLE], id=7)
+swift = Swift(name="Swift", cost=2, points=2, qualities=[Quality.VISIBLE, Quality.FLEETING], id=7)
 class Pelican(Card):
     def play(self, player, game, index, bonus):
         amt = 0
@@ -132,15 +132,12 @@ phoenix = Phoenix(name="Phoenix", cost=5, points=5, qualities=[Quality.FLEETING]
 
 class Heron(Card):
     def play(self, player, game, index, bonus):
-        amt_fleeting = 0
-        for card in game.hand[player]:
-            if Quality.FLEETING in card.qualities:
-                amt_fleeting += 1
-
         super().play(player, game, index, bonus)
+        self.reset(game)
 
-        self.inspire(amt_fleeting, game, player)
-heron = Heron(name="Heron", cost=5, points=4, qualities=[Quality.FLEETING], id=65, rarity=1)
+    def get_cost(self, player, game):
+        return len(game.pile[player])
+heron = Heron(name="Heron", cost=5, points=0, id=65, rarity=1)
 
 """Discard"""
 class BoneKnife(Card):
@@ -647,16 +644,14 @@ class Clone(Card):
 
 clone = Clone(name="Clone", cost=5, points=5, id=70)
 
-class Buoy(Card):
-    def on_draw(self, player, game):
+class Swamp(Card):
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
 
-        game.story.add_act(dove, player, Source.PILE)
-
-        story_index = len(game.story.acts) - 1
-        game.animations[player].append(('Hand', 'Story', story_index))
-
-
-bouy = Buoy(name="Buoy", cost=2, points=1, id=76)
+        amt = max(0, len(game.hand[player]) - 2)
+        self.discard(amt, game, player)
+        self.nourish(amt, game, player)
+swamp = Swamp(name="Swamp", cost=0, points=0, qualities=[Quality.FLEETING], id=72, rarity=0)
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
@@ -675,7 +670,7 @@ full_catalog = [
     paramountcy, axolotl, cornucopia, fish_bones, heron,
     kneel, conquer, nightmare,
 
-    clone, bouy
+    clone, swamp
     ]
 
 non_collectibles = [hidden_card] + tokens
