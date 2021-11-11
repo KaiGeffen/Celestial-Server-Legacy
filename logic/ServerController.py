@@ -53,7 +53,6 @@ class ServerController:
             # If both player's have passed in sequence, end turn and start another
             if self.model.passes == 2:
                 self.model.passes = 0
-                self.model.amt_passes = [0, 0]
 
                 self.do_takedown()
 
@@ -142,6 +141,8 @@ class ServerController:
     # Perform the upkeep phase
     def do_upkeep(self):
         self.model.vision = [0, 0]
+        self.model.amt_passes = [0, 0]
+        self.model.amt_drawn = [0, 0]
         self.model.sound_effect = None
 
         # Give priority to the player in the lead, or random if tied

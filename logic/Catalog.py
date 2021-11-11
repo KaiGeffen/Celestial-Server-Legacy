@@ -672,6 +672,15 @@ class Occupation(Card):
         self.create(camera, game, player ^ 1)
 occupation = Occupation(name="Occupation", cost=8, points=8, id=75, rarity=2)
 
+class GentleRain(Card):
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
+
+        amt = game.amt_drawn[player]
+
+        self.nourish(amt, game, player)
+gentle_rain = GentleRain(name="Gentle Rain", cost=4, points=1, id=71, rarity=3)
+
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
 full_catalog = [
@@ -689,7 +698,7 @@ full_catalog = [
     paramountcy, axolotl, cornucopia, fish_bones, heron,
     kneel, conquer, nightmare,
 
-    clone, swamp, carrion, occupation
+    clone, swamp, carrion, occupation, gentle_rain
     ]
 
 non_collectibles = [hidden_card] + tokens

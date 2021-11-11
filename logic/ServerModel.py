@@ -70,6 +70,9 @@ class ServerModel:
         # The number of times each player has passed in this round
         self.amt_passes = [0, 0]
 
+        # The number of cards the player has drawn this round (including tutor)
+        self.amt_drawn = [0, 0]
+
     def version_incr(self):
         self.version_no += 1
         self.animations = [[], []]
@@ -92,6 +95,7 @@ class ServerModel:
 
             card = self.deck[player].pop()
             self.hand[player].append(card)
+            self.amt_drawn[player] += 1
 
             amt -= 1
 
@@ -133,6 +137,7 @@ class ServerModel:
                     # Add it to hand, remove it from deck
                     self.hand[player].append(card)
                     self.deck[player].remove(card)
+                    self.amt_drawn[player] += 1
 
                     # self.sound_effect = SoundEffect.Draw
                     self.animations[player].append(('Deck', 'Hand', len(self.hand[player]) - 1))
@@ -144,6 +149,7 @@ class ServerModel:
                     # Add it to hand, remove it from pile
                     self.hand[player].append(card)
                     self.pile[player].remove(card)
+                    self.amt_drawn[player] += 1
 
                     # self.sound_effect = SoundEffect.Draw
                     self.animations[player].append(('Discard', 'Hand', len(self.hand[player]) - 1))
