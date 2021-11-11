@@ -128,7 +128,7 @@ class Phoenix(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.create(dove, game, player)
-phoenix = Phoenix(name="Phoenix", cost=5, points=5, qualities=[Quality.FLEETING], id=51, rarity=0)
+phoenix = Phoenix(name="Phoenix", cost=5, points=5, qualities=[Quality.VISIBLE, Quality.FLEETING], id=51, rarity=0)
 
 class Heron(Card):
     def play(self, player, game, index, bonus):
