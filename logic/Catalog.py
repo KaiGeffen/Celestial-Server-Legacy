@@ -666,6 +666,12 @@ class Carrion(Card):
         self.nourish(amt, game, player)
 carrion = Carrion(name="Carrion", cost=2, points=0, id=74, rarity=2)
 
+class Occupation(Card):
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
+        self.create(camera, game, player ^ 1)
+occupation = Occupation(name="Occupation", cost=8, points=8, id=75, rarity=2)
+
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
 full_catalog = [
@@ -683,7 +689,7 @@ full_catalog = [
     paramountcy, axolotl, cornucopia, fish_bones, heron,
     kneel, conquer, nightmare,
 
-    clone, swamp, carrion
+    clone, swamp, carrion, occupation
     ]
 
 non_collectibles = [hidden_card] + tokens
