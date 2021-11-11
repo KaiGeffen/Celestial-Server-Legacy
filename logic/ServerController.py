@@ -93,7 +93,10 @@ class ServerController:
 
         self.model.mana[player] -= card.get_cost(player, self.model)
 
-        card.on_play(player, self.model)
+        # If on_play results in something, add that card instead of this one
+        result = card.on_play(player, self.model)
+        if result:
+            card = result
 
         self.model.story.add_act(card, owner=player, source=Source.HAND)
 

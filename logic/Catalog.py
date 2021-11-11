@@ -636,25 +636,18 @@ class Conquer(Card):
 conquer = Conquer(name="Conquer", cost=5, points=2, qualities=[Quality.VISIBLE], id=67, rarity=1)
 
 
-class KingOfTheDead(Card):
-    def play(self, player, game, index, bonus):
-        super().play(player, game, index, bonus)
+class Clone(Card):
+    def on_play(self, player, game):
+        # Gets the length before this card is a part of the story
+        index = game.story.get_length()
+        print(index)
 
-        new_pile = []
-        amt = 0
-        for card in game.pile[player]:
-            if Quality.FLEETING in card.qualities:
-                game.animations[player].append(('Discard', 'Gone', CardCodec.encode_card(card)))
+        recap = game.recap.story
+        print(len(recap))
+        if len(recap) >= index + 1:
+            return recap[index][0]
 
-                amt += 1
-            else:
-                new_pile.append(card)
-
-        game.pile[player] = new_pile
-
-        game.max_mana[player] = round(amt / 2 + 0.1)
-
-king_of_the_dead = KingOfTheDead(name="King of the Dead", cost=5, points=0, qualities=[Quality.FLEETING], id=69)
+clone = Clone(name="Clone", cost=5, points=5, id=70)
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
@@ -673,7 +666,7 @@ full_catalog = [
     paramountcy, axolotl, cornucopia, fish_bones, heron,
     kneel, conquer, nightmare,
 
-    king_of_the_dead
+    clone
     ]
 
 non_collectibles = [hidden_card] + tokens
