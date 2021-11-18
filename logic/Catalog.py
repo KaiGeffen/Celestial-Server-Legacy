@@ -681,6 +681,17 @@ class GentleRain(Card):
         self.nourish(amt, game, player)
 gentle_rain = GentleRain(name="Gentle Rain", cost=4, points=1, id=71, rarity=3)
 
+class Sunflower(Card):
+    def play(self, player, game, index, bonus):
+        points = self.points + bonus
+        points += game.status[player].count(Status.NOURISH)
+        points -= game.status[player].count(Status.STARVE)
+
+        super().play(player, game, index, bonus)
+
+        self.inspire(points, game, player)
+sunflower = Sunflower(name="Sunflower", cost=2, points=1, id=69, rarity=2)
+
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
 full_catalog = [
@@ -688,17 +699,17 @@ full_catalog = [
     gears, cosmos, factory, fruiting, gift, hurricane, dinosaur_bones, mine,
     chimney, tumulus, uprising, stalker, sarcophagus, anubis, ai, oak,
 
-    nectar, bandit, spy, night_vision, disintegrate, juggle, sine,
-    fishing_boat, unearth, bastet, imprison, crypt, paranoia,
-    pelican, lotus, eagle, ecology, horus, icarus, enrage,
+    nectar, bandit, spy, night_vision, disintegrate, sine,
+    fishing_boat, unearth, bastet, imprison, paranoia,
+    pelican, lotus, ecology, horus, icarus, enrage,
 
     bounty, desert, scarab, phoenix, vulture, generator, pocket_watch, become_machine, sun,
     symbiosis,
     sickness, cogsplosion, anvil,
-    paramountcy, axolotl, cornucopia, fish_bones, heron,
+    paramountcy, axolotl, fish_bones, heron,
     kneel, conquer, nightmare,
 
-    clone, swamp, carrion, occupation, gentle_rain
+    carrion, occupation, gentle_rain, sunflower
     ]
 
 non_collectibles = [hidden_card] + tokens
