@@ -143,17 +143,17 @@ class ServerModel:
                     self.animations[player].append(('Deck', 'Hand', len(self.hand[player]) - 1))
                     return card
 
-            for card in self.pile[player][::-1]:
-
-                if card.cost == cost:
-                    # Add it to hand, remove it from pile
-                    self.hand[player].append(card)
-                    self.pile[player].remove(card)
-                    self.amt_drawn[player] += 1
-
-                    # self.sound_effect = SoundEffect.Draw
-                    self.animations[player].append(('Discard', 'Hand', len(self.hand[player]) - 1))
-                    return card
+            # for card in self.pile[player][::-1]:
+            #
+            #     if card.cost == cost:
+            #         # Add it to hand, remove it from pile
+            #         self.hand[player].append(card)
+            #         self.pile[player].remove(card)
+            #         self.amt_drawn[player] += 1
+            #
+            #         # self.sound_effect = SoundEffect.Draw
+            #         self.animations[player].append(('Discard', 'Hand', len(self.hand[player]) - 1))
+            #         return card
 
         return None
 
