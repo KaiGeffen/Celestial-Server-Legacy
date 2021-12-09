@@ -692,6 +692,17 @@ class Sunflower(Card):
         self.inspire(points, game, player)
 sunflower = Sunflower(name="Sunflower", cost=2, points=1, id=69, rarity=2)
 
+class Hollow(Card):
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
+
+        amt = max(0, game.score[player])
+
+        game.score[player] = 0
+
+        self.nourish(amt, game, player)
+hollow = Hollow(name="Hollow", cost=0, points=0, id=76, rarity=-1)
+
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
 full_catalog = [
@@ -709,7 +720,9 @@ full_catalog = [
     paramountcy, axolotl, fish_bones, heron,
     kneel, conquer, nightmare,
 
-    carrion, occupation, gentle_rain, sunflower
+    carrion, occupation, gentle_rain, sunflower,
+
+    hollow
     ]
 
 non_collectibles = [hidden_card] + tokens
