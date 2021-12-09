@@ -664,7 +664,7 @@ class Carrion(Card):
         self.dig(3, game, player)
 
         self.nourish(amt, game, player)
-carrion = Carrion(name="Carrion", cost=2, points=0, id=74, rarity=2)
+carrion = Carrion(name="Carrion", cost=2, points=1, id=74, rarity=2)
 
 class Occupation(Card):
     def play(self, player, game, index, bonus):
@@ -679,7 +679,7 @@ class GentleRain(Card):
         amt = game.amt_drawn[player]
 
         self.nourish(amt, game, player)
-gentle_rain = GentleRain(name="Gentle Rain", cost=4, points=1, id=71, rarity=3)
+gentle_rain = GentleRain(name="Gentle Rain", cost=4, points=2, id=71, rarity=3)
 
 class Sunflower(Card):
     def play(self, player, game, index, bonus):
