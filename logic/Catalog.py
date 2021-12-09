@@ -585,7 +585,7 @@ class PocketWatch(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.draw(2, game, player)
-pocket_watch = PocketWatch(name="Pocket Watch", cost=4, points=1, id=54, rarity=1)
+pocket_watch = PocketWatch(name="Pocket Watch", cost=4, points=2, id=54, rarity=1)
 class Sun(Card):
     def pile_upkeep(self, player, game, index):
         # Only do it if this is the top card of the discard pile
@@ -670,7 +670,7 @@ class Occupation(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.create(camera, game, player ^ 1)
-occupation = Occupation(name="Occupation", cost=8, points=8, id=75, rarity=2)
+occupation = Occupation(name="Occupation", cost=7, points=7, id=75, rarity=2)
 
 class GentleRain(Card):
     def play(self, player, game, index, bonus):
@@ -701,7 +701,7 @@ class Hollow(Card):
         game.score[player] = 0
 
         self.nourish(amt, game, player)
-hollow = Hollow(name="Hollow", cost=0, points=0, id=76, rarity=-1)
+hollow = Hollow(name="Hollow", cost=0, points=0, id=76, rarity=0)
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
@@ -710,7 +710,7 @@ full_catalog = [
     gears, cosmos, factory, fruiting, gift, hurricane, dinosaur_bones, mine,
     chimney, tumulus, uprising, stalker, sarcophagus, anubis, ai, oak,
 
-    nectar, bandit, spy, night_vision, disintegrate, sine,
+    nectar, bandit, spy, night_vision, sine,
     fishing_boat, unearth, bastet, imprison, paranoia,
     pelican, lotus, ecology, horus, icarus, enrage,
 
