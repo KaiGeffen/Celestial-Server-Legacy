@@ -29,6 +29,11 @@ class ServerController:
 
     # Return True if a play/pass occurred (False if play couldn't be completed)
     def on_player_input(self, player, choice, version=None):
+        if choice == 13: # Autowin, debug
+            self.model.wins[0] = 5
+            self.model.version_incr()
+            return True
+
         if version is not None and version != self.model.version_no:
             return False
 
