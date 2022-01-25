@@ -592,7 +592,7 @@ class Sun(Card):
         if index == len(game.pile[player]) - 1:
             super().add_mana(1, game, player)
             return True
-sun = Sun(name="Sun", cost=8, points=8, id=56, rarity=2)
+sun = Sun(name="Sun", cost=8, points=8, id=56, rarity=2, qualities=[Quality.VISIBLE])
 class Sickness(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
