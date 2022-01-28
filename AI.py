@@ -18,6 +18,9 @@ def know_we_are_ahead(model):
     our_nourish = model.status.count(Status.NOURISH) - model.status.count(Status.STARVE)
     their_nourish = model.opp_status.count(Status.NOURISH) - model.opp_status.count(Status.STARVE)
 
+    their_mana = model.max_mana + model.opp_status.count(Status.INSPIRED)
+    they_played_hidden_cards = False
+
     for act in model.story.acts:
         if act.owner == 0:
             # Consume any nourish
@@ -34,6 +37,15 @@ def know_we_are_ahead(model):
             # Add this act's expected points only if we can see it
             if Quality.VISIBLE in act.card.qualities:
                 their_points += act.card.points
+                their_mana -= act.card.cost
+            else:
+                they_played_hidden_cards = True
+
+    # If they have played hidden cards, assume they spent all of their remaining mana
+    # and got roughly that many points
+    if they_played_hidden_cards:
+        their_points += their_mana
+
     return our_points > their_points
 
 # Return whether we would like to end the round 'dry' (With no cards played)
@@ -76,6 +88,8 @@ def get_action(model) -> int:
     if want_dry_round(model):
         print('drypassing')
         return 10
+
+    # TODO Know I can't beat them
 
     # Determine how to play cards such that the least mana is left over
     # Make a 2^6 bit number to represent which cards are considered, then check how close
