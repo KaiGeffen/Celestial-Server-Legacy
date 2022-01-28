@@ -34,9 +34,30 @@ def know_we_are_ahead(model):
             # Add this act's expected points only if we can see it
             if Quality.VISIBLE in act.card.qualities:
                 their_points += act.card.points
-    print(our_points)
-    print(their_points)
     return our_points > their_points
+
+# Return whether it's better for us to drypass
+# Drypassing is when you start a round by passing, or react to the opponent's pass with your own
+# Thus ending the round with no plays (Dry round)
+def should_drypass(model):
+    # Heuristic result, positive is good for us to drypass
+    result = 0
+
+    # Valuing each card drawn as worth 2 inspire
+
+    # Consider how many cards we draw, and how many opponent draws
+    we_draw = min(2, 6 - len(model.hand))
+    result += 2 * we_draw
+    they_draw = min(2, 6 - model.opp_hand)
+    result -= 2 * they_draw
+
+    # The amount of Inspired that will be lost, for us and them
+    result -= model.status.count(Status.INSPIRED)
+    result += model.opp_status.count(Status.INSPIRED)
+
+    # TODO we have lesser discard pile triggers
+
+    return result > 0
 
 # The ai which, when enabled, will take all actions for the player
 
@@ -46,6 +67,9 @@ def get_action(model) -> int:
 
     # If we know we've played more points than opponent, pass
     if know_we_are_ahead(model):
+        return 10
+
+    if should_drypass(model):
         return 10
 
     # Don't consider any of the restricted cards, which is the first X cards
