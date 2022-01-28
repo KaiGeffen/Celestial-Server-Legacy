@@ -1,12 +1,42 @@
 from itertools import chain, combinations
 import time
 
-from logic.Effects import Status
+from logic.Effects import Status, Quality
+
 
 # From itertools recipe
 def powerset(l):
     "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
     return chain.from_iterable(combinations(l, r) for r in range(len(l)+1))
+
+
+# Return whether we know we are ahead in points
+def know_we_are_ahead(model):
+    our_points = 0
+    their_points = 0
+
+    our_nourish = model.status.count(Status.NOURISH) - model.status.count(Status.STARVE)
+    their_nourish = model.opp_status.count(Status.NOURISH) - model.opp_status.count(Status.STARVE)
+
+    for act in model.story.acts:
+        if act.owner == 0:
+            # Consume any nourish
+            our_points += our_nourish
+            our_nourish = 0
+
+            # Add this act's expected points
+            our_points += act.card.points
+        else:
+            # Consume any nourish
+            their_points += their_nourish
+            their_nourish = 0
+
+            # Add this act's expected points only if we can see it
+            if Quality.VISIBLE in act.card.qualities:
+                their_points += act.card.points
+    print(our_points)
+    print(their_points)
+    return our_points > their_points
 
 # The ai which, when enabled, will take all actions for the player
 
@@ -14,20 +44,8 @@ def powerset(l):
 def get_action(model) -> int:
     time.sleep(.9)
 
-    # If we've played points this round and opponent hasn't, don't play more
-    opponent_has_played = False
-    expected_points = 0
-    for act in model.story.acts:
-        if act.owner == 0:
-            expected_points += act.card.points
-        else:
-            opponent_has_played = True
-
-    if expected_points > 0 and not opponent_has_played:
-        return 10
-
-    # If we've played lots of points, stop
-    if expected_points > model.max_mana[0] and len(model.hand) <= 4:
+    # If we know we've played more points than opponent, pass
+    if know_we_are_ahead(model):
         return 10
 
     # Don't consider any of the restricted cards, which is the first X cards
