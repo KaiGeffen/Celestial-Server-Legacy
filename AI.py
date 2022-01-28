@@ -78,6 +78,8 @@ def want_dry_round(model):
 
     return result > 0
 
+# Try to play into our swift not theirs
+
 # Rate the given turn based on a variety of heuristics
 def rate_turn(turn, model):
     predicted_model = copy.deepcopy(model)
@@ -85,9 +87,18 @@ def rate_turn(turn, model):
     remaining_mana = predicted_model.mana
 
     value = 0
-    last_was_swift = False
+    # Bonus for us/them based on the last card being a swift
+    floating_swift_bonus = 0
+    if len(model.story.acts) > 0:
+        last_act = model.story.acts[-1]
+        if last_act.card.name == 'Swift':
+            if last_act.owner == 0:
+                floating_swift_bonus = 1
+            else:
+                floating_swift_bonus = -1
+
     # Keep track of if the last card played gives a bonus for being played last
-    final_card_bonus = False
+    final_card_bonus = 0
 
     for card_num in turn:
         card = predicted_model.hand[card_num]
@@ -103,20 +114,19 @@ def rate_turn(turn, model):
         predicted_model.story.add_act(card, 0)
 
         # Special case for swift TODO name
-        if card.cost == 1 and last_was_swift:
-            value += 1
+        if card.cost == 1:
+            value += floating_swift_bonus
 
         if card.name == 'Swift':
-            last_was_swift = True
+            floating_swift_bonus = 1
         elif card.name in ['Axolotl', 'Generator', 'Sun', 'Desert']:
-            final_card_bonus = True
+            final_card_bonus = 1
         else:
-            last_was_swift = False
-            final_card_bonus = False
+            floating_swift_bonus = 0
+            final_card_bonus = 0
 
     # Add a bonuses if final card benefits from being last
-    if final_card_bonus:
-        value += 1
+    value += final_card_bonus
 
     return value
     #
