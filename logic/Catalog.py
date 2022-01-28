@@ -615,7 +615,7 @@ class Chimney(Card):
             game.deck[player^1].append(card)
 
             game.animations[player^1].append(('Hand', 'Deck', CardCodec.encode_card(card)))
-chimney = Chimney(name="Chimney", cost=5, points=2, text="5:2, your opponent puts the leftmost card in their hand on top of their deck.", id=16)
+chimney = Chimney(name="Chimney", cost=5, points=3, id=16)
 
 class PocketWatch(Card):
     def get_cost(self, player, game):
