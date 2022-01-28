@@ -493,11 +493,11 @@ kneel = Kneel(name="Kneel", cost=0, points=0, qualities=[Quality.FLEETING], id=6
 
 """INSECTS"""
 # bee = Card(name="Bee", cost=0, points=1, qualities=[Quality.VISIBLE], text="0:1, visible", id=24)
-class Nectar(Card):
+class Nectar(SightCard):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.nourish(1, game, player)
-nectar = Nectar(name="Nectar", cost=1, text="1:0, nourish 1 (Your next card gives +1 points)", id=25, rarity=0)
+nectar = Nectar(name="Nectar", amt=3, cost=1, text="1:0, nourish 1 (Your next card gives +1 points)", id=25, rarity=0)
 
 """Other"""
 class Hurricane(Card):
