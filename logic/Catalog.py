@@ -437,6 +437,10 @@ class Tumulus(Card):
             bonus += 2
 
         super().play(player, game, index, bonus)
+
+    def rate_play(self, world):
+        pile_has_8 = len(world.pile[0]) # TODO Cards in story
+        return 4 + 2 * pile_has_8
 tumulus = Tumulus(name="Tumulus", cost=5, points=4, id=17)
 class Sarcophagus(Card):
     def play(self, player, game, index, bonus):
@@ -461,6 +465,23 @@ class Sarcophagus(Card):
             super().play(player, game, index, bonus)
         else:
             super().play(player, game, index, bonus)
+
+    def rate_play(self, world):
+        highest_cost = 0
+        for card in world.pile[0]:
+            highest_cost = max(highest_cost, card.cost)
+
+        for act in world.story.acts:
+            if act.owner == 0:
+                highest_cost = max(highest_cost, act.card.cost)
+
+        # Account for the value of getting a high value card back
+        if highest_cost <= 3:
+            return highest_cost - 1
+        elif highest_cost <= 5:
+            return highest_cost
+        else:
+            return highest_cost + 1
 sarcophagus = Sarcophagus(name="Sarcophagus", cost=6,
                           text="6:X, put the highest cost card from your pile on top of your deck, X is its cost", id=20)
 class Anubis(Card):
