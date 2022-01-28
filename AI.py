@@ -36,10 +36,14 @@ def know_we_are_ahead(model):
                 their_points += act.card.points
     return our_points > their_points
 
-# Return whether it's better for us to drypass
-# Drypassing is when you start a round by passing, or react to the opponent's pass with your own
+# Return whether we would like to end the round 'dry' (With no cards played)
+# By reacting to the opponent's pass with your own
 # Thus ending the round with no plays (Dry round)
-def should_drypass(model):
+def want_dry_round(model):
+    # Only consider drypassing if no cards have been played yet this round and opponent has passed
+    if len(model.story.acts) > 0 or model.passes == 0:
+        return False
+
     # Heuristic result, positive is good for us to drypass
     result = 0
 
@@ -69,18 +73,16 @@ def get_action(model) -> int:
     if know_we_are_ahead(model):
         return 10
 
-    if should_drypass(model):
+    if want_dry_round(model):
+        print('drypassing')
         return 10
-
-    # Don't consider any of the restricted cards, which is the first X cards
-    amt_restricted = model.status.count(Status.RESTRICTED)
 
     # Determine how to play cards such that the least mana is left over
     # Make a 2^6 bit number to represent which cards are considered, then check how close
     # that combination gets to spending all available mana
     high_score = 100
     best_possible = None
-    for possible_turn in powerset(range(amt_restricted, len(model.hand))):
+    for possible_turn in powerset(range(len(model.hand))):
         total_cost = 0
         for card_num in possible_turn:
             card = model.hand[card_num]
@@ -96,10 +98,9 @@ def get_action(model) -> int:
                 total_cost -= 1000
 
         score = model.mana - total_cost
-        # Prefer playing more cards where possible
         # Can't spend more mana than we have
         if score >= 0:
-            if score < high_score or score == high_score:# and len(possible_turn) > len(best_possible):
+            if score < high_score or score == high_score:
                 high_score = score
                 best_possible = possible_turn
 
@@ -123,9 +124,3 @@ def get_action(model) -> int:
 
         # The first card of the best possible turn (In terms of mana wasted)
         return result[0]
-    #
-    # for index in range(6):
-    #     if model.can_play(index):
-    #         return index
-    #
-    # return 10
