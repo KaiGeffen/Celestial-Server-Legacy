@@ -530,6 +530,9 @@ class Uprising(Card):
     def play(self, player, game, index, bonus):
         game.sound_effect = SoundEffect.Crowd
         super().play(player, game, index, bonus + index)
+
+    def rate_play(self, world):
+        return len(world.story.acts)
 uprising = Uprising(name="Uprising", cost=6, points=3, text="6:3, worth 1 more for each card before this in the story", id=18)
 class Juggle(Card):
     def on_play(self, player, game):
