@@ -82,6 +82,10 @@ class Swift(Card):
                 bonus += 1
 
         super().play(player, game, index, bonus)
+    def rate_play(self, world):
+        value = 2
+        # TODO
+        return value
 swift = Swift(name="Swift", cost=2, points=2, qualities=[Quality.VISIBLE, Quality.FLEETING], id=7)
 class Pelican(Card):
     def play(self, player, game, index, bonus):
@@ -137,6 +141,9 @@ class Heron(Card):
 
     def get_cost(self, player, game):
         return len(game.pile[player])
+
+    def rate_play(self, world):
+        return self.rate_reset(world)
 heron = Heron(name="Heron", cost=5, points=0, id=65, rarity=1)
 
 """Discard"""
@@ -160,6 +167,9 @@ class Imprison(Card):
         self.reset(game)
 
         game.score[opp] = len(game.hand[opp])
+
+    def rate_play(self, world):
+        return self.rate_reset(world) - world.opp_hand
 imprison = Imprison(name="Imprison", cost=2, id=35, rarity=1)
 class Gift(Card):
     def play(self, player, game, index, bonus):
@@ -167,6 +177,9 @@ class Gift(Card):
 
         for player in (0, 1):
             self.draw(1, game, player)
+
+    def rate_play(self, world):
+        return 3 + world.opp_hand/2 - len(world.hand)/2
 gift = Gift(name="Gift", cost=3, points=3, text="3:3, both players draw 1", id=12)
 class Symbiosis(Card):
     def play(self, player, game, index, bonus):
@@ -504,6 +517,9 @@ class Hurricane(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.reset(game)
+
+    def rate_play(self, world):
+        return self.rate_reset(world)
 hurricane = Hurricane(name="Hurricane", cost=4, text="4:0, reset", id=13)
 class Spy(Card):
     def play(self, player, game, index, bonus):

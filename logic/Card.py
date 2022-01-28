@@ -34,6 +34,11 @@ class Card:
         else:
             return f"{result}"
 
+    # Rate the heuristic value of playing this card in the given world-model
+    def rate_play(self, world):
+        # Default is to just value it as its cost
+        return self.cost
+
     def play_spring(self, player, game, index, bonus):
         return self.play(player, game, index, bonus)
 
@@ -324,12 +329,44 @@ class Card:
                 return False
         return True
 
+    # Rate how valuable resetting is in the given world
+    def rate_reset(self, world):
+        # Approximate the known value of cards in the story
+        known_value = 0
+        their_unknown_cards = 0
+        their_mana = world.max_mana[1] + world.opp_status.count(Status.INSPIRED)
+
+        for act in world.story.acts:
+            card = act.card
+
+            if act.owner == 0:
+                known_value -= card.cost
+            elif Quality.VISIBLE in card.qualities:
+                known_value += card.cost
+                their_mana -= card.cost
+            else:
+                their_unknown_cards += 1
+
+        # Guess the cost of the unknown cards they have played as half of remaining mana
+        value = known_value
+        for i in range(their_unknown_cards):
+            guessed_value = their_mana // 2
+
+            value += guessed_value
+            their_mana -= guessed_value
+
+        return value
+
+
 
 class FireCard(Card):
     def play(self, player, game, index, bonus):
         # game.sound_effect = SoundEffect.Fire
         bonus = bonus - index
         return super().play(player, game, index, bonus)
+
+    def rate_play(self, world):
+        return self.points - len(world.story.acts)
 
 # Trigger the leftmost flow card when this is played
 class EbbCard(Card):
