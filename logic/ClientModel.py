@@ -34,6 +34,8 @@ class ClientModel:
 
         self.version_num = state['version_number']
 
+        self.costs = state['costs']
+
     # Return if the player can play the card
     def can_play(self, card_num):
         if not self.priority == 0:

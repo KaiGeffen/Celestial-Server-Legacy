@@ -93,7 +93,7 @@ def rate_turn(turn, model):
         card = predicted_model.hand[card_num]
 
         # Determine how much mana is left, if negative this is illegal
-        remaining_mana -= card.cost
+        remaining_mana -= predicted_model.costs[card_num]
         if remaining_mana < 0:
             return -1
 
