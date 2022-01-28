@@ -5,9 +5,7 @@ import copy
 from logic.Effects import Status, Quality
 
 # TODO Mulligan
-# Shouldnt play a reset as the first card
 # Don't play 2 resets in a row (Or separated by a card you play)
-# Should consider whether we have cards to draw
 
 # From itertools recipe
 def powerset(l):
@@ -88,6 +86,9 @@ def rate_turn(turn, model):
 
     value = 0
     last_was_swift = False
+    # Keep track of if the last card played gives a bonus for being played last
+    final_card_bonus = False
+
     for card_num in turn:
         card = predicted_model.hand[card_num]
 
@@ -107,8 +108,15 @@ def rate_turn(turn, model):
 
         if card.name == 'Swift':
             last_was_swift = True
+        elif card.name in ['Axolotl', 'Generator', 'Sun', 'Desert']:
+            final_card_bonus = True
         else:
             last_was_swift = False
+            final_card_bonus = False
+
+    # Add a bonuses if final card benefits from being last
+    if final_card_bonus:
+        value += 1
 
     return value
     #
