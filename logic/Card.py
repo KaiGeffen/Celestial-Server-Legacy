@@ -255,21 +255,7 @@ class Card:
 
     # Oust the top X cards from the player's pile
     def dig(self, amt, game, player):
-        recap = '\nRemove:'
-
-        any_seen = False
-        for _ in range(amt):
-            if game.pile[player]:
-                any_seen = True
-
-                card = game.pile[player].pop()
-                recap += f'\n{card.name}'
-                game.animations[player].append(('Discard', 'Gone', CardCodec.encode_card(card)))
-
-        if any_seen:
-            return recap
-        else:
-            return ''
+        game.dig(player, amt)
 
     # Counter the next act this round for which function returns True
     def counter(self, game, function=None):

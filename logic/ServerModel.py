@@ -44,6 +44,9 @@ class ServerModel:
         # The last discard pile that each player was seen to shuffle back into their deck
         self.last_shuffle = [[], []]
 
+        # Cards that have been expended (Removed from the game)
+        self.expended = [[], []]
+
         # Score in current round, and how many round wins
         self.score = [0, 0]
         self.wins = [0, 0]
@@ -192,11 +195,24 @@ class ServerModel:
 
                     self.animations[player].append(('Hand', 'Gone', CardCodec.encode_card(card)))
 
+                    # Add card to player's list of expended cards
+                    self.expended[player].append(card)
+
                     del self.hand[player][i]
                     return card
             cost += 1
 
         return None
+
+    # Remove the top amt cards of player's discard pile from the game
+    def dig(self, player, amt):
+        for _ in range(amt):
+            if self.pile[player]:
+                card = self.pile[player].pop()
+                self.animations[player].append(('Discard', 'Gone', CardCodec.encode_card(card)))
+
+                # Add card to player's list of expended cards
+                self.expended[player].append(card)
 
     # Move the top card of player's deck to the top of their pile
     def mill(self, player):
@@ -266,6 +282,7 @@ class ServerModel:
             'opp_deck': len(self.deck[player ^ 1]),
             'pile': list(map(CardCodec.encode_deck, self.pile[::slice_step])),
             'last_shuffle': list(map(CardCodec.encode_deck, self.last_shuffle[::slice_step])),
+            'expended': list(map(CardCodec.encode_deck, self.expended[::slice_step])),
             'wins': self.wins[::slice_step],
             'max_mana': self.max_mana[::slice_step],
             'mana': self.mana[player],

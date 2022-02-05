@@ -61,6 +61,8 @@ class Story:
             # Card goes to pile unless it has fleeting
             if Quality.FLEETING not in act.card.qualities:
                 game.pile[act.owner].append(act.card)
+            else:
+                game.expended[act.owner].append(act.card)
 
             index += 1
 

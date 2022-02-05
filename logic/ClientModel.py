@@ -13,6 +13,8 @@ class ClientModel:
         self.deck = CardCodec.decode_deck(state['deck'])
         self.opp_deck = state['opp_deck']
         self.pile = list(map(CardCodec.decode_deck, state['pile']))
+        # TODO Expended
+        self.expended = list(map(CardCodec.decode_deck, state['expended']))
 
         self.wins = state['wins']
 
