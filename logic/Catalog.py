@@ -1,7 +1,7 @@
 from logic.Card import *
 from logic.Effects import Status, Quality
 from logic.Story import Source, Act
-import Animation
+from Animation import Animation
 
 # TODO make a separate file for tokens
 """Tokens"""
@@ -57,7 +57,8 @@ class Desert(Card):
                 game.sound_effect = None
 
                 hand_index = len(game.hand[act.owner]) - 1
-                game.animations[act.owner].append(('Story', 'Hand', hand_index, story_index))
+                game.animations[act.owner].append(
+                    Animation('Story', 'Hand', index=hand_index, index2=story_index))
             # else:
                 # TODO
                 # game.animations[act.owner].append(('Story', 'Gone', story_index))
@@ -429,7 +430,8 @@ class Unearth(Card):
             card = game.pile[player].pop()
             game.deck[player].append(card)
 
-            game.animations[player].append(('Discard', 'Deck', CardCodec.encode_card(card)))
+            game.animations[player].append(
+                Animation('Discard', 'Deck', card=CardCodec.encode_card(card)))
 unearth = Unearth(name="Unearth", cost=2, points=2, id=33, rarity=0)
 class Tumulus(Card):
     def play(self, player, game, index, bonus):
@@ -460,7 +462,8 @@ class Sarcophagus(Card):
             bonus += highest_cost
 
             game.sound_effect = SoundEffect.Sarcophagus
-            game.animations[player].append(('Discard', 'Deck', CardCodec.encode_card(card)))
+            game.animations[player].append(
+                Animation('Discard', 'Deck', card=CardCodec.encode_card(card)))
 
             super().play(player, game, index, bonus)
         else:
@@ -614,7 +617,8 @@ class Chimney(Card):
             card = game.hand[player^1].pop(0)
             game.deck[player^1].append(card)
 
-            game.animations[player^1].append(('Hand', 'Deck', CardCodec.encode_card(card)))
+            game.animations[player^1].append(
+                Animation('Hand', 'Deck', card=CardCodec.encode_card(card)))
 chimney = Chimney(name="Chimney", cost=5, points=3, id=16)
 
 class PocketWatch(Card):
@@ -659,7 +663,8 @@ class Paramountcy(Card):
                 game.story.add_act(card, player, Source.PILE)
 
                 story_index = len(game.story.acts) - 1
-                game.animations[player].append(('Discard', 'Story', story_index))
+                game.animations[player].append(
+                    Animation('Discard', 'Story', index=story_index))
 
 
 paramountcy = Paramountcy(name="Paramountcy", cost=9, points=0, id=62, rarity=3)

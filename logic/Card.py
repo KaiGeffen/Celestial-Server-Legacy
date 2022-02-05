@@ -2,7 +2,7 @@ import CardCodec
 from logic.Effects import Status, Quality
 import SoundEffect
 from logic.Story import Act
-import Animation
+from Animation import Animation
 
 
 class Card:

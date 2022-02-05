@@ -119,7 +119,7 @@ class ServerModel:
             # self.sound_effect = SoundEffect.Discard
 
             self.animations[player].append(
-                Animation('Hand', 'Discard', CardCodec.encode_card(card), index))
+                Animation('Hand', 'Discard', card=CardCodec.encode_card(card), index=index))
 
         return card
 
@@ -188,7 +188,7 @@ class ServerModel:
                     card = self.hand[player][i]
 
                     self.animations[player].append(
-                        Animation('Hand', 'Gone', CardCodec.encode_card(card)), i)
+                        Animation('Hand', 'Gone', card=CardCodec.encode_card(card)), index=i)
 
                     # Add card to player's list of expended cards
                     self.expended[player].append(card)

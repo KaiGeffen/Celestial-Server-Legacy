@@ -11,12 +11,13 @@ Top = 'top'
 
 
 class Animation(dict):
-    def __init__(self, zone_from, zone_to=None, card=None, index=None):
+    def __init__(self, zone_from, zone_to=None, card=None, index=None, index2=None):
         dict.__init__(self,
                       zone_from=zone_from,
                       zone_to=zone_to,
                       card=card,
-                      index=index)
+                      index=index,
+                      index2=index2)
 
 # Resolve = 'resolve'
 # Win = 'win'

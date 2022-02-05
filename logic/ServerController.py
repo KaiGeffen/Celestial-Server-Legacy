@@ -6,7 +6,7 @@ from logic.ServerModel import ServerModel
 from logic import Catalog
 from logic.Effects import Status
 import SoundEffect
-import Animation
+from Animation import Animation
 # TODO Separate out source
 from logic.Story import Source
 
@@ -126,7 +126,7 @@ class ServerController:
             self.model.deck[player].append(set_aside_cards[i])
             # Animate the card moving from mulliganed back to deck
             self.model.animations[player].append(
-                Animation('Mulligan', index=i))
+                Animation('Mulligan', 'Deck', card=CardCodec.encode_card(set_aside_cards[i]), index=i))
 
         # Shuffle the deck, don't remember what was shuffled
         self.model.shuffle(player, remember=False)
@@ -179,7 +179,7 @@ class ServerController:
 
                 if something_activated:
                     self.model.animations[player].append(
-                        Animation('Hand', 'Hand', CardCodec.encode_card(card), index))
+                        Animation('Hand', 'Hand', card=CardCodec.encode_card(card), index=index))
 
                 index += 1
 
