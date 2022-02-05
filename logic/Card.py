@@ -36,13 +36,8 @@ class Card:
 
     # Rate the heuristic value of playing this card in the given world-model
     def rate_play(self, world):
-        # Special case for Robots
-        if self.name == 'Robot':
-            # Model doesn't see its points field, preserving the robot also has value
-            return 3
-
         # Default is to just value it as its cost
-        return self.cost
+        return max(1, self.cost)
 
     def play_spring(self, player, game, index, bonus):
         return self.play(player, game, index, bonus)
