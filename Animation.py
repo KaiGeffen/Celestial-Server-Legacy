@@ -9,6 +9,15 @@ Shuffle = 'shuffle'
 Mill = 'mill'
 Top = 'top'
 
+
+class Animation(dict):
+    def __init__(self, zone_from, zone_to=None, card=None, index=None):
+        dict.__init__(self,
+                      zone_from=zone_from,
+                      zone_to=zone_to,
+                      card=card,
+                      index=index)
+
 # Resolve = 'resolve'
 # Win = 'win'
 # Lose = 'lose'

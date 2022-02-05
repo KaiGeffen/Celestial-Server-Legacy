@@ -2,6 +2,7 @@ import CardCodec
 from logic.Effects import Status, Quality
 import SoundEffect
 from logic.Story import Act
+import Animation
 
 
 class Card:
@@ -121,7 +122,8 @@ class Card:
 
     # Add X mana next turn
     def inspire(self, amt, game, player):
-        game.animations[player].append(('Status', 'Status', 0))
+        game.animations[player].append(
+            Animation('Status', index=0))
 
         return self.add_status(amt, game, player, Status.INSPIRE)
 
@@ -131,13 +133,15 @@ class Card:
 
     # Next card gives +X points
     def nourish(self, amt, game, player):
-        game.animations[player].append(('Status', 'Status', 2))
+        game.animations[player].append(
+            Animation('Status', index=2))
 
         return self.add_status(amt, game, player, Status.NOURISH)
 
     # Next card gives -X points
     def starve(self, amt, game, player):
-        game.animations[player].append(('Status', 'Status', 3))
+        game.animations[player].append(
+            Animation('Status', index=3))
         return self.add_status(amt, game, player, Status.STARVE)
 
     # Your x leftmost cards you can't play next round
@@ -305,7 +309,8 @@ class Card:
             ))
 
             # Add an animation
-            game.animations[act.owner].append(('Transform', 'Story', index, CardCodec.encode_card(act.card)))
+            game.animations[act.owner].append(
+                Animation('Transform', 'Story', CardCodec.encode_card(act.card), index=0))
 
 
     """UTILITY CHECKS"""

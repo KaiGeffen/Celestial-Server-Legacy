@@ -3,7 +3,7 @@ import random
 # from logic.ClientModel import ClientModel
 import CardCodec
 import SoundEffect
-import Animation
+from Animation import Animation
 from logic.Catalog import hidden_card
 from logic.Effects import Quality
 from logic.Story import Story
@@ -102,7 +102,8 @@ class ServerModel:
 
             amt -= 1
 
-            self.animations[player].append(('Deck', 'Hand', len(self.hand[player]) - 1))
+            self.animations[player].append(
+                Animation('Deck', 'Hand', index=len(self.hand[player]) - 1))
 
             card.on_draw(player, self)
         return card
@@ -116,7 +117,9 @@ class ServerModel:
             amt -= 1
 
             # self.sound_effect = SoundEffect.Discard
-            self.animations[player].append(('Hand', 'Discard', CardCodec.encode_card(card)))
+
+            self.animations[player].append(
+                Animation('Hand', 'Discard', CardCodec.encode_card(card), index))
 
         return card
 
@@ -143,20 +146,9 @@ class ServerModel:
                     self.amt_drawn[player] += 1
 
                     # self.sound_effect = SoundEffect.Draw
-                    self.animations[player].append(('Deck', 'Hand', len(self.hand[player]) - 1))
+                    self.animations[player].append(
+                        Animation('Deck', 'Hand', index=len(self.hand[player]) - 1))
                     return card
-
-            # for card in self.pile[player][::-1]:
-            #
-            #     if card.cost == cost:
-            #         # Add it to hand, remove it from pile
-            #         self.hand[player].append(card)
-            #         self.pile[player].remove(card)
-            #         self.amt_drawn[player] += 1
-            #
-            #         # self.sound_effect = SoundEffect.Draw
-            #         self.animations[player].append(('Discard', 'Hand', len(self.hand[player]) - 1))
-            #         return card
 
         return None
 
@@ -166,7 +158,8 @@ class ServerModel:
             self.hand[player].append(card)
 
             self.sound_effect = SoundEffect.Create
-            self.animations[player].append(('Gone', 'Hand', len(self.hand[player]) - 1))
+            self.animations[player].append(
+                Animation('Gone', 'Hand', index=len(self.hand[player]) - 1))
 
             return card
 
@@ -174,7 +167,8 @@ class ServerModel:
 
     # Create a copy of the given card in player's pile
     def create_in_pile(self, player, card):
-        self.animations[player].append(('Gone', 'Discard', CardCodec.encode_card(card)))
+        self.animations[player].append(
+            Animation('Gone', 'Discard', CardCodec.encode_card(card)))
         self.pile[player].append(card)
 
     # Player cycles the given card, won't draw the same card, assumes card is in player's hand
@@ -193,7 +187,8 @@ class ServerModel:
                 if self.hand[player][i].cost is cost:
                     card = self.hand[player][i]
 
-                    self.animations[player].append(('Hand', 'Gone', CardCodec.encode_card(card)))
+                    self.animations[player].append(
+                        Animation('Hand', 'Gone', CardCodec.encode_card(card)), i)
 
                     # Add card to player's list of expended cards
                     self.expended[player].append(card)
@@ -209,7 +204,8 @@ class ServerModel:
         for _ in range(amt):
             if self.pile[player]:
                 card = self.pile[player].pop()
-                self.animations[player].append(('Discard', 'Gone', CardCodec.encode_card(card)))
+                self.animations[player].append(
+                    Animation('Discard', 'Gone', CardCodec.encode_card(card)))
 
                 # Add card to player's list of expended cards
                 self.expended[player].append(card)
@@ -220,7 +216,8 @@ class ServerModel:
             card = self.deck[player].pop()
             self.pile[player].append(card)
 
-            self.animations[player].append(('Deck', 'Discard', CardCodec.encode_card(card)))
+            self.animations[player].append(
+                Animation('Deck', 'Discard', CardCodec.encode_card(card)))
 
             return card
 
@@ -241,7 +238,7 @@ class ServerModel:
         self.pile[player] = []
 
         if self.deck[player]:
-            self.animations[player].append(('Shuffle', 'Deck', '-1'))
+            self.animations[player].append(Animation('Shuffle'))
 
     # Create the given card in the player's hand, if possible
     def create_card(self, player, card):
@@ -309,9 +306,10 @@ class ServerModel:
         opp_animations = animations[1]
 
         for anim in opp_animations:
-            if anim[0] == 'Mulligan':
-                just_shuffle = [('Shuffle', 'Deck', '-1')]
+            if anim['zone_to'] == 'Mulligan':
+                just_shuffle = Animation('Shuffle', 'Deck')
                 return [animations[0], just_shuffle]
+
         return animations
 
     # Get a view of the story that the given player can see
