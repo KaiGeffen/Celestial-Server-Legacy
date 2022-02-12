@@ -117,9 +117,9 @@ def rate_turn(turn, model):
         if card.cost == 1:
             value += floating_swift_bonus
 
-        if card.name == 'Swift':
-            floating_swift_bonus = 1
-        elif card.name in ['Axolotl', 'Generator', 'Sun', 'Desert']:
+        # if card.name == 'Swift':
+        #     floating_swift_bonus = 1
+        if card.name in ['Axolotl', 'Generator', 'Sun', 'Desert']:
             final_card_bonus = 1
         else:
             floating_swift_bonus = 0
