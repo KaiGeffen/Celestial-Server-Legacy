@@ -188,7 +188,7 @@ class ServerModel:
                     card = self.hand[player][i]
 
                     self.animations[player].append(
-                        Animation('Hand', 'Gone', card=CardCodec.encode_card(card)), index=i)
+                        Animation('Hand', 'Gone', card=CardCodec.encode_card(card), index=i))
 
                     # Add card to player's list of expended cards
                     self.expended[player].append(card)
