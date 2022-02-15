@@ -9,7 +9,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 
 from internet.Settings import *
-from logic.Pack import get_random_pack
+# from logic.Pack import get_random_pack
 
 
 # The id for the google_api for oauth2

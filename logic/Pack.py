@@ -1,3 +1,5 @@
+# TODO Remove, deprecated
+
 import random
 import CardCodec
 
@@ -43,6 +45,3 @@ def get_choice_cards():
         return map(lambda c: c.id, random.sample(legend_cards, 3))
     else:
         return map(lambda c: c.id, random.sample(rare_cards, 3))
-
-
-print(get_random_pack())
