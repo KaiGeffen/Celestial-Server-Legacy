@@ -97,7 +97,7 @@ class Pelican(Card):
 
         super().play(player, game, index, bonus + amt)
         self.oust(amt, game, player)
-pelican = Pelican(name="Pelican", cost=4, points=3, id=40, rarity=0)
+pelican = Pelican(name="Pelican", cost=4, points=4, id=40, qualities=[Quality.VISIBLE], rarity=0)
 class Icarus(Card):
     def get_cost(self, player, game):
         amt = 0
@@ -145,7 +145,7 @@ class Heron(Card):
 
     def rate_play(self, world):
         return self.rate_reset(world)
-heron = Heron(name="Heron", cost=5, points=0, id=65, rarity=1)
+heron = Heron(name="Heron", cost=5, points=0, id=65, qualities=[Quality.VISIBLE], rarity=1)
 
 """Discard"""
 class BoneKnife(Card):
