@@ -21,6 +21,9 @@ WIN_AMT = 15
 # NOTE Have to add 1 for working with sql arrays, they start at 1
 
 async def authenticate(ws):
+    print('User tried to authenticate but authentication is deprecated.')
+    return
+
     # Send a request for token
     message = json.dumps({"type": "request_token"})
     await asyncio.wait([ws.send(message)])
