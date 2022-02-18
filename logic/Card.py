@@ -40,9 +40,6 @@ class Card:
         # Default is to just value it as its cost
         return max(1, self.cost)
 
-    def play_spring(self, player, game, index, bonus):
-        return self.play(player, game, index, bonus)
-
     # Get the cost of the card for player in this game state
     def get_cost(self, player, game):
         return self.cost
@@ -58,15 +55,6 @@ class Card:
     # Handle any effects that happen immediately when the card is player
     def on_play(self, player, game):
         pass
-
-    # Handle any effects that happen immediately after the card is drawn
-    def on_draw(self, player, game):
-        pass
-
-    # Handle anything that happens when flow is triggered by another card in your hand
-    def on_flow(self, player, game):
-        # False signifies that nothing happened for the flow, cards with effects return true in their overriding methods
-        return False
 
     """GENERIC THINGS A CARD CAN DO"""
     # Reset the scores to 0, 0 - removes all safe
@@ -88,17 +76,6 @@ class Card:
 
         if amt > 0:
             return f'\n+{amt} mana'
-        else:
-            return ''
-
-    # Lose X mana this turn
-    def lose_mana(self, amt, game, player):
-        game.mana[player] -= amt
-        for _ in range(amt):
-            game.status[player].append(Status.DULLED)
-
-        if amt > 0:
-            return f'\n-{amt} mana'
         else:
             return ''
 
@@ -127,10 +104,6 @@ class Card:
 
         return self.add_status(amt, game, player, Status.INSPIRE)
 
-    # Lose X mana next turn
-    def dull(self, amt, game, player):
-        return self.add_status(amt, game, player, Status.DULL)
-
     # Next card gives +X points
     def nourish(self, amt, game, player):
         game.animations[player].append(
@@ -143,22 +116,6 @@ class Card:
         game.animations[player].append(
             Animation('Status', index=3))
         return self.add_status(amt, game, player, Status.STARVE)
-
-    # Your x leftmost cards you can't play next round
-    def restrict(self, amt, game, player):
-        return self.add_status(amt, game, player, Status.RESTRICT)
-
-    # At start of next turn, create X Doves in hand
-    def flock(self, amt, game, player):
-        return self.add_status(amt, game, player, Status.FLOCK)
-
-    # At start of next turn, create X Bees in hand
-    def swarm(self, amt, game, player):
-        return self.add_status(amt, game, player, Status.SWARM)
-
-    # If you would lose this round by X or less, instead the round is a tie
-    def safe(self, amt, game, player):
-        return self.add_status(amt, game, player, Status.SAFE)
 
     # Draw X cards from deck
     def draw(self, amt, game, player):
@@ -261,17 +218,6 @@ class Card:
     def dig(self, amt, game, player):
         game.dig(player, amt)
 
-    # Counter the next act this round for which function returns True
-    def counter(self, game, function=None):
-        if function is None:
-            function = (lambda act: act.countered is False)
-
-        card = game.counter(function)
-        if card:
-            return f'\nCounter: {card.name}'
-        else:
-            return ''
-
     # At the end of this round, if you win, convert points to nourish such that you win by 1
     def gentle(self, game, player):
         recap = '\nGentle'
@@ -359,19 +305,6 @@ class FireCard(Card):
     def rate_play(self, world):
         return self.points - len(world.story.acts)
 
-# Trigger the leftmost flow card when this is played
-class EbbCard(Card):
-    def on_play(self, player, game):
-        for card in game.hand[player]:
-            if card.on_flow(player, game):
-                return
-
-# When ebb is activated, cycle me from hand
-class FlowCard(Card):
-    def on_flow(self, player, game):
-        game.cycle(player, self)
-        return True
-
 # Card that makes story visible to owner this round
 class SightCard(Card):
     def __init__(self, amt, **kwargs):
@@ -380,20 +313,3 @@ class SightCard(Card):
 
     def on_play(self, player, game):
         game.vision[player] += self.amt
-
-class FlockCard(Card):
-    def __init__(self, name, amt, **args):
-        self.amt = amt
-        super().__init__(name, **args)
-
-    def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.flock(self.amt, game, player)
-
-
-class SwarmCard(Card):
-    def __init__(self, name, amt, **args):
-        self.amt = amt
-        super().__init__(name, **args)
-
-    def play(self, player, game, index, bonus):
-        return super().play(player, game, index, bonus) + self.swarm(self.amt, game, player)
