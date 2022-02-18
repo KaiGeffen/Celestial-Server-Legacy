@@ -137,18 +137,11 @@ class GameController(Layer):
             self.queued_act = card_num
 
 
-def get_new_game(start_deck, single_player=False):
+def get_new_game(start_deck):
     scene = Scene()
 
-    net = None
-    if single_player:
-        from internet.MockNetwork import MockNetwork
-
-        net = MockNetwork(start_deck)
-    else:
-        from internet.Network import Network
-
-        net = Network(start_deck)
+    from internet.Network import Network
+    net = Network(start_deck)
 
     # Get the model from Server
     hud = HUD()
