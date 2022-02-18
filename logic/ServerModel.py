@@ -133,7 +133,7 @@ class ServerModel:
 
         return card
 
-    # Search through your deck, then your discard pile for a card with cost x. Draw that card
+    # Search through your deck for a card with cost x. Draw that card
     def tutor(self, player, cost):
         if len(self.hand[player]) < HAND_CAP:
 

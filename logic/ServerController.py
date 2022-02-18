@@ -212,9 +212,6 @@ class ServerController:
         # Reset to a new Recap for this round's takedown
         self.model.recap.reset()
 
-        # Before the story is resolved, leftmost cards in player's hands can spring
-        self.do_spring()
-
         self.model.story.run(self.model)
 
         #
@@ -322,21 +319,6 @@ class ServerController:
         def clear_temp_statuses(stat):
             return stat not in cleared_statuses
         self.model.status[player] = list(filter(clear_temp_statuses, self.model.status[player]))
-
-    # The leftmost card in each player's hand, starting with priority player
-    # may have an effect
-    def do_spring(self):
-        for player in (self.model.priority, (self.model.priority + 1) % 2):
-
-            hand = self.model.hand[player]
-            restricted = Status.RESTRICTED in self.model.status[player]
-
-            if not restricted and len(hand) != 0:
-                if hand[0].spring:
-                    self.model.story.add_act(hand[0], player, Source.SPRING)
-
-                    # Remove the sprung card from hand
-                    self.model.hand[player].pop(0)
 
     # If the winning player has gentle, award carryover equal to how much extra they won by
     def do_gentle(self):
