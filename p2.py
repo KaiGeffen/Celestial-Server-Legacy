@@ -1,4 +1,0 @@
-import Main
-
-Main.main()
-
