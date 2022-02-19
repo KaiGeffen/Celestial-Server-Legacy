@@ -14,7 +14,7 @@ def powerset(l):
 
 
 # Return whether we know we are ahead in points
-def know_we_are_ahead(model):
+def predict_point_difference(model) -> int:
     our_points = 0
     their_points = 0
 
@@ -49,7 +49,7 @@ def know_we_are_ahead(model):
     if they_played_hidden_cards:
         their_points += their_mana
 
-    return our_points > their_points
+    return our_points - their_points
 
 # Return whether we would like to end the round 'dry' (With no cards played)
 # By reacting to the opponent's pass with your own
@@ -65,9 +65,9 @@ def want_dry_round(model):
     # Valuing each card drawn as worth 2 inspire
 
     # Consider how many cards we draw, and how many opponent draws
-    we_draw = min(2, 6 - len(model.hand))
+    we_draw = min(2, 6 - len(model.hand), len(model.deck) + len(model.pile[0]))
     result += 2 * we_draw
-    they_draw = min(2, 6 - model.opp_hand)
+    they_draw = min(2, 6 - model.opp_hand, model.opp_deck + len(model.pile[1]))
     result -= 2 * they_draw
 
     # The amount of Inspired that will be lost, for us and them
@@ -154,10 +154,14 @@ def rate_turn(turn, model):
 def get_action(model) -> int:
     time.sleep(.9)
 
+    # How many points up/down we believe we are
+    point_difference = predict_point_difference(model)
+
     # If we know we've played more points than opponent, pass
-    if know_we_are_ahead(model):
+    if point_difference > 0:
         return 10
 
+    # If we can achieve a dry round and we want to, pass
     if want_dry_round(model):
         return 10
 
@@ -175,6 +179,13 @@ def get_action(model) -> int:
         if score > high_score:
             high_score = score
             best_possible = possible_turn
+
+    # Determine if best_possible is enough to win
+    # This assumes that the score is all going towards points
+    # if high_score + point_difference <= 0:
+    #     # TODO Play utility
+    #     print(point_difference)
+    #     return 10
 
     # If nothing can be played, pass
     if best_possible == () or best_possible is None:
