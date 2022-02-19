@@ -105,7 +105,6 @@ class ServerModel:
             self.animations[player].append(
                 Animation('Deck', 'Hand', index=len(self.hand[player]) - 1))
 
-            card.on_draw(player, self)
         return card
 
     def discard(self, player, amt=1, index=0):
