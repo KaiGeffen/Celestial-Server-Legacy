@@ -188,13 +188,13 @@ class GameMatch:
 
 
 class TutorialMatch(GameMatch):
-    def __init__(self, ws):
+    def __init__(self, ws, num=None):
         super().__init__(ws)
 
         self.vs_ai = True
 
         # Start a tutorial game
-        self.game = TutorialController()
+        self.game = TutorialController(num)
         self.game.start()
         self.game.do_mulligan(0, [False, False, False])
         self.game.do_mulligan(1, [False, False, False])
@@ -257,11 +257,17 @@ async def get_match(ws, path, uuid=None):
         match = GameMatch(ws, uuid)
         i = path[3:]
         await match.add_ai_opponent(i)
+    # Tutorials in the adventure mode
+    elif path.startswith('ai:t'):
+        player = 0
+        tutorial_number = int(path[4:])
+        match = TutorialMatch(ws, tutorial_number)
     elif path.startswith('ai:'):
         player = 0
         match = GameMatch(ws, uuid)
         deck_code = path[3:]
         await match.add_specific_ai_opponent(deck_code)
+    # TODO Remove
     elif path == 'tutorial':
       player = 0
       match = TutorialMatch(ws)

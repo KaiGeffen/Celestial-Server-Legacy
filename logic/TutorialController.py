@@ -4,14 +4,30 @@ from logic.Catalog import *
 
 # TODO Redo
 
+p_decks = [
+    [dove, dove, dove, dove, dove, gift, dash,
+     gift, dove, dash, dove, dash, dove, dove]
+]
+o_decks = [
+    [dove, dove, dove, dove, dove, dove, dove, dove,
+     dove, dove, dove, dove, dove, dove, dove]
+]
+
+
 class TutorialController(ServerController):
-    def __init__(self):
+    def __init__(self, num=None):
         # NOTE The last cards are the top of the deck, which isn't shuffled for tutorial
         player_deck = [gift, gift, dove, dash, gift, dove, dove, dash,
-                    dove, dove, dash, dove, dash, dove, dove]
+                       dove, dove, dash, dove, dash, dove, dove]
         ai_deck = [dove, gift, dove, dove, gift, dove, dove, dove,
                    gift, dove, dove, dove, dove, dove, dove]
+
+        if num is not None:
+            player_deck = p_decks[num]
+            ai_deck = o_decks[num]
         self.model = ServerModel(player_deck, ai_deck, shuffle=False)
+
+        self.model.wins[0] = 2
 
     # Ensure that player has priority
     def start(self):
