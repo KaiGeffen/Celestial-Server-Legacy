@@ -61,9 +61,6 @@ class Card:
     def reset(self, game):
         game.score = [0, 0]
 
-        for player in [0, 1]:
-            self.remove_status(game, player, Status.SAFE)
-
         game.sound_effect = SoundEffect.Reset
 
         return '\nReset'

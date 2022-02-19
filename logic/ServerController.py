@@ -236,10 +236,10 @@ class ServerController:
         #     index += 1
 
         # Add to wins here
-        if self.model.score[0] > self.model.score[1] + self.model.status[1].count(Status.SAFE):
+        if self.model.score[0] > self.model.score[1]:
             if self.model.score[0] > 0:
                 wins[0] += 1
-        elif self.model.score[1] > self.model.score[0] + self.model.status[0].count(Status.SAFE):
+        elif self.model.score[1] > self.model.score[0]:
             if self.model.score[1] > 0:
                 wins[1] += 1
         else:
@@ -251,8 +251,7 @@ class ServerController:
         self.do_gentle()
 
         # Recap the results
-        safe_totals = [self.model.status[0].count(Status.SAFE),
-                       self.model.status[1].count(Status.SAFE)]
+        safe_totals = [0,0]
         self.model.recap.add_total(self.model.score, wins, safe_totals)
 
         # Remember how the round ended for user's recap (Must come after wins are determined)
@@ -277,44 +276,20 @@ class ServerController:
 
         # TODO Not dry, could make this method and the one below the same
         # Clear statuses that are created by other statuses
-        created_statuses = [Status.RESTRICTED,
-                            Status.INSPIRED,
-                            Status.DULLED]
+        created_statuses = [Status.INSPIRED]
         def clear_created_statuses(stat):
             return stat not in created_statuses
         self.model.status[player] = list(filter(clear_created_statuses, self.model.status[player]))
 
         for stat in self.model.status[player]:
 
-            # Flock : Add a Dove to player's hand
-            if stat is Status.FLOCK:
-                self.model.create_card(player, Catalog.dove)
-
-            # Swarm : Add a Bee to player's hand
-            elif stat is Status.SWARM:
-                self.model.create_card(player, Catalog.bee)
-
             # Inspire : Gain 1 temporary mana
-            elif stat is Status.INSPIRE:
+            if stat is Status.INSPIRE:
                 self.model.mana[player] += 1
                 self.model.status[player].append(Status.INSPIRED)
 
-            # Dull : Lose 1 temporary mana
-            elif stat is Status.DULL:
-                self.model.mana[player] -= 1
-                self.model.status[player].append(Status.DULLED)
-
-            # Restrict : Disallow played your leftmost card this round
-            elif stat is Status.RESTRICT:
-                self.model.status[player].append(Status.RESTRICTED)
-
         cleared_statuses = [Status.INSPIRE,
-                            Status.DULL,
-                            Status.FLOCK,
-                            Status.SWARM,
-                            Status.GENTLE,
-                            Status.RESTRICT,
-                            Status.SAFE]
+                            Status.GENTLE]
 
         def clear_temp_statuses(stat):
             return stat not in cleared_statuses
@@ -327,7 +302,7 @@ class ServerController:
             score_dif = self.model.score[p1] - max(self.model.score[p2], 0)
 
             # Subtract the safety of the losing player
-            score_above_winning = score_dif - self.model.status[p2].count([Status.SAFE])
+            score_above_winning = score_dif
             # Subtract 1 because that much is needed to take the round
             score_above_winning -= 1
 
@@ -345,10 +320,6 @@ class ServerController:
 
         # Player doesn't have enough mana
         if card.get_cost(player, self.model) > self.model.mana[player]:
-            return False
-
-        # Card is restricted by Restrict status
-        if card_num + 1 <= self.model.status[player].count(Status.RESTRICTED):
             return False
 
         return True
