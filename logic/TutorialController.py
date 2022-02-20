@@ -79,7 +79,7 @@ class TutorialController(ServerController):
         self.model.wins[1] += wins[1]
 
         # Recap the results
-        self.model.recap.add_total(self.model.score, wins, 0)
+        self.model.recap.add_total(self.model.score, wins, [0,0])
 
         # Remember how the round ended for user's recap (Must come after wins are determined)
         self.model.story.save_end_state(self.model)
