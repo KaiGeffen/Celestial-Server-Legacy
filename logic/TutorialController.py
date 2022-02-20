@@ -66,10 +66,10 @@ class TutorialController(ServerController):
         self.model.story.run(self.model, isSimplified=True)
 
         # Add to wins here
-        if self.model.score[0] > self.model.score[1] + self.model.status[1].count(Status.SAFE):
+        if self.model.score[0] > self.model.score[1]:
             if self.model.score[0] > 0:
                 wins[0] += 1
-        elif self.model.score[1] > self.model.score[0] + self.model.status[0].count(Status.SAFE):
+        elif self.model.score[1] > self.model.score[0]:
             if self.model.score[1] > 0:
                 wins[1] += 1
         else:
@@ -79,9 +79,7 @@ class TutorialController(ServerController):
         self.model.wins[1] += wins[1]
 
         # Recap the results
-        safe_totals = [self.model.status[0].count(Status.SAFE),
-                       self.model.status[1].count(Status.SAFE)]
-        self.model.recap.add_total(self.model.score, wins, safe_totals)
+        self.model.recap.add_total(self.model.score, wins, 0)
 
         # Remember how the round ended for user's recap (Must come after wins are determined)
         self.model.story.save_end_state(self.model)
