@@ -173,6 +173,7 @@ class Imprison(Card):
         game.score[opp] = len(game.hand[opp])
 
     def rate_play(self, world):
+        # TODO Use a function for predicting opponent's hand size
         return self.rate_reset(world) - world.opp_hand
 imprison = Imprison(name="Imprison", cost=2, id=35, rarity=1)
 class Gift(Card):
@@ -191,6 +192,14 @@ class Symbiosis(Card):
         super().play(player, game, index, bonus)
         if nourished:
             super().discard(1, game, player^1)
+
+    def rate_play(self, world):
+        nourished = Status.NOURISH in world.status[0]
+
+        if nourished:
+            return self.points + self.rate_discard(world)
+        else:
+            return self.points
 symbiosis = Symbiosis(name="Symbiosis", cost=6, points=6, id=57, rarity=0)
 
 class Nightmare(Card):
@@ -622,6 +631,9 @@ class Chimney(Card):
 
             game.animations[player^1].append(
                 Animation('Hand', 'Deck', card=CardCodec.encode_card(card)))
+
+    def rate_play(self, world):
+        return self.points + self.rate_discard(world)
 chimney = Chimney(name="Chimney", cost=5, points=3, id=16)
 
 class PocketWatch(Card):
