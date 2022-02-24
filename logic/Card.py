@@ -40,6 +40,10 @@ class Card:
         # Default is to just value it as its cost
         return max(1, self.cost)
 
+    # Rate how much this card wants to be played later in the story as opposed to early
+    def rate_delay(self, world):
+        return 0
+
     # Get the cost of the card for player in this game state
     def get_cost(self, player, game):
         return self.cost

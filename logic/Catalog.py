@@ -162,6 +162,9 @@ class Stalker(Card):
         opp = (player + 1) % 2
 
         return len(game.hand[opp])
+
+    def rate_delay(self, world):
+        return 10
 stalker = Stalker(name="Stalker", cost=6, points=3, id=19)
 class Imprison(Card):
     def play(self, player, game, index, bonus):

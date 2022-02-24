@@ -191,4 +191,9 @@ def get_action(model) -> int:
     if best_possible == () or best_possible is None:
         return 10
     else:
-        return best_possible[0]
+        # Sort best_possible such that cards that want to be played later are
+        def sort_by_delay(i):
+            return model.hand[i].rate_delay(model)
+        l = list(best_possible)
+        l.sort(key=sort_by_delay)
+        return l[0]
