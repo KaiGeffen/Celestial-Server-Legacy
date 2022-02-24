@@ -153,6 +153,9 @@ class BoneKnife(Card):
         opp = (player + 1) % 2
         super().play(player, game, index, bonus)
         self.discard(1, game, opp)
+
+    def rate_play(self, world):
+        return self.rate_discard(world)
 bone_knife = BoneKnife(name="Bone Knife", cost=1, id=1)
 class Stalker(Card):
     def get_cost(self, player, game):

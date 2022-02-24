@@ -291,6 +291,29 @@ class Card:
 
         return value
 
+    # Rate how valuable forcing the opponent to discard a card is
+    def rate_discard(self, world):
+        # Extra cards achieved by previous acts
+        extra_cards = 0
+        for act in world.story.acts:
+            if act.card.name == 'Gift' or act.card.name == 'Mercy':
+                extra_cards += 1
+            elif act.card.name == 'Dagger' or act.card.name == 'Bone Knife' or act.card.name == 'Chimney':
+                extra_cards -= 1
+
+        cards_in_hand_to_value = [
+            0,
+            0.6,
+            0.8,
+            1,
+            1,
+            0.2,
+            0.1
+        ]
+
+        hand_count = max(0, min(6, world.opp_hand + extra_cards))
+
+        return cards_in_hand_to_value[hand_count]
 
 
 class FireCard(Card):
