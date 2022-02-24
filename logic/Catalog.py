@@ -197,7 +197,7 @@ class Symbiosis(Card):
             super().discard(1, game, player^1)
 
     def rate_play(self, world):
-        nourished = Status.NOURISH in world.status[0]
+        nourished = Status.NOURISH in world.status
 
         if nourished:
             return self.points + self.rate_discard(world)
@@ -211,6 +211,14 @@ class Nightmare(Card):
             bonus += 4
 
         super().play(player, game, index, bonus)
+
+    def rate_play(self, world):
+        hand_diff = len(world.hand) - world.opp_hand
+
+        # If they lead in cards, gets better for each additional card they're up by, up to 4
+        if (hand_diff > 0):
+            return min(4, 1.5 + hand_diff)
+
 nightmare = Nightmare(name="Nightmare", cost=3, points=0, qualities=[Quality.VISIBLE], id=68, rarity=1)
 
 

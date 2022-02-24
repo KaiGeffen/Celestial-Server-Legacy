@@ -128,6 +128,9 @@ def rate_turn(turn, model):
     # Add a bonuses if final card benefits from being last
     value += final_card_bonus
 
+    # Consider Nightmare TODO
+
+
     return value
     #
     # total_cost = 0
