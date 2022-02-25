@@ -219,6 +219,8 @@ class Nightmare(Card):
         if (hand_diff > 0):
             return min(4, 1.5 + hand_diff)
 
+        return -1
+
 nightmare = Nightmare(name="Nightmare", cost=3, points=0, qualities=[Quality.VISIBLE], id=68, rarity=1)
 
 
