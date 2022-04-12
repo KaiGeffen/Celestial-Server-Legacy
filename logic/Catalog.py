@@ -145,7 +145,7 @@ class Heron(Card):
 
     def rate_play(self, world):
         return self.rate_reset(world)
-heron = Heron(name="Heron", cost=5, points=0, id=65, qualities=[Quality.VISIBLE], rarity=1)
+heron = Heron(name="Heron", cost=0, points=0, id=65, qualities=[Quality.VISIBLE], rarity=1)
 
 """Discard"""
 class BoneKnife(Card):
@@ -258,6 +258,9 @@ class Sine(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.starve(4, game, player)
+
+    def rate_delay(self, world):
+        return 12
 sine = Sine(name="Sine", cost=2, points=4, text="2:4, starve 4 (Your next card gives -4 points)", id=31)
 
 class Generator(Card):
