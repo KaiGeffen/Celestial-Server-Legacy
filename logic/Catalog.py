@@ -58,7 +58,7 @@ class Desert(Card):
 
                 hand_index = len(game.hand[act.owner]) - 1
                 game.animations[act.owner].append(
-                    Animation('Story', 'Hand', index=hand_index, index2=story_index))
+                    Animation('Story', 'Hand', index=story_index, index2=hand_index))
             # else:
                 # TODO
                 # game.animations[act.owner].append(('Story', 'Gone', story_index))
@@ -695,7 +695,7 @@ class Paramountcy(Card):
 
                 story_index = len(game.story.acts) - 1
                 game.animations[player].append(
-                    Animation('Discard', 'Story', index=story_index))
+                    Animation('Discard', 'Story', index2=story_index))
 
 
 paramountcy = Paramountcy(name="Paramountcy", cost=9, points=0, id=62, rarity=3)

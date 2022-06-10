@@ -103,7 +103,7 @@ class ServerModel:
             amt -= 1
 
             self.animations[player].append(
-                Animation('Deck', 'Hand', card=CardCodec.encode_card(card), index=len(self.hand[player]) - 1))
+                Animation('Deck', 'Hand', card=CardCodec.encode_card(card), index2=len(self.hand[player]) - 1))
 
         return card
 
@@ -146,7 +146,7 @@ class ServerModel:
 
                     # self.sound_effect = SoundEffect.Draw
                     self.animations[player].append(
-                        Animation('Deck', 'Hand', card=CardCodec.encode_card(card), index=len(self.hand[player]) - 1))
+                        Animation('Deck', 'Hand', card=CardCodec.encode_card(card), index2=len(self.hand[player]) - 1))
                     return card
 
         return None
@@ -158,7 +158,7 @@ class ServerModel:
 
             self.sound_effect = SoundEffect.Create
             self.animations[player].append(
-                Animation('Gone', 'Hand', card=CardCodec.encode_card(card), index=len(self.hand[player]) - 1))
+                Animation('Gone', 'Hand', card=CardCodec.encode_card(card), index2=len(self.hand[player]) - 1))
 
             return card
 

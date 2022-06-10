@@ -191,7 +191,7 @@ class ServerController:
 
                 if something_activated:
                     self.model.animations[player].append(
-                        Animation('Hand', 'Hand', card=CardCodec.encode_card(card), index=index))
+                        Animation('Hand', 'Hand', card=CardCodec.encode_card(card), index=index, index2=index))
 
                 index += 1
 
@@ -204,7 +204,7 @@ class ServerController:
                 something_activated = card.pile_upkeep(player, self.model, index)
                 if something_activated:
                     self.model.animations[player].append(
-                        Animation('Discard', 'Discard', CardCodec.encode_card(card), index))
+                        Animation('Discard', 'Discard', CardCodec.encode_card(card), index=index, index2=index))
 
                 index += 1
 
