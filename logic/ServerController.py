@@ -112,21 +112,33 @@ class ServerController:
         # TODO Lock are necessary to do this right, since everywhere else only 1 player has control at a time, but not here
         self.model.version_incr()
 
-        # Set aside each mulliganed card
-        set_aside_cards = []
-        for i in range(START_HAND_REAL)[::-1]:
+        # With index within the dealt hand
+        kept_cards = []
+        thrown_cards = []
+        for i in range(START_HAND_REAL):
+            card = self.model.hand[player].pop()
             if mulligans[i]:
-                set_aside_cards.append(self.model.hand[player].pop(i))
+                thrown_cards.append((card, i))
+            else:
+                kept_cards.append((card, i))
+
+        # Add each of the kept cards back to the hand
+        for (card, index_from) in kept_cards:
+            index_to = len(self.model.hand[player])
+            self.model.animations[player].append(
+                Animation('Mulligan', 'Hand', card=CardCodec.encode_card(card), index=index_from, index2=index_to))
+            self.model.hand[player].append(card)
 
         # Draw as many cards as were mulliganed
         self.model.draw(player, mulligans.count(True))
 
-        # Add the set aside cards to the deck
-        for i in range(len(set_aside_cards)):
-            self.model.deck[player].append(set_aside_cards[i])
+        # Add each thrown card back to the deck
+        for (card, index_from) in thrown_cards:
+            self.model.deck[player].append(card)
+
             # Animate the card moving from mulliganed back to deck
             self.model.animations[player].append(
-                Animation('Mulligan', 'Deck', card=CardCodec.encode_card(set_aside_cards[i]), index=i))
+                Animation('Mulligan', 'Deck', card=CardCodec.encode_card(card), index=index_from))
 
         # Shuffle the deck, don't remember what was shuffled
         self.model.shuffle(player, remember=False)
