@@ -116,7 +116,7 @@ class ServerController:
         kept_cards = []
         thrown_cards = []
         for i in range(START_HAND_REAL):
-            card = self.model.hand[player].pop()
+            card = self.model.hand[player].pop(0)
             if mulligans[i]:
                 thrown_cards.append((card, i))
             else:
