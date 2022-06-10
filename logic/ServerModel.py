@@ -295,21 +295,39 @@ class ServerModel:
             'winner': None if self.get_winner() is None else self.get_winner() ^ player,
             'score': self.score[::slice_step],
             'sound_effect': self.sound_effect,
-            'animations': self.hide_opp_mulligan_animations(self.animations[::slice_step]),
+            'animations': self.hide_opp_animations(self.animations[::slice_step]),
             'costs': costs
         }
 
 
+    # Hide any private information about the opponent's animations
     # Hide all information except the shuffle about the opponent's mulligan
-    def hide_opp_mulligan_animations(self, animations):
+    def hide_opp_animations(self, animations):
         opp_animations = animations[1]
 
+        # Mulligan phase should hide everything but that they shuffled
         for anim in opp_animations:
-            if anim['zone_to'] == 'Mulligan':
-                just_shuffle = Animation('Shuffle', 'Deck')
+            if anim['zone_from'] == 'Mulligan':
+                just_shuffle = [Animation('Shuffle', 'Deck')]
                 return [animations[0], just_shuffle]
 
-        return animations
+        # Cards going to their hand should not show what card it is
+        obfuscated = []
+        for anim in opp_animations:
+            # Emphasized cards should still be shown
+            if anim['zone_to'] == 'Hand' and anim['zone_from'] != 'Hand':
+                new_anim = Animation(
+                    zone_to=anim['zone_to'],
+                    zone_from=anim['zone_from'],
+                    # No card
+                    index=anim['index'],
+                    index2=anim['index2']
+                    )
+            else:
+                new_anim = anim
+            obfuscated.append(new_anim)
+
+        return [animations[0], obfuscated]
 
     # Get a view of the story that the given player can see
     def get_relative_story(self, player, total_vision):
