@@ -155,7 +155,7 @@ def rate_turn(turn, model):
 
 # For a given game state, decide what action to take (Card to play, or pass)
 def get_action(model) -> int:
-    time.sleep(.9)
+    time.sleep(1.6)
 
     # How many points up/down we believe we are
     point_difference = predict_point_difference(model)
