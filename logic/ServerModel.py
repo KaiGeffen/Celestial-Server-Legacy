@@ -277,7 +277,8 @@ class ServerModel:
             'deck': CardCodec.encode_deck(sorted(self.deck[player], key=deck_sort)),
             'opp_deck': len(self.deck[player ^ 1]),
             'pile': list(map(CardCodec.encode_deck, self.pile[::slice_step])),
-            'last_shuffle': list(map(CardCodec.encode_deck, self.last_shuffle[::slice_step])),
+            # Only send the opponent's last shuffle
+            'last_shuffle': CardCodec.encode_deck(sorted(self.last_shuffle[player ^ 1], key=deck_sort)),
             'expended': list(map(CardCodec.encode_deck, self.expended[::slice_step])),
             'wins': self.wins[::slice_step],
             'max_mana': self.max_mana[::slice_step],
