@@ -260,6 +260,10 @@ class ServerController:
 
         self.do_gentle()
 
+        # Remember the scores
+        self.model.round_results[0].append(self.model.score[0])
+        self.model.round_results[1].append(self.model.score[1])
+
         # Recap the results
         safe_totals = [0,0]
         self.model.recap.add_total(self.model.score, wins, safe_totals)

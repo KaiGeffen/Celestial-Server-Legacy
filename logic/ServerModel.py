@@ -79,6 +79,9 @@ class ServerModel:
         # The id of each player's avatar
         self.avatars = [avatar1, avatar2]
 
+        # For each player, the amount of points they earned in the nth round
+        self.round_results =[[],[]]
+
     def version_incr(self):
         self.version_no += 1
         self.animations = [[], []]
@@ -301,7 +304,8 @@ class ServerModel:
             'sound_effect': self.sound_effect,
             'animations': self.hide_opp_animations(self.animations[::slice_step]),
             'costs': costs,
-            'avatars': self.avatars[::slice_step]
+            'avatars': self.avatars[::slice_step],
+            'round_results': self.round_results[::slice_step]
         }
 
 
