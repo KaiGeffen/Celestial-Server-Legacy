@@ -24,6 +24,7 @@ class GameMatch:
     ws1 = None
     ws2 = None
     stored_deck = None
+    sotre_avatar = None
     vs_ai = False
     lock = None
 
@@ -135,22 +136,23 @@ class GameMatch:
             await notify_error(ws)
 
     async def add_ai_opponent(self, i=None):
-        await self.add_deck(1, get_computer_deck(i))
+        await self.add_deck(1, get_computer_deck(i), 0)
         self.vs_ai = True
 
     async def add_specific_ai_opponent(self, deck_code):
-        await self.add_deck(1, CardCodec.decode_deck(deck_code))
+        await self.add_deck(1, CardCodec.decode_deck(deck_code), 0)
         self.vs_ai = True
 
-    async def add_deck(self, player, deck):
+    async def add_deck(self, player, deck, avatar):
         async with self.lock:
             if self.stored_deck is None:
                 self.stored_deck = deck
+                self.stored_avatar = avatar
             else:
                 if player == 0:
-                    self.game = ServerController(deck, self.stored_deck)
+                    self.game = ServerController(deck, self.stored_deck, avatar, self.stored_avatar)
                 else:
-                    self.game = ServerController(self.stored_deck, deck)
+                    self.game = ServerController(self.stored_deck, deck, self.stored_avatar, avatar)
                 self.game.start()
 
                 # Print out what's happening
@@ -290,8 +292,10 @@ async def get_match(ws, path, uuid=None):
 async def handle_game_messages(data, match, player):
     if data["type"] == "init":
         deck = CardCodec.decode_deck(data["value"])
+        avatar = data["avatar"]
+        print(avatar)
 
-        await match.add_deck(player, deck)
+        await match.add_deck(player, deck, avatar)
 
         await match.notify_state()
 

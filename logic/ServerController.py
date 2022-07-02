@@ -25,8 +25,8 @@ PASS = 10
 
 
 class ServerController:
-    def __init__(self, deck1, deck2):
-        self.model = ServerModel(deck1, deck2)
+    def __init__(self, deck1, deck2, avatar1, avatar2):
+        self.model = ServerModel(deck1, deck2, avatar1, avatar2)
 
     # Return True if a play/pass occurred (False if play couldn't be completed)
     def on_player_input(self, player, choice, version=None):

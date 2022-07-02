@@ -23,7 +23,7 @@ PASS = 10
 
 
 class ServerModel:
-    def __init__(self, deck1, deck2, shuffle=True):
+    def __init__(self, deck1, deck2, avatar1, avatar2, shuffle=True):
         super().__init__()
 
         # The number of times an action has occurred, used for syncing with clients
@@ -75,6 +75,9 @@ class ServerModel:
 
         # The number of cards the player has drawn this round (including tutor)
         self.amt_drawn = [0, 0]
+
+        # The id of each player's avatar
+        self.avatars = [avatar1, avatar2]
 
     def version_incr(self):
         self.version_no += 1
@@ -297,7 +300,8 @@ class ServerModel:
             'score': self.score[::slice_step],
             'sound_effect': self.sound_effect,
             'animations': self.hide_opp_animations(self.animations[::slice_step]),
-            'costs': costs
+            'costs': costs,
+            'avatars': self.avatars[::slice_step]
         }
 
 
@@ -360,6 +364,7 @@ class ServerModel:
 
     """UTILITY CHECKS"""
     def get_winner(self):
+        return 0
         if self.wins[0] >= 5:#10 or (self.wins[0] >= 5 and self.wins[0] >= self.wins[1] + 2):
             return 0
 
