@@ -249,11 +249,9 @@ class ServerController:
 
         # Add to wins here
         if self.model.score[0] > self.model.score[1]:
-            if self.model.score[0] > 0:
-                wins[0] += 1
+            wins[0] += 1
         elif self.model.score[1] > self.model.score[0]:
-            if self.model.score[1] > 0:
-                wins[1] += 1
+            wins[1] += 1
         else:
             pass
         # Adjust the scores to reflect the wins from this round
@@ -311,7 +309,7 @@ class ServerController:
     def do_gentle(self):
         # Consider p1 winning and consider p2 winning
         for (p1, p2) in [(0, 1), (1, 0)]:
-            score_dif = self.model.score[p1] - max(self.model.score[p2], 0)
+            score_dif = self.model.score[p1] - self.model.score[p2]
 
             # Subtract the safety of the losing player
             score_above_winning = score_dif
