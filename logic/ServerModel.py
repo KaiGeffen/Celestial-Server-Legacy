@@ -364,7 +364,6 @@ class ServerModel:
 
     """UTILITY CHECKS"""
     def get_winner(self):
-        return 0
         if self.wins[0] >= 5:#10 or (self.wins[0] >= 5 and self.wins[0] >= self.wins[1] + 2):
             return 0
 

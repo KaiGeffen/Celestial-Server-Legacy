@@ -293,7 +293,6 @@ async def handle_game_messages(data, match, player):
     if data["type"] == "init":
         deck = CardCodec.decode_deck(data["value"])
         avatar = data["avatar"]
-        print(avatar)
 
         await match.add_deck(player, deck, avatar)
 
