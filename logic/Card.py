@@ -103,12 +103,16 @@ class Card:
         game.animations[player].append(
             Animation('Status', index=0))
 
+        game.sound_effect = SoundEffect.Inspire
+
         return self.add_status(amt, game, player, Status.INSPIRE)
 
     # Next card gives +X points
     def nourish(self, amt, game, player):
         game.animations[player].append(
             Animation('Status', index=2))
+
+        game.sound_effect = SoundEffect.Nourish
 
         return self.add_status(amt, game, player, Status.NOURISH)
 
@@ -235,12 +239,12 @@ class Card:
                 card.points += amt
                 card.dynamic_text = f'0:{card.points}, Fleeting'
 
-                game.sound_effect = SoundEffect.Build
+                # game.sound_effect = SoundEffect.Build
                 return f'\nBuild +{amt}'
 
         card = Card(name='Robot', points=amt, qualities=[Quality.FLEETING], dynamic_text=f'0:{amt}, fleeting', id=1003)
         if game.create(player, card):
-            game.sound_effect = SoundEffect.Build
+            # game.sound_effect = SoundEffect.Build
             return f'\nBuild {amt}'
         else:
             return ''
