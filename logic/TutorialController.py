@@ -34,7 +34,7 @@ class TutorialController(ServerController):
         if num is not None:
             player_deck = p_decks[num]
             ai_deck = o_decks[num]
-        self.model = ServerModel(player_deck, ai_deck, shuffle=False)
+        self.model = ServerModel(player_deck, ai_deck, 0, 0, shuffle=False)
 
         if num is not None:
             self.model.wins[0] = 2

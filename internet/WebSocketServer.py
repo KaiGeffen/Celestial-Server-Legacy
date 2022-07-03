@@ -202,7 +202,7 @@ class TutorialMatch(GameMatch):
         self.game.do_mulligan(1, [False, False, False])
         self.game.model.version_no = 0
 
-    async def add_deck(self, player, deck):
+    async def add_deck(self, player, deck, avatar):
         return
 
 
