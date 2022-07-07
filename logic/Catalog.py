@@ -107,7 +107,7 @@ class Icarus(Card):
                 if act.owner == player:
                     amt += 1
 
-        if amt == 5:
+        if amt == 4:
             return 0
         else:
             return self.cost
@@ -239,7 +239,8 @@ class Factory(Card):
     def play(self, player, game, index, bonus):
         amt = game.story.get_length()
         super().play(player, game, index, bonus)
-        self.build(amt, game, player)
+        if (amt >= 1):
+            self.build(amt, game, player)
 factory = Factory(name="Factory", cost=3, text="3:0, build X, where X is number of cards later in the story", id=10)
 class AI(Card):
     def play(self, player, game, index, bonus):
