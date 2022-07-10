@@ -422,10 +422,10 @@ class FishBones(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
 
+        self.draw(2, game, player)
+
         for _ in range(3):
             self.create_in_pile(broken_bone, game, player)
-
-        self.draw(2, game, player)
 fish_bones = FishBones(name="Fish Bones", cost=2, points=0, qualities=[Quality.FLEETING], id=64, rarity=0)
 
 """Ships"""
