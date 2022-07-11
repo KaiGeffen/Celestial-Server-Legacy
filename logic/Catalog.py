@@ -13,7 +13,6 @@ camera = Camera(name="Camera", cost=2, qualities=[Quality.FLEETING],
                 text="2:0, Fleeting, at the start of each round, give your opponent vision 4", id=1001)
 class BrokenBone(Card):
     def play(self, player, game, index, bonus):
-        game.sound_effect = SoundEffect.BoneSnap
         super().play(player, game, index, bonus)
         self.draw(1, game, player)
 broken_bone = BrokenBone(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], id=1002)
@@ -153,6 +152,8 @@ class BoneKnife(Card):
         opp = (player + 1) % 2
         super().play(player, game, index, bonus)
         self.discard(1, game, opp)
+
+        game.sound_effect = SoundEffect.Cut
 
     def rate_play(self, world):
         return self.rate_discard(world)
@@ -376,6 +377,8 @@ cornucopia = Cornucopia(name="Cornucopia", cost=6, points=2, id=61, rarity=2)
 """Earth"""
 class CrossedBones(Card):
     def play(self, player, game, index, bonus):
+        game.sound_effect = SoundEffect.Fire
+
         super().play(player, game, index, bonus)
 
         for _ in range(2):

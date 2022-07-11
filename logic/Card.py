@@ -239,12 +239,12 @@ class Card:
                 card.points += amt
                 card.dynamic_text = f'0:{card.points}, Fleeting'
 
-                # game.sound_effect = SoundEffect.Build
+                game.sound_effect = SoundEffect.Birth
                 return f'\nBuild +{amt}'
 
         card = Card(name='Robot', points=amt, qualities=[Quality.FLEETING], dynamic_text=f'0:{amt}, fleeting', id=1003)
         if game.create(player, card):
-            # game.sound_effect = SoundEffect.Build
+            game.sound_effect = SoundEffect.Birth
             return f'\nBuild {amt}'
         else:
             return ''

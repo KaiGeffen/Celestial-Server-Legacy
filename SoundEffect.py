@@ -9,7 +9,7 @@ Win = 'win'
 Lose = 'lose'
 Tie = 'tie'
 
-Build = 'build'
+Birth = 'birth'
 Inspire = 'inspire'
 Nourish = 'nourish'
 
@@ -22,3 +22,5 @@ Fire = 'fire'
 Reset = 'reset'
 Crowd = 'crowd'
 Sarcophagus = 'sarcophagus'
+
+Cut = 'cut'
