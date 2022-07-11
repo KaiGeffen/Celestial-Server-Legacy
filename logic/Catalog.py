@@ -705,12 +705,18 @@ class Paramountcy(Card):
 paramountcy = Paramountcy(name="Paramountcy", cost=9, points=0, id=62, rarity=3)
 
 class Conquer(Card):
-    def play(self, player, game, index, bonus):
-        if not game.story.is_empty():
-            bonus += game.story.acts[0].card.cost
+    def get_cost(self, player, game):
+        num_seen_cards = 0
+        for i in range(len(game.story.acts)):
+            act = game.story.acts[i]
+            if act.owner == player:
+                num_seen_cards += 1
+            else:
+                if i + 1 <= game.vision[player] or Quality.VISIBLE in act.card.qualities:
+                    num_seen_cards += 1
 
-        super().play(player, game, index, bonus)
-conquer = Conquer(name="Conquer", cost=5, points=2, qualities=[Quality.VISIBLE], id=67, rarity=1)
+        return max(0, self.cost - num_seen_cards)
+conquer = Conquer(name="Conquer", cost=5, points=2, id=67, rarity=1)
 
 
 class Clone(Card):
