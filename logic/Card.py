@@ -251,9 +251,9 @@ class Card:
 
     # Transform the card in the story at index into the given card
     def transform(self, index, card, game):
-        print(len(game.story.acts))
         if index + 1 <= len(game.story.acts):
             act = game.story.acts[index]
+            old_card = act.card
             game.story.replace_act(index, Act(
                 card=card,
                 owner=act.owner
@@ -261,7 +261,7 @@ class Card:
 
             # Add an animation
             game.animations[act.owner].append(
-                Animation('Transform', 'Story', CardCodec.encode_card(act.card), index=0))
+                Animation('Transform', 'Story', CardCodec.encode_card(old_card), index=index))
 
 
     """UTILITY CHECKS"""
