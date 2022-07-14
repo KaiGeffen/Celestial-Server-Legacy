@@ -1,4 +1,4 @@
-websockets~=9.1
+websockets~=10.1
 
 # Modules for authentication
 bottle~=0.12
