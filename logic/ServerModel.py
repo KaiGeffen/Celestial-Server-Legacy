@@ -316,7 +316,7 @@ class ServerModel:
 
         # Mulligan phase should hide everything but that they shuffled
         for anim in opp_animations:
-            if anim['zone_from'] == 'Mulligan':
+            if anim['zone_from'] == 'Mulligan' or anim['zone_to'] == 'Mulligan':
                 just_shuffle = [Animation('Shuffle', 'Deck')]
                 return [animations[0], just_shuffle]
 

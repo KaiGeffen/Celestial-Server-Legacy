@@ -151,6 +151,14 @@ class ServerController:
         self.do_setup()
         self.do_upkeep()
 
+        # Replace the draw animations with deck to mulligan
+        for player in (0, 1):
+            self.model.animations[player] = []
+            for i in range(0, 3):
+                card = self.model.hand[player][i]
+                anim = Animation('Deck', 'Mulligan', card=CardCodec.encode_card(card), index=i)
+                self.model.animations[player].append(anim)
+
     # Perform the setup phase
     def do_setup(self):
         for player in (0, 1):
