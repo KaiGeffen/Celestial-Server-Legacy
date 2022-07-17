@@ -124,7 +124,7 @@ class ServerModel:
             # self.sound_effect = SoundEffect.Discard
 
             self.animations[player].append(
-                Animation('Hand', 'Discard', card=CardCodec.encode_card(card), index=index))
+                Animation('Hand', 'Discard', card=CardCodec.encode_card(card), index=index, index2=len(self.pile[player]) - 1))
 
         return card
 
@@ -173,7 +173,7 @@ class ServerModel:
     # Create a copy of the given card in player's pile
     def create_in_pile(self, player, card):
         self.animations[player].append(
-            Animation('Gone', 'Discard', CardCodec.encode_card(card)))
+            Animation('Gone', 'Discard', CardCodec.encode_card(card), index2=len(self.pile[player])))
         self.pile[player].append(card)
 
     # Player cycles the given card, won't draw the same card, assumes card is in player's hand
