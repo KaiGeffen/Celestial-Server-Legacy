@@ -39,6 +39,9 @@ class GameMatch:
 
         self.lock = asyncio.Lock()
 
+    def has_begun(self):
+        return self.game is not None
+
     # Notify each player how many players are connected
     async def notify_number_players_connected(self):
         ready = self.ws2 is not None or self.vs_ai
@@ -241,9 +244,11 @@ async def serveMain(ws, path):
 async def match_cleanup(path, match):
     # If this player was searching for an opponent and left, remove their open match
     async with matches_lock:
-        if path in PWD_MATCHES:
-            print("My opponent left before we got into a game. " + path)
-            PWD_MATCHES.pop(path)
+        # If the match hasn't begun
+        if not match.has_begun():
+            if path in PWD_MATCHES:
+                print("Player left before getting into a game. " + path)
+                PWD_MATCHES.pop(path)
 
     await match.notify_exit()
 
