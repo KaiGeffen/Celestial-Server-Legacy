@@ -8,6 +8,7 @@ from logic.Catalog import hidden_card
 from logic.Effects import Quality
 from logic.Story import Story
 from logic.Recap import Recap
+from logic.Story import Source
 
 DRAW_PER_TURN = 2
 START_HAND_REAL = 3
@@ -175,6 +176,17 @@ class ServerModel:
         self.animations[player].append(
             Animation('Gone', 'Discard', CardCodec.encode_card(card), index2=len(self.pile[player])))
         self.pile[player].append(card)
+
+    # Create a copy of the given card at the end of the story
+    def create_in_story(self, player, card):
+        if len(self.story.acts) >= 12:
+            return
+
+        self.animations[player].append(
+            Animation('Gone', 'Story', CardCodec.encode_card(card), index2=len(self.story.acts)))
+
+        # TODO Pile isn't the source, but this feature is deprecated
+        self.story.add_act(card, player, Source.PILE)
 
     # Player cycles the given card, won't draw the same card, assumes card is in player's hand
     # def cycle(self, player, card):

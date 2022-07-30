@@ -115,7 +115,7 @@ class ServerController:
         # With index within the dealt hand
         kept_cards = []
         thrown_cards = []
-        for i in range(START_HAND_REAL):
+        for i in range(min(START_HAND_REAL, len(self.model.hand[player]))):
             card = self.model.hand[player].pop(0)
             if mulligans[i]:
                 thrown_cards.append((card, i))
@@ -154,7 +154,8 @@ class ServerController:
         # Replace the draw animations with deck to mulligan
         for player in (0, 1):
             self.model.animations[player] = []
-            for i in range(0, 3):
+
+            for i in range(min(START_HAND_REAL, len(self.model.deck[player]))):
                 card = self.model.hand[player][i]
                 anim = Animation('Deck', 'Mulligan', card=CardCodec.encode_card(card), index=i)
                 self.model.animations[player].append(anim)

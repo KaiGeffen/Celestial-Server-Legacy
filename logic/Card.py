@@ -147,6 +147,10 @@ class Card:
 
         return f'\n{card.name}'
 
+    # Create at the end of the story a copy of the given card
+    def create_in_story(self, card, game, player):
+        game.create_in_story(player, card)
+
     # Tutor a card with cost x
     def tutor(self, cost, game, player):
         card = game.tutor(player, cost)

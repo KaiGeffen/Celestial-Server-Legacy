@@ -207,22 +207,13 @@ class Symbiosis(Card):
 symbiosis = Symbiosis(name="Symbiosis", cost=6, points=6, id=57, rarity=0)
 
 class Nightmare(Card):
-    def play(self, player, game, index, bonus):
-        if len(game.hand[player]) > len(game.hand[player^1]):
-            bonus += 4
-
-        super().play(player, game, index, bonus)
-
-    def rate_play(self, world):
-        hand_diff = len(world.hand) - world.opp_hand
-
-        # If they lead in cards, gets better for each additional card they're up by, up to 4
-        if (hand_diff > 0):
-            return min(4, 1.5 + hand_diff)
-
-        return -1
-
-nightmare = Nightmare(name="Nightmare", cost=3, points=0, qualities=[Quality.VISIBLE], id=68, rarity=1)
+    def pile_upkeep(self, player, game, index):
+        # Only do it if this is the top card of the discard pile
+        if index == len(game.pile[player]) - 1:
+            if len(game.hand[player^1]) == 0:
+                super().create(stalker, game, player)
+                return True
+nightmare = Nightmare(name="Nightmare", cost=2, points=2, id=68, rarity=1)
 
 
 """Machines"""
