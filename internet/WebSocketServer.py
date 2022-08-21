@@ -225,6 +225,7 @@ async def serveMain(ws, path):
 
     if path == 'tokensignin':
         await Authenticate.authenticate(ws)
+        return
 
         # Wait for player to seek a match
         # async for message in ws:
