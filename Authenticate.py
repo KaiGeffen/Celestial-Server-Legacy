@@ -249,7 +249,7 @@ def adjust_decks(uuid, decks):
 # For user with given id, add them a win's worth of igc and record 1 win
 def add_win(uuid):
     update_query = "UPDATE players\n"
-    update_query += f"SET igc = igc + {WIN_AMT}, wins = wins + 1"
+    update_query += f"SET wins = wins + 1"
     update_query += f"\nWHERE id = '{uuid}';"
 
     update_db(update_query)

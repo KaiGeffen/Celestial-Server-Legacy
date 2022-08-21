@@ -59,6 +59,9 @@ class GameMatch:
         if self.game is None:
             return
 
+        print(self.uuid1)
+        print(self.uuid2)
+
         # Give the winner igc if they just won, then remove their uuid so they aren't double paid
         winner = self.game.model.get_winner()
         if winner == 0:
