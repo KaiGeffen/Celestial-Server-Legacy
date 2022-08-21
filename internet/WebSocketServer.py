@@ -239,15 +239,7 @@ async def serveMain(ws, path):
         async for message in ws:
             data = json.loads(message)
 
-            print(data)
-
-            # If player is seeking a new match (They are logged in), load that
-            if (data["type"] == "new_match"):
-                print(data)
-                match, player = await get_match(ws, data["path"])
-            # Otherwise handle their command for their current game
-            else:
-                await handle_game_messages(data, match, player)
+            await handle_game_messages(data, match, player)
 
     finally:
         await match_cleanup(path, match)

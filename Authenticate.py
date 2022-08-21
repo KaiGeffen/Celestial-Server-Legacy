@@ -99,6 +99,8 @@ async def authenticate(ws):
             elif data["type"] == "find_match":
                 path = data["value"]
 
+                print(data)
+
                 match, player = await game_server.get_match(ws, path, uuid)
             elif data["type"] == "exit_match":
                 await game_server.match_cleanup(path, match)
