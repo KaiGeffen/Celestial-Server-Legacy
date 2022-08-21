@@ -239,6 +239,8 @@ async def serveMain(ws, path):
         async for message in ws:
             data = json.loads(message)
 
+            print(data)
+
             # If player is seeking a new match (They are logged in), load that
             if (data["type"] == "new_match"):
                 print(data)
