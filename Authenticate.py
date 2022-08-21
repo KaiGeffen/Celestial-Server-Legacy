@@ -127,13 +127,14 @@ def get_id_email(token):
 # Returns a tuple if there is data, None otherwise
 def get_user_data(id, email):
     try:
+        print(os.environ["DATABASE_URL"])
         # Connect to an existing database
         connection = psycopg2.connect(user="doadmin",
                                       password=os.environ["DB_PWD"],
                                       host=os.environ["DATABASE_URL"],
                                       #"app-8058d91d-8288-43bb-a12e-e1eb61ce00e3-do-user-8861671-0.b.db.ondigitalocean.com",
                                       port="25060",
-                                      database="db",
+                                      database="defaultdb",
                                       sslmode="require")
 
         cursor = connection.cursor()
