@@ -225,7 +225,12 @@ async def serveMain(ws, path):
 
     if path == 'tokensignin':
         await Authenticate.authenticate(ws)
-        return
+
+        # Wait for player to seek a match
+        # async for message in ws:
+        #     data = json.loads(message)
+        #
+        #     match, player = await get_match(ws, '')
     else:
         match, player = await get_match(ws, path)
 
@@ -234,7 +239,13 @@ async def serveMain(ws, path):
         async for message in ws:
             data = json.loads(message)
 
-            await handle_game_messages(data, match, player)
+            # If player is seeking a new match (They are logged in), load that
+            if (data["type"] == "new_match"):
+                print(data)
+                match, player = await get_match(ws, data["path"])
+            # Otherwise handle their command for their current game
+            else:
+                await handle_game_messages(data, match, player)
 
     finally:
         await match_cleanup(path, match)
