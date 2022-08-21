@@ -59,9 +59,6 @@ class GameMatch:
         if self.game is None:
             return
 
-        print(self.uuid1)
-        print(self.uuid2)
-
         # Give the winner igc if they just won, then remove their uuid so they aren't double paid
         winner = self.game.model.get_winner()
         if winner == 0:
@@ -94,10 +91,16 @@ class GameMatch:
     def state_event(self, player):
         return json.dumps({"type": "transmit_state", "value": self.game.get_client_model(player)})
 
-    async def notify_exit(self):
+    async def notify_exit(self, disconnecting_ws=None):
         # Don't inform after the game has ended, since users will naturally dc
         if self.game is None or self.game.model.get_winner() is not None:
             return
+
+        # Remove the disconnecting ws
+        if self.ws1 == disconnecting_ws:
+            self.ws1 = None
+        elif self.ws2 == disconnecting_ws:
+            self.ws2 = None
 
         messages = []
         if self.ws1 is not None and not self.ws1.closed:
@@ -250,7 +253,7 @@ async def serveMain(ws, path):
 
 
 # Do any cleanup that must happen after a match ends
-async def match_cleanup(path, match):
+async def match_cleanup(path, match, ws=None):
     # If this player was searching for an opponent and left, remove their open match
     async with matches_lock:
         # If the match hasn't begun
@@ -259,7 +262,7 @@ async def match_cleanup(path, match):
                 print("Player left before getting into a game. " + path)
                 PWD_MATCHES.pop(path)
 
-    await match.notify_exit()
+    await match.notify_exit(ws)
 
 
 # Get a match for this websocket / path pair

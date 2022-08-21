@@ -99,11 +99,9 @@ async def authenticate(ws):
             elif data["type"] == "find_match":
                 path = data["value"]
 
-                print(data)
-
                 match, player = await game_server.get_match(ws, path, uuid)
             elif data["type"] == "exit_match":
-                await game_server.match_cleanup(path, match)
+                await game_server.match_cleanup(path, match, ws)
                 path = match = None
             # In all other cases the message has to do with a game action, so it should be handled as a game message
             else:
