@@ -19,7 +19,10 @@ IGC_INDEX = 1
 WIN_AMT = 15
 
 # Just take the app part of the url
-HOST = os.environ["DATABASE_URL"].split('@')[1].split(':')[0]
+if platform.system() == 'Darwin':
+    HOST = 'Local build does not use authenticate'
+else:
+    HOST = os.environ["DATABASE_URL"].split('@')[1].split(':')[0]
 
 
 # NOTE Have to add 1 for working with sql arrays, they start at 1
@@ -33,6 +36,8 @@ async def authenticate(ws):
     user_data = None
     # The last set of choice cards user saw, should always be set before choice is made
     choice_cards = [0, 0, 0]
+
+    path = None
 
     # Listen to responses
     try:
