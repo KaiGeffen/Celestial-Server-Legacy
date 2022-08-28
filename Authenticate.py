@@ -101,6 +101,10 @@ async def authenticate(ws):
                 adjust_user_progress(uuid, data["value"])
             elif data["type"] == "send_decks":
                 adjust_decks(uuid, data["value"])
+            elif data["type"] == "send_inventory":
+                adjust_inventory(uuid, data["value"])
+            elif data["type"] == "send_completed_missions":
+                adjust_completed_missions(uuid, data["value"])
             elif data["type"] == "find_match":
                 path = data["value"]
 
@@ -245,6 +249,24 @@ def adjust_decks(uuid, decks):
     update_query = "UPDATE players\n"
     # SQL db uses curly brace instead of square for arrays
     update_query += f"SET decks = '{decks_no_quotes}'\n"
+    update_query += f"WHERE id = '{uuid}';"
+
+    update_db(update_query)
+
+# For user with given id, update their inventory
+def adjust_inventory(uuid, binary_string):
+    update_query = "UPDATE players\n"
+    # SQL db uses curly brace instead of square for arrays
+    update_query += f"SET inventory = '{binary_string}'\n"
+    update_query += f"WHERE id = '{uuid}';"
+
+    update_db(update_query)
+
+# For user with given id, update their completed missions
+def adjust_completed_missions(uuid, binary_string):
+    update_query = "UPDATE players\n"
+    # SQL db uses curly brace instead of square for arrays
+    update_query += f"SET completedmissions = '{binary_string}'\n"
     update_query += f"WHERE id = '{uuid}';"
 
     update_db(update_query)
