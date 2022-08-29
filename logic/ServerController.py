@@ -205,17 +205,25 @@ class ServerController:
                 index += 1
 
             # Each card in pile has a chance to do an upkeep effect
-            index = 0
-            while index < len(self.model.pile[player]):
-                card = self.model.pile[player][index]
+            # index = 0
+            # while index < len(self.model.pile[player]):
+            #     card = self.model.pile[player][index]
+            #
+            #     # NOTE This now
+            #     something_activated = card.morning(player, self.model, index)
+            #     if something_activated:
+            #         self.model.animations[player].append(
+            #             Animation('Discard', 'Discard', CardCodec.encode_card(card), index=index, index2=index))
+            #
+            #     index += 1
 
-                # NOTE This now
-                something_activated = card.morning(player, self.model, index)
+            if len(self.model.pile[player]) > 0:
+                # NOTE Morning is now the only effect that triggers in the discard pile
+                card = self.model.pile[player][-1]
+                something_activated = card.morning(player, self.model, len(self.model.pile[player]) - 1)
                 if something_activated:
                     self.model.animations[player].append(
                         Animation('Discard', 'Discard', CardCodec.encode_card(card), index=index, index2=index))
-
-                index += 1
 
             # Draw cards for turn
             self.model.draw(player, DRAW_PER_TURN)

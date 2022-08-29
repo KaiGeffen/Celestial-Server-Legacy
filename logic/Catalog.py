@@ -123,10 +123,8 @@ class Eagle(SightCard):
 eagle = Eagle(amt=4, name="Eagle", cost=6, points=6, id=43, rarity=2)
 class Vulture(Card):
     def morning(self, player, game, index):
-        # Only do it if this is the top card of the discard pile
-        if index == len(game.pile[player]) - 1:
-            super().create(dove, game, player)
-            return True
+        super().create(dove, game, player)
+        return True
 vulture = Vulture(name="Vulture", cost=3, points=3, id=52)
 class Phoenix(Card):
     def play(self, player, game, index, bonus):
@@ -208,11 +206,9 @@ symbiosis = Symbiosis(name="Symbiosis", cost=6, points=6, id=57, rarity=0)
 
 class Nightmare(Card):
     def morning(self, player, game, index):
-        # Only do it if this is the top card of the discard pile
-        if index == len(game.pile[player]) - 1:
-            if len(game.hand[player^1]) == 0:
-                super().create(stalker, game, player)
-                return True
+        if len(game.hand[player^1]) == 0:
+            super().create(stalker, game, player)
+            return True
 nightmare = Nightmare(name="Nightmare", cost=2, points=2, id=68, rarity=1)
 
 
@@ -258,10 +254,8 @@ sine = Sine(name="Sine", cost=2, points=4, text="2:4, starve 4 (Your next card g
 
 class Generator(Card):
     def morning(self, player, game, index):
-        # Only do it if this is the top card of the discard pile
-        if index == len(game.pile[player]) - 1:
-            super().build(1, game, player)
-            return True
+        super().build(1, game, player)
+        return True
 generator = Generator(name="Generator", cost=4, points=4, id=53, rarity=1)
 class BecomeMachine(Card):
     def play(self, player, game, index, bonus):
@@ -434,10 +428,8 @@ fishing_boat = FishingBoat(name="Fishing Boat", cost=2, text="2:0, tutor a 1 3 t
 """Death"""
 class Scarab(SightCard):
     def morning(self, player, game, index):
-        # Only do it if this is the top card of the discard pile
-        if index == len(game.pile[player]) - 1:
-            game.vision[player] += 1
-            return True
+        game.vision[player] += 1
+        return True
 scarab = Scarab(amt=4, name="Scarab", cost=0, points=0, id=50, rarity=0)
 class Drown(Card):
     def play(self, player, game, index, bonus):
@@ -658,10 +650,8 @@ class PocketWatch(Card):
 pocket_watch = PocketWatch(name="Pocket Watch", cost=4, points=2, id=54, rarity=1)
 class Sun(Card):
     def morning(self, player, game, index):
-        # Only do it if this is the top card of the discard pile
-        if index == len(game.pile[player]) - 1:
-            super().add_mana(1, game, player)
-            return True
+        super().add_mana(1, game, player)
+        return True
 sun = Sun(name="Sun", cost=8, points=8, id=56, rarity=2, qualities=[Quality.VISIBLE])
 class Sickness(Card):
     def play(self, player, game, index, bonus):
@@ -671,17 +661,27 @@ class Sickness(Card):
 sickness = Sickness(name="Sickness", cost=3, points=0, qualities=[Quality.FLEETING], id=58, rarity=1)
 class Axolotl(Card):
     def morning(self, player, game, index):
-        # Only do it if this is the top card of the discard pile
-        if index == len(game.pile[player]) - 1:
-            super().create(axolotl, game, player)
-            return True
+        super().create(axolotl, game, player)
+        return True
 axolotl = Axolotl(name="Axolotl", cost=1, points=1, id=63, rarity=0)
 class Moon(Card):
     def morning(self, player, game, index):
-        # Only do it if this is the top card of the discard pile
-        if index == len(game.pile[player]) - 1:
-            super().add_mana(1, game, player)
-            return True
+        # Iterate through each card below this, trigger its morning effect
+        # Stop after 2 effects have been triggered
+        count = 0
+        for i in range(index - 1, -1, -1):
+            if (count >= 2):
+                break
+
+            card = game.pile[player][i]
+            if card.morning(player, game, i):
+                # Add an animation for the card
+                game.animations[player].append(
+                    Animation('Discard', 'Discard', CardCodec.encode_card(card), index=i, index2=i))
+
+                count += 1
+
+        return True
 moon = Moon(name="Moon", cost=5, points=5, id=73)
 
 
