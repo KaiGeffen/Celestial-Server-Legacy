@@ -210,7 +210,7 @@ class ServerController:
                 card = self.model.pile[player][index]
 
                 # NOTE This now
-                something_activated = card.pile_upkeep(player, self.model, index)
+                something_activated = card.morning(player, self.model, index)
                 if something_activated:
                     self.model.animations[player].append(
                         Animation('Discard', 'Discard', CardCodec.encode_card(card), index=index, index2=index))

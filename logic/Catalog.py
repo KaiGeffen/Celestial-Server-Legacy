@@ -122,7 +122,7 @@ class Eagle(SightCard):
         self.nourish(2, game, player)
 eagle = Eagle(amt=4, name="Eagle", cost=6, points=6, id=43, rarity=2)
 class Vulture(Card):
-    def pile_upkeep(self, player, game, index):
+    def morning(self, player, game, index):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
             super().create(dove, game, player)
@@ -207,7 +207,7 @@ class Symbiosis(Card):
 symbiosis = Symbiosis(name="Symbiosis", cost=6, points=6, id=57, rarity=0)
 
 class Nightmare(Card):
-    def pile_upkeep(self, player, game, index):
+    def morning(self, player, game, index):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
             if len(game.hand[player^1]) == 0:
@@ -257,7 +257,7 @@ class Sine(Card):
 sine = Sine(name="Sine", cost=2, points=4, text="2:4, starve 4 (Your next card gives -4 points)", id=31)
 
 class Generator(Card):
-    def pile_upkeep(self, player, game, index):
+    def morning(self, player, game, index):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
             super().build(1, game, player)
@@ -433,7 +433,7 @@ fishing_boat = FishingBoat(name="Fishing Boat", cost=2, text="2:0, tutor a 1 3 t
 
 """Death"""
 class Scarab(SightCard):
-    def pile_upkeep(self, player, game, index):
+    def morning(self, player, game, index):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
             game.vision[player] += 1
@@ -657,7 +657,7 @@ class PocketWatch(Card):
         self.draw(2, game, player)
 pocket_watch = PocketWatch(name="Pocket Watch", cost=4, points=2, id=54, rarity=1)
 class Sun(Card):
-    def pile_upkeep(self, player, game, index):
+    def morning(self, player, game, index):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
             super().add_mana(1, game, player)
@@ -670,12 +670,20 @@ class Sickness(Card):
         self.create(sickness, game, player ^ 1)
 sickness = Sickness(name="Sickness", cost=3, points=0, qualities=[Quality.FLEETING], id=58, rarity=1)
 class Axolotl(Card):
-    def pile_upkeep(self, player, game, index):
+    def morning(self, player, game, index):
         # Only do it if this is the top card of the discard pile
         if index == len(game.pile[player]) - 1:
             super().create(axolotl, game, player)
             return True
 axolotl = Axolotl(name="Axolotl", cost=1, points=1, id=63, rarity=0)
+class Moon(Card):
+    def morning(self, player, game, index):
+        # Only do it if this is the top card of the discard pile
+        if index == len(game.pile[player]) - 1:
+            super().add_mana(1, game, player)
+            return True
+moon = Moon(name="Moon", cost=5, points=5, id=73)
+
 
 class Paramountcy(Card):
     def play(self, player, game, index, bonus):
@@ -799,7 +807,9 @@ full_catalog = [
 
     carrion, occupation, gentle_rain, sunflower,
 
-    hollow
+    hollow,
+
+    moon,
     ]
 
 non_collectibles = [hidden_card] + tokens
