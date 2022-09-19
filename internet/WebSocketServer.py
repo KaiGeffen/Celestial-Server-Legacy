@@ -254,10 +254,13 @@ async def serveMain(ws, path):
 
 # Do any cleanup that must happen after a match ends
 async def match_cleanup(path, match, ws=None):
+    if match is None:
+        return
+
     # If this player was searching for an opponent and left, remove their open match
     async with matches_lock:
         # If the match hasn't begun
-        if match is None or not match.has_begun():
+        if not match.has_begun():
             if path in PWD_MATCHES:
                 print("Player left before getting into a game. " + path)
                 PWD_MATCHES.pop(path)
