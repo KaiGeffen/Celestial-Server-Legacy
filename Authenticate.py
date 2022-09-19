@@ -55,48 +55,6 @@ async def authenticate(ws):
 
                 message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
                 await asyncio.wait([ws.send(message)])
-            elif data["type"] == "request_pack":
-                print('User tried to buy a pack but that feature is deprecated.')
-                return
-                #
-                # # Check if they have the funds
-                # have_funds = user_data[IGC_INDEX] >= COST_PACK
-                #
-                # # If not, return error
-                # if not have_funds:
-                #     message = json.dumps({"type": "error"})
-                # else:
-                #     pack = get_random_pack()
-                #
-                #     # Subtract funds, add these cards to user inventory
-                #     # The first card of the choosables is picked by default,
-                #     # then if another is chosen, the inventory is adjusted
-                #     adjust_user_data_opened_pack(uuid, pack)
-                #
-                #     # choice_cards = pack[4:]
-                #     choice_cards[0] = pack[4]
-                #     choice_cards[1] = pack[5]
-                #     choice_cards[2] = pack[6]
-                #
-                #     message = json.dumps({"type": "send_pack", "value": pack})
-                # await asyncio.wait([ws.send(message)])
-            elif data["type"] == "make_choice":
-                print('User tried to choose a card from a pack but that feature is deprecated.')
-                return
-                #
-                # chosen_card = choice_cards[data['value']]
-                #
-                # # Adjust the inventory to reflect if user chose a card besides the first option
-                # adjust_user_data_chosen_card(uuid, chosen_card, choice_cards[0])
-                #
-                # # Get the user's data
-                # if email is None:
-                #     user_data = None
-                # else:
-                #     user_data = get_user_data(uuid, email)
-                #
-                # message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
-                # await asyncio.wait([ws.send(message)])
             elif data["type"] == "send_user_progress":
                 adjust_user_progress(uuid, data["value"])
             elif data["type"] == "send_decks":
@@ -107,9 +65,11 @@ async def authenticate(ws):
                 adjust_completed_missions(uuid, data["value"])
             elif data["type"] == "find_match":
                 path = data["value"]
+                print("User with email: " + email + " Is looking for a match with value: " + path)
 
                 match, player = await game_server.get_match(ws, path, uuid)
             elif data["type"] == "exit_match":
+                print('Exiting match for signed in user with email: ' + uuid)
                 await game_server.match_cleanup(path, match, ws)
                 path = match = None
             # In all other cases the message has to do with a game action, so it should be handled as a game message
