@@ -49,13 +49,16 @@ async def authenticate(ws):
                 token = data['value']
                 (uuid, email) = get_id_email(token)
 
-                if email is None:
-                    user_data = None
+                # If no uuid was returned, this token is invalid
+                if uuid is None:
+                    message = json.dumps({"type": "invalid_token"}, default=str)
+                    await asyncio.wait([ws.send(message)])
+                    ws.close()
                 else:
                     user_data = get_user_data(uuid, email)
 
-                message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
-                await asyncio.wait([ws.send(message)])
+                    message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
+                    await asyncio.wait([ws.send(message)])
             elif data["type"] == "send_user_progress":
                 adjust_user_progress(uuid, data["value"])
             elif data["type"] == "send_decks":
