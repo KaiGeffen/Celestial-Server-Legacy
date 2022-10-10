@@ -3,6 +3,7 @@ import asyncio
 import psycopg2
 import json
 import internet.WebSocketServer as game_server
+import websockets
 
 from bottle import run, post, request, response, get, route
 from google.oauth2 import id_token
@@ -75,6 +76,10 @@ async def authenticate(ws):
             # In all other cases the message has to do with a game action, so it should be handled as a game message
             else:
                 await game_server.handle_game_messages(data, match, player)
+    except websockets.exceptions.ConnectionClosedError as e:
+        print("Connection closed error:")
+        print(e.reason)
+        print(e.code)
     finally:
         # Exit from any games that user was in / matchmaking that user was in
         if path is not None:

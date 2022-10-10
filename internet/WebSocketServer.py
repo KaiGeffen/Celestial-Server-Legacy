@@ -56,7 +56,6 @@ class GameMatch:
 
     # If game has started, notify each player the state of the game
     async def notify_state(self):
-        print("Notifying users of state")
         if self.game is None:
             return
 
