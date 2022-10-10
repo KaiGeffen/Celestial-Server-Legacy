@@ -53,7 +53,7 @@ async def authenticate(ws):
                 if uuid is None:
                     message = json.dumps({"type": "invalid_token"}, default=str)
                     await asyncio.wait([ws.send(message)])
-                    ws.close()
+                    await ws.close()
                 else:
                     user_data = get_user_data(uuid, email)
 
