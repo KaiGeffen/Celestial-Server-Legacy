@@ -700,7 +700,7 @@ class Paramountcy(Card):
                 game.animations[player].append(Animation('Discard', 'Story', index2=i))
 
 
-paramountcy = Paramountcy(name="Paramountcy", cost=0, points=0, id=62, rarity=3)
+paramountcy = Paramountcy(name="Paramountcy", cost=9, points=0, id=62, rarity=3)
 
 class Conquer(Card):
     def get_cost(self, player, game):
