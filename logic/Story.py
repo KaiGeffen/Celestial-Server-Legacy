@@ -19,9 +19,12 @@ class Story:
         self.acts = []
         self.recap = Recap()
 
-    def add_act(self, card, owner, source=Source.HAND):
+    def add_act(self, card, owner, source=Source.HAND, i=None):
         act = Act(card, owner, source)
-        self.acts.append(act)
+        if i is None:
+            self.acts.append(act)
+        else:
+            self.acts.insert(i, act)
 
     def run(self, game, isSimplified=False):
         # Reset the recap so that it now recaps this run
