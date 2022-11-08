@@ -819,6 +819,53 @@ class FreshAir(Card):
         if all(act.owner != player for act in game.story.acts):
             self.draw(1, game, player)
 fresh_air = FreshAir(name="FreshAir", cost=2, points=1, id=2002)
+class Possibilities(Card):
+    def play(self, player, game, index, bonus):
+        double = False
+        if game.mana[player] >= 4:
+            game.mana[player] -= 4
+            double = True
+
+        if game.mana[player] >= 1:
+            game.mana[player] -= 1
+            bonus += 1
+        if game.mana[player] >= 2:
+            game.mana[player] -= 2
+            bonus += 2
+
+        if double:
+            bonus += bonus + self.points + game.score[player]
+
+        super().play(player, game, index, bonus)
+possibilities = Possibilities(name="Possibilities", cost=2, points=2, id=2003)
+class Hatchling(Card):
+    def __init__(self, points):
+        text = f'0:{points}'
+        super().__init__("Hatchling", dynamic_text=text, cost=0, points=points, id=2004)
+
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
+
+        if game.mana[player] >= 2:
+            game.mana[player] -= 2
+
+            for _ in range(2):
+                card = dove
+                game.story.add_act(card, player)
+
+                story_index = len(game.story.acts) + index - 1
+                game.animations[player].append(Animation('Gone', 'Story', index2=story_index))
+    def morning(self, player, game, index):
+        new_card = Hatchling(self.points + 1)
+
+        game.pile[player].pop()
+        super().create_in_pile(new_card, game, player)
+
+        # Remove the creation animation
+        game.animations = [[], []]
+
+        return True
+hatchling = Hatchling(0)
 
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
@@ -837,7 +884,7 @@ full_catalog = [
     paramountcy, axolotl, fish_bones, heron,
     kneel, conquer, nightmare, carrion, occupation, gentle_rain, sunflower, hollow, moon,
 
-    rat, beggar, fresh_air
+    rat, beggar, fresh_air, possibilities, hatchling,
     ]
 
 non_collectibles = [hidden_card] + tokens
