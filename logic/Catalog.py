@@ -688,7 +688,6 @@ moon = Moon(name="Moon", cost=5, points=5, id=73)
 class Paramountcy(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
-
         # Up to the number of spaces left(99), pop from discard pile and add to story
         space = 99 - (index + 1 + len(game.story.acts))
         for i in range(min(space, 5)):
@@ -698,7 +697,6 @@ class Paramountcy(Card):
 
                 # story_index = len(game.story.acts) - 1
                 game.animations[player].append(Animation('Discard', 'Story', index2=i))
-
 
 paramountcy = Paramountcy(name="Paramountcy", cost=9, points=0, id=62, rarity=3)
 
@@ -787,6 +785,41 @@ class Hollow(Card):
         self.nourish(amt, game, player)
 hollow = Hollow(name="Hollow", cost=0, points=0, id=76, rarity=0)
 
+""" DEV CARDS """
+class Rat(Card):
+    def play(self, player, game, index, bonus):
+        if game.mana[player] >= 2:
+            game.mana[player] -= 2
+            for act in game.story.acts:
+                if act.owner == player:
+                    bonus += 1
+
+        super().play(player, game, index, bonus)
+
+        if len(game.hand[player]) == 0:
+            self.draw(1, game, player)
+rat = Rat(name="Rat", cost=0, points=0, id=2000)
+class Beggar(Card):
+    def play(self, player, game, index, bonus):
+        if len(game.story.acts) > 0:
+            cost = game.story.acts[0].card.cost
+            self.tutor(cost, game, player)
+
+        if game.mana[player] >= 1:
+            game.mana[player] -= 1
+            bonus += 1
+
+        super().play(player, game, index, bonus)
+beggar = Beggar(name="Beggar", cost=0, points=0, id=2001)
+class FreshAir(Card):
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
+        game.mana[player] += 3
+
+        if all(act.owner != player for act in game.story.acts):
+            self.draw(1, game, player)
+fresh_air = FreshAir(name="FreshAir", cost=2, points=1, id=2002)
+
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
 full_catalog = [
@@ -802,13 +835,9 @@ full_catalog = [
     symbiosis,
     sickness, cogsplosion, anvil,
     paramountcy, axolotl, fish_bones, heron,
-    kneel, conquer, nightmare,
+    kneel, conquer, nightmare, carrion, occupation, gentle_rain, sunflower, hollow, moon,
 
-    carrion, occupation, gentle_rain, sunflower,
-
-    hollow,
-
-    moon,
+    rat, beggar, fresh_air
     ]
 
 non_collectibles = [hidden_card] + tokens
