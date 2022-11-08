@@ -866,7 +866,25 @@ class Hatchling(Card):
 
         return True
 hatchling = Hatchling(0)
+class Eyes(Card):
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
+        self.draw(1, game, player)
+    def in_hand_on_play(self, player, game):
+        game.vision[player] += 1
+        return True
+eyes = Eyes(name="Eyes", cost=1, id=2005)
+class Capybara(Card):
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
 
+        if game.mana[player] >= 1:
+            game.mana[player] -= 1
+            self.draw(1, game, player)
+        if game.mana[player] >= 4:
+            game.mana[player] -= 4
+            self.reset(game)
+capybara = Capybara(name="Capybara", cost=0, points=0, id=2006)
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
 full_catalog = [
@@ -884,7 +902,7 @@ full_catalog = [
     paramountcy, axolotl, fish_bones, heron,
     kneel, conquer, nightmare, carrion, occupation, gentle_rain, sunflower, hollow, moon,
 
-    rat, beggar, fresh_air, possibilities, hatchling,
+    rat, beggar, fresh_air, possibilities, hatchling, eyes, capybara,
     ]
 
 non_collectibles = [hidden_card] + tokens

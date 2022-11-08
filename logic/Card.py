@@ -52,6 +52,10 @@ class Card:
     def on_upkeep(self, player, game, index):
         return False
 
+    # Handle any effects that trigger when you play a card while this is in your hand
+    def in_hand_on_play(self, player, game):
+        return False
+
     # Handle any effects that happen during the upkeep if this card is in pile
     def morning(self, player, game, index):
         return False

@@ -103,6 +103,10 @@ class ServerController:
         if result:
             card = result
 
+        # If playing a card triggers another card in hand, do that
+        for card_in_hand in self.model.hand[player]:
+            card_in_hand.in_hand_on_play(player, self.model)
+
         self.model.story.add_act(card, owner=player, source=Source.HAND)
 
         self.model.sound_effect = SoundEffect.Play
