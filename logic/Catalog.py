@@ -917,7 +917,18 @@ class Tragedy(Card):
                 self.remove_act(i, game)
                 return
 tragedy = Tragedy(name="Tragedy", cost=0, points=1, id=2008)
+class Hound(Card):
+    def get_cost(self, player, game):
+        if len(game.story.acts) > 0:
 
+            card = game.story.acts[-1].card
+
+            for (yesterday_card, _, _) in game.recap.story:
+                if yesterday_card.name == card.name:
+                    return 1
+
+        return self.cost
+hound = Hound(name="Hound", cost=2, points=2, id=2009)
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
 full_catalog = [
@@ -936,7 +947,7 @@ full_catalog = [
     kneel, conquer, nightmare, carrion, occupation, gentle_rain, sunflower, hollow, moon,
 
     rat, beggar, fresh_air, possibilities, hatchling, eyes, capybara,
-    rekindle, tragedy,
+    rekindle, tragedy, hound,
     ]
 
 non_collectibles = [hidden_card] + tokens
