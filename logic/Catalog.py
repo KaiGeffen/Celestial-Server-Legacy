@@ -901,8 +901,7 @@ class Rekindle(Card):
             else:
                 i += 1
     def on_play(self, player, game):
-        game.mana[player] += 1000
-        # TODO
+        game.status[player].append(Status.UNLOCKED)
 rekindle = Rekindle(name="Rekindle", cost=3, points=2, id=2007)
 class Tragedy(Card):
     def play(self, player, game, index, bonus):

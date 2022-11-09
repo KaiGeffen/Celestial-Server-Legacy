@@ -96,7 +96,7 @@ class ServerController:
         # Remove the card from hand, then play it
         card = self.model.hand[player].pop(card_num)
 
-        self.model.mana[player] -= card.get_cost(player, self.model)
+        self.model.mana[player] -= self.get_cost(card, player)
 
         # If on_play results in something, add that card instead of this one
         result = card.on_play(player, self.model)
@@ -302,7 +302,7 @@ class ServerController:
                                   list(range(len(self.model.hand[player])))))
         costs = []
         for card in self.model.hand[player]:
-            costs.append(card.get_cost(player, self.model))
+            costs.append(self.get_cost(card, player))
 
         return self.model.get_client_model(player, cards_playable, costs=costs)
 
@@ -324,7 +324,8 @@ class ServerController:
                 self.model.status[player].append(Status.INSPIRED)
 
         cleared_statuses = [Status.INSPIRE,
-                            Status.GENTLE]
+                            Status.GENTLE,
+                            Status.UNLOCKED]
 
         def clear_temp_statuses(stat):
             return stat not in cleared_statuses
@@ -355,8 +356,14 @@ class ServerController:
         card = self.model.hand[player][card_num]
 
         # Player doesn't have enough mana
-        if card.get_cost(player, self.model) > self.model.mana[player]:
+        if self.get_cost(card, player) > self.model.mana[player]:
             return False
 
         return True
 
+    # Get the cost of a card in current state
+    def get_cost(self, card, player):
+        if Status.UNLOCKED in self.model.status[player]:
+            return 0
+        else:
+            return card.get_cost(player, self.model)

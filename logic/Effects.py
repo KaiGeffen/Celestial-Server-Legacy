@@ -12,3 +12,4 @@ class Status(Enum):
     NOURISH = "Nourish"
     STARVE = "Starve"
     GENTLE = "Gentle"
+    UNLOCKED = "Unlocked"
