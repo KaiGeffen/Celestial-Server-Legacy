@@ -271,6 +271,10 @@ class Card:
             game.animations[act.owner].append(
                 Animation('Transform', 'Story', CardCodec.encode_card(old_card), index=index))
 
+    # Remove and return the act at given index (Must be valid)
+    def remove_act(self, index, game):
+        result = game.remove_act(index)
+        return result
 
     """UTILITY CHECKS"""
     def your_final(self, game, player):

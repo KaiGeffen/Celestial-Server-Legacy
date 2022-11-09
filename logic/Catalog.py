@@ -885,6 +885,39 @@ class Capybara(Card):
             game.mana[player] -= 4
             self.reset(game)
 capybara = Capybara(name="Capybara", cost=0, points=0, id=2006)
+class Rekindle(Card):
+    def play(self, player, game, index, bonus):
+        for act in game.story.acts:
+            if act.owner == player:
+                bonus += 1
+
+        super().play(player, game, index, bonus)
+
+        i = 0
+        while i < len(game.story.acts):
+            act = game.story.acts[i]
+            if act.owner == player:
+                self.remove_act(i, game)
+            else:
+                i += 1
+    def on_play(self, player, game):
+        game.mana[player] += 1000
+        # TODO
+rekindle = Rekindle(name="Rekindle", cost=3, points=2, id=2007)
+class Tragedy(Card):
+    def play(self, player, game, index, bonus):
+        if len(game.story.acts) == 0:
+            bonus += 2
+
+        super().play(player, game, index, bonus)
+
+        for i in range(len(game.story.acts)):
+            act = game.story.acts[i]
+            if act.card.cost <= 2:
+                self.remove_act(i, game)
+                return
+tragedy = Tragedy(name="Tragedy", cost=0, points=1, id=2008)
+
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
 full_catalog = [
@@ -903,6 +936,7 @@ full_catalog = [
     kneel, conquer, nightmare, carrion, occupation, gentle_rain, sunflower, hollow, moon,
 
     rat, beggar, fresh_air, possibilities, hatchling, eyes, capybara,
+    rekindle, tragedy,
     ]
 
 non_collectibles = [hidden_card] + tokens

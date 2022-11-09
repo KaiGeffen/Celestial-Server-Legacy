@@ -126,6 +126,13 @@ class Story:
 
         return act
 
+    # Remeove and return the act at index
+    def remove_act(self, index):
+        if len(self.acts) < index + 1:
+            raise Exception(f"Tried to remove act {index} in a story with only {len(self.acts)} acts.")
+
+        return self.acts.pop(index)
+
     # Replace the act at index with replacement_act
     def replace_act(self, index, replacement_act):
         if len(self.acts) < index + 1:

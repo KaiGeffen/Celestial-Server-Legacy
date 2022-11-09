@@ -188,6 +188,15 @@ class ServerModel:
         # TODO Pile isn't the source, but this feature is deprecated
         self.story.add_act(card, player, Source.PILE)
 
+    # Discard the act at given index in the story and return the card
+    def remove_act(self, index):
+        act = self.story.remove_act(index)
+        self.pile[act.owner].append(act.card)
+
+        # TODO Animation
+
+        return act.card
+
     # Player cycles the given card, won't draw the same card, assumes card is in player's hand
     # def cycle(self, player, card):
     #     self.hand[player].remove(card)
