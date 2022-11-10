@@ -928,6 +928,39 @@ class Hound(Card):
 
         return self.cost
 hound = Hound(name="Hound", cost=2, points=2, id=2009)
+class Lullaby(Card):
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
+
+        amt = max(0, game.score[player])
+
+        game.score = [0, 0]
+
+        self.build(amt, game, player)
+lullaby = Lullaby(name="Lullaby", cost=6, points=0, id=2010)
+class Longing(Card):
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
+
+        # For each card in our pile, if it's even-costed, move it atop the deck
+        for i in range(len(game.pile[player]) - 1, -1, -1):
+            card = game.pile[player][i]
+            if card.cost % 2 == 0:
+                game.pile[player].pop(i)
+                game.deck[player].append(card)
+
+                # Add an animation of card going from pile to deck
+                game.animations[player].append(
+                    Animation('Discard', 'Deck', card=CardCodec.encode_card(card)))
+
+        # Shuffle the deck
+        # TODO It's odd that this gives information about all cards, even those unseen, in the player's deck
+        game.shuffle(player)
+
+        if game.mana[player] >= 4:
+            game.mana[player] -= 4
+            self.nourish(5, game, player)
+longing = Longing(name="Longing", cost=1, points=0, id=2011)
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
 full_catalog = [
@@ -946,7 +979,8 @@ full_catalog = [
     kneel, conquer, nightmare, carrion, occupation, gentle_rain, sunflower, hollow, moon,
 
     rat, beggar, fresh_air, possibilities, hatchling, eyes, capybara,
-    rekindle, tragedy, hound,
+    rekindle, tragedy, hound, lullaby, longing,
+
     ]
 
 non_collectibles = [hidden_card] + tokens
