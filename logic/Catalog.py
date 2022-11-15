@@ -953,9 +953,8 @@ class Longing(Card):
                 game.animations[player].append(
                     Animation('Discard', 'Deck', card=CardCodec.encode_card(card)))
 
-        # Shuffle the deck
-        # TODO It's odd that this gives information about all cards, even those unseen, in the player's deck
-        game.shuffle(player)
+        # Shuffle the deck (Don't shuffle the full discard pile into it)
+        game.shuffle(player, remember=False, take_pile=False)
 
         if game.mana[player] >= 4:
             game.mana[player] -= 4

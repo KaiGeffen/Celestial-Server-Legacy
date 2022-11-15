@@ -255,13 +255,14 @@ class ServerModel:
     #     return card
 
     # Shuffle the player's pile into their deck, optionally save the shuffled cards if they are known info
-    def shuffle(self, player, remember=True):
+    def shuffle(self, player, remember=True, take_pile=True):
         if remember:
             self.last_shuffle[player] = self.pile[player]
 
-        self.deck[player] = self.pile[player] + self.deck[player]
+        if take_pile:
+            self.deck[player] = self.pile[player] + self.deck[player]
+            self.pile[player] = []
         random.shuffle(self.deck[player])
-        self.pile[player] = []
 
         if self.deck[player]:
             self.animations[player].append(Animation('Shuffle'))
