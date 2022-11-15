@@ -932,12 +932,11 @@ class Lullaby(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
 
-        amt = max(0, game.score[player])
-
-        game.score = [0, 0]
-
-        self.build(amt, game, player)
-lullaby = Lullaby(name="Lullaby", cost=6, points=0, id=2010)
+        for act in game.story.acts:
+            card = act.card
+            if card.cost == 0:
+                self.create(card, game, player)
+lullaby = Lullaby(name="Lullaby", cost=6, points=4, id=2010)
 class Longing(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
@@ -960,6 +959,20 @@ class Longing(Card):
             game.mana[player] -= 4
             self.nourish(5, game, player)
 longing = Longing(name="Longing", cost=1, points=0, id=2011)
+class Dwindle(Card):
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
+
+        self.inspire(2, game, player)
+
+        if game.mana[player] >= 3:
+            game.mana[player] -= 3
+            self.reset(game)
+
+        if game.mana[player] >= 2:
+            game.mana[player] -= 2
+            self.draw(1, game, player)
+dwindle = Dwindle(name="Dwindle", cost=2, points=0, id=2012)
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
 full_catalog = [
@@ -978,7 +991,7 @@ full_catalog = [
     kneel, conquer, nightmare, carrion, occupation, gentle_rain, sunflower, hollow, moon,
 
     rat, beggar, fresh_air, possibilities, hatchling, eyes, capybara,
-    rekindle, tragedy, hound, lullaby, longing,
+    rekindle, tragedy, hound, lullaby, longing, dwindle,
 
     ]
 
