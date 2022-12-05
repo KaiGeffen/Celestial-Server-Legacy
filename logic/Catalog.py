@@ -858,6 +858,7 @@ class Hatchling(Card):
     def morning(self, player, game, index):
         new_card = Hatchling(self.points + 1)
 
+        # Has a bug if moon is triggering this, since it pops the top card instead of _index_
         game.pile[player].pop()
         super().create_in_pile(new_card, game, player)
 
