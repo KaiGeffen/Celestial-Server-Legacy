@@ -14,7 +14,7 @@ class TutorialController(ServerController):
             [uprising, dove, gift, dash, stars, stars, dove,
              stars, stars, uprising, stars, gift, dove, stars],
             [uprising, dove, dove, fruiting, dash, dove, dove,
-             stars, cosmos, fruiting, uprising, fruiting, stars, dove]
+             stars, cosmos, fruiting, uprising, fruiting, stars, dove, dove]
         ]
         o_decks = [
             [dove, dove, dove, dove, dove, dove, dove, dove,
