@@ -143,12 +143,13 @@ class ServerModel:
     def tutor(self, player, cost):
         if len(self.hand[player]) < HAND_CAP:
 
-            for card in self.deck[player]:
+            for i in reversed(range(len(self.deck[player]))):
+                card = self.deck[player][i]
 
                 if card.cost == cost:
                     # Add it to hand, remove it from deck
                     self.hand[player].append(card)
-                    self.deck[player].remove(card)
+                    self.deck[player].pop(i)
                     self.amt_drawn[player] += 1
 
                     # self.sound_effect = SoundEffect.Draw
