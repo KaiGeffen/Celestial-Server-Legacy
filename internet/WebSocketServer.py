@@ -144,6 +144,16 @@ class GameMatch:
             ws = self.ws1 if player == 0 else self.ws2
             await notify_error(ws)
 
+    async def signal_emote(self, player, emote_number):
+        if self.game is None:
+            return
+
+        msg = json.dumps({"type": "opponent_emote", "value": emote_number})
+        if player == 0 and self.ws2 is not None:
+            await self.ws2.send(msg)
+        if player == 1 and self.ws1 is not None:
+            await self.ws1.send(msg)
+
     async def add_ai_opponent(self, i=None):
         await self.add_deck(1, get_computer_deck(i), 0)
         self.vs_ai = True
@@ -330,6 +340,8 @@ async def handle_game_messages(data, match, player):
     elif data["type"] == "pass_turn":
         # TODO 10 is the pass action, use the constant for pass to avoid arbitrary literal
         await match.do_action(player, 10, data["version"])
+    elif data["type"] == "emote":
+        await match.signal_emote(player, data["value"])
     # elif data["type"] == "exit_match":
     #     break
     else:
