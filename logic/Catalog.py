@@ -206,7 +206,7 @@ symbiosis = Symbiosis(name="Symbiosis", cost=6, points=6, id=57, rarity=0)
 
 class Nightmare(Card):
     def morning(self, player, game, index):
-        if len(game.hand[player^1]) == 0:
+        if len(game.hand[player^1]) < len(game.hand[player]):
             super().create(stalker, game, player)
             return True
 nightmare = Nightmare(name="Nightmare", cost=2, points=2, id=68, rarity=1)
