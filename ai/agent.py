@@ -32,6 +32,7 @@ class Agent:
 	
 	def get_state(self, game):
 		state = game.get_client_model(self.player_number)
+		print(state['wins'])
 
 		# {
 		#     'hand': CardCodec.encode_deck(self.hand[player]),
@@ -63,14 +64,15 @@ class Agent:
 		#     'avatars': self.avatars[::slice_step],
 		#     'round_results': self.round_results[::slice_step]
 		# }
-		l = [state['winner']]
+		winner = state['winner']
+		if winner is None:
+			winner = -1
+		l = [winner, state['opp_hand'], len(state['hand'])]
 
-		if state['winner'] is None:
-			l = [-1]
 		# for v in state.values():
 		
-		for i in range(6):
-			l.append(0)
+		for i in range(4):
+			l.append(99)
 			
 
 		# l = [hash(str(v)) for v in state.values()]
@@ -98,18 +100,18 @@ class Agent:
 		# final_move = [0, 0,0,0, 0,0,0]
 
 		valid_actions = [10] # Can always pass
-		# for i in range(6):
-		# 	if state.cards_playable[i]:
-		# 		valid_actions.append(i)
+		for i in range(6):
+			# if state.cards_playable[i]:
+			valid_actions.append(i)
 
 		if random.randint(0, 200) < self.epsilon:
 			move = random.choice(valid_actions)
-			return 10
+			return move
 		else:
 			state0 = torch.tensor(state, dtype=torch.float)
 			prediction = self.model(state0)
 			move = torch.argmax(prediction).item()
-			return 10
+			return move
 			# if move in valid_actions:
 			# 	return move
 			# else:
@@ -124,6 +126,10 @@ def train():
 	deck = get_deck()
 	their_deck = get_deck()
 	game = ServerController(deck, their_deck, 0, 0)
+	game.start()
+	# TODO Mulligans
+	game.do_mulligan(0, [False, False, False])
+	game.do_mulligan(1, [False, False, False])
 
 	while True:
 		# Determine which agent is acting/learning
@@ -148,13 +154,12 @@ def train():
 		# for i in range(len(action)):
 		# 	if action[i]:
 		# 		a = i
-		game.on_player_input(player_number, action)
+		result = game.on_player_input(player_number, action)
 		state1 = agent.get_state(game)
 
 		# Determine the reward/done of new state
 		score = 0
 		done = reward = None
-		print(state1)
 		if state1[0] == -1:
 			done = False
 			reward = 0
