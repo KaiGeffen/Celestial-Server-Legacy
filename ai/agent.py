@@ -33,7 +33,47 @@ class Agent:
 	def get_state(self, game):
 		state = game.get_client_model(self.player_number)
 
-		l = [hash(str(v)) for v in state.values()]
+		# {
+		#     'hand': CardCodec.encode_deck(self.hand[player]),
+		#     'opp_hand': len(self.hand[player ^ 1]),
+		#     'deck': CardCodec.encode_deck(sorted(self.deck[player], key=deck_sort)),
+		#     'opp_deck': len(self.deck[player ^ 1]),
+		#     'pile': list(map(CardCodec.encode_deck, self.pile[::slice_step])),
+		#     # Only send the opponent's last shuffle
+		#     'last_shuffle': CardCodec.encode_deck(sorted(self.last_shuffle[player ^ 1], key=deck_sort)),
+		#     'expended': list(map(CardCodec.encode_deck, self.expended[::slice_step])),
+		#     'wins': self.wins[::slice_step],
+		#     'max_mana': self.max_mana[::slice_step],
+		#     'mana': self.mana[player],
+		#     'status': CardCodec.encode_statuses(self.status[player]),
+		#     'opp_status': CardCodec.encode_statuses(self.status[player ^ 1]),
+		#     'story': self.get_relative_story(player, total_vision=is_recap),
+		#     'priority': self.priority ^ player,
+		#     'passes': self.passes,
+		#     'recap': CardCodec.encode_recap(relative_recap, shallow=is_recap),
+		#     'mulligans_complete': self.mulligans_complete[::slice_step],
+		#     'version_number': self.version_no,
+		#     'cards_playable': cards_playable,
+		#     'vision': self.vision[player],
+		#     'winner': None if self.get_winner() is None else self.get_winner() ^ player,
+		#     'score': self.score[::slice_step],
+		#     'sound_effect': self.sound_effect,
+		#     'animations': self.hide_opp_animations(self.animations[::slice_step]),
+		#     'costs': costs,
+		#     'avatars': self.avatars[::slice_step],
+		#     'round_results': self.round_results[::slice_step]
+		# }
+		l = [state['winner']]
+
+		if state['winner'] is None:
+			l = [-1]
+		# for v in state.values():
+		
+		for i in range(6):
+			l.append(0)
+			
+
+		# l = [hash(str(v)) for v in state.values()]
 
 		return np.array(l, dtype=int)
 
@@ -108,15 +148,17 @@ def train():
 		# for i in range(len(action)):
 		# 	if action[i]:
 		# 		a = i
-		game.attempt_play(player_number, action)
+		game.on_player_input(player_number, action)
 		state1 = agent.get_state(game)
 
 		# Determine the reward/done of new state
 		score = 0
-		if state1.winner == None:
+		done = reward = None
+		print(state1)
+		if state1[0] == -1:
 			done = False
 			reward = 0
-		elif state1.winner == 0:
+		elif state1[0] == 0:
 			done = True
 			reward = 1
 		else:
