@@ -10,10 +10,12 @@ import CardCodec
 from logic.ServerController import ServerController
 
 
+# For actions, 0th is pass, 1-6 are play that card
+
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
 LR = 0.001
-
+CHOICES = 7
 
 class Agent:
 	def __init__(self, player_number):
@@ -25,14 +27,15 @@ class Agent:
 		self.memory = deque(maxlen=MAX_MEMORY) # popleft()
 
 		# TODO 11 should be 6 or 60 for building the deck
-		self.model = Linear_QNet(11, 256, 3)
+		self.model = Linear_QNet(CHOICES, 256, 3)
 		self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 	
 	def get_state(self, game):
 		state = game.get_client_model(self.player_number)
 
-		return state
-		# return np.array(state, dtype=int)
+		l = [hash(str(v)) for v in state.values()]
+
+		return np.array(l, dtype=int)
 
 	def remember(self, state, action, reward, next_state, done):
 		self.memory.append((state, action, reward, next_state, done)) # popleft if MAX_MEMORY is reached
@@ -52,18 +55,25 @@ class Agent:
 	def get_action(self, state):
 		# random moves: tradeoff exploration / exploitation
 		self.epsilon = 80 - self.n_games
-		final_move = [0,0,0, 0,0,0, 0]
+		# final_move = [0, 0,0,0, 0,0,0]
+
+		valid_actions = [10] # Can always pass
+		# for i in range(6):
+		# 	if state.cards_playable[i]:
+		# 		valid_actions.append(i)
 
 		if random.randint(0, 200) < self.epsilon:
-			move = random.randint(0, 7-1)
-			final_move[move] = 1
+			move = random.choice(valid_actions)
+			return 10
 		else:
 			state0 = torch.tensor(state, dtype=torch.float)
 			prediction = self.model(state0)
 			move = torch.argmax(prediction).item()
-			final_move[move] = 1
-
-		return final_move
+			return 10
+			# if move in valid_actions:
+			# 	return move
+			# else:
+			# 	return 10
 
 
 def train():
@@ -94,7 +104,11 @@ def train():
 		action = agent.get_action(state0)
 
 		# Perform action and get new state
-		game.play(player_number, action)
+		# a = None # Integer version of the action vector
+		# for i in range(len(action)):
+		# 	if action[i]:
+		# 		a = i
+		game.attempt_play(player_number, action)
 		state1 = agent.get_state(game)
 
 		# Determine the reward/done of new state
