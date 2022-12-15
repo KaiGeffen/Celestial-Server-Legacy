@@ -122,6 +122,7 @@ def get_user_data(id, email):
         select_query = f"SELECT * from players where id = '{id}'"
         cursor.execute(select_query)
         count = cursor.rowcount
+        # TODO Throw if there is more than one row with that uuid
         if count > 0:
             # If they do, return that entry
             user_data = cursor.fetchone()
@@ -129,6 +130,8 @@ def get_user_data(id, email):
             return user_data
 
         else:
+            # TODO Take the user's preexisting progress / decks here
+
             # If they don't create one, then return the basic entry
             print("User doesn't yet exist")
 
