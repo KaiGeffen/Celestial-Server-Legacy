@@ -13,6 +13,7 @@ class Linear_QNet(nn.Module):
     def forward(self, x):
         x = F.relu(self.linear1(x))
         x = self.linear2(x)
+        print(x)
         return x
 
     def save(self, file_name='model.pth'):

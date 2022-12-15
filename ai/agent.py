@@ -16,7 +16,8 @@ MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
 LR = 0.001
 # Vectors that express any given state
-STATE_SIZE = 8
+STATE_SIZE = 8 + 30 + 1 + 30*2 + 3
+CHOICES = 7
 
 class Agent:
 	def __init__(self, player_number):
@@ -28,26 +29,63 @@ class Agent:
 		self.memory = deque(maxlen=MAX_MEMORY) # popleft()
 
 		# TODO 11 should be 6 or 60 for building the deck
-		self.model = Linear_QNet(STATE_SIZE, 256, 3)
+		self.model = Linear_QNet(STATE_SIZE, 256, CHOICES)
 		self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 	
 	def get_state(self, game):
 		state = game.get_client_model(self.player_number)
 		print(state['wins'])
 
+		# TODO Dynamic card points (Child / Pet)
+
 		l = [-1 if state['winner'] is None else state['winner']]
 
 		# Our hand
-		hand = CardCodec.decode_deck(state['hand'])
+		stack = CardCodec.decode_deck(state['hand'])
 		for i in range(6):
-			if len(hand) > i:
-				l.append(hand[i].id)
+			if len(stack) > i:
+				l.append(stack[i].id)
 			else:
 				l.append(-1)
 
-		# Opponent hand
+		# Opponent Hand
 		l.append(state['opp_hand'])
 
+		# Our deck
+		stack = CardCodec.decode_deck(state['deck'])
+		for i in range(30): # Large number
+			if len(stack) > i:
+				l.append(stack[i].id)
+			else:
+				l.append(-1)
+
+		# Their deck
+		l.append(state['opp_deck'])
+
+		# Our pile
+		pile = CardCodec.decode_deck(state['pile'][0])
+		for i in range(30): # Large number
+			if len(stack) > i:
+				l.append(stack[i].id)
+			else:
+				l.append(-1)
+
+		# Their pile
+		pile = CardCodec.decode_deck(state['pile'][1])
+		for i in range(30): # Large number
+			if len(stack) > i:
+				l.append(stack[i].id)
+			else:
+				l.append(-1)
+
+		# Max mana
+		l.append(state['max_mana'][0])
+
+		# Current mana
+		l.append(state['mana'])
+
+		# Passes
+		l.append(state['passes'])
 
 		# {
 		#     'hand': CardCodec.encode_deck(self.hand[player]),
