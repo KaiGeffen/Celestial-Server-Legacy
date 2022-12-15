@@ -57,7 +57,12 @@ async def authenticate(ws):
                 else:
                     user_data = get_user_data(uuid, email)
 
-                    message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
+                    # If user's account is just being created, prompt them to init it
+                    if user_data is None:
+                        message = json.dumps({"type": "prompt_user_init"}, default=str)
+                    else:
+                        message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
+
                     await asyncio.wait([ws.send(message)])
             elif data["type"] == "send_user_progress":
                 adjust_user_progress(uuid, data["value"])
@@ -140,12 +145,8 @@ def get_user_data(id, email):
             cursor.execute(insert_query)
             connection.commit()
 
-            # Fetch this user's fresh data
-            cursor.execute(select_query)
-            user_data = cursor.fetchone()
-
-            print(f"Created the basic entry: {user_data}")
-            return user_data
+            print(f"Created the basic entry for user: {email}")
+            return None
 
     except (Exception, psycopg2.Error) as error:
         print("Error while connecting to PostgreSQL", error)
