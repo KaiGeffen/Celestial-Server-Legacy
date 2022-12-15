@@ -15,7 +15,8 @@ from logic.ServerController import ServerController
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
 LR = 0.001
-CHOICES = 7
+# Vectors that express any given state
+STATE_SIZE = 8
 
 class Agent:
 	def __init__(self, player_number):
@@ -27,12 +28,26 @@ class Agent:
 		self.memory = deque(maxlen=MAX_MEMORY) # popleft()
 
 		# TODO 11 should be 6 or 60 for building the deck
-		self.model = Linear_QNet(CHOICES, 256, 3)
+		self.model = Linear_QNet(STATE_SIZE, 256, 3)
 		self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 	
 	def get_state(self, game):
 		state = game.get_client_model(self.player_number)
 		print(state['wins'])
+
+		l = [-1 if state['winner'] is None else state['winner']]
+
+		# Our hand
+		hand = CardCodec.decode_deck(state['hand'])
+		for i in range(6):
+			if len(hand) > i:
+				l.append(hand[i].id)
+			else:
+				l.append(-1)
+
+		# Opponent hand
+		l.append(state['opp_hand'])
+
 
 		# {
 		#     'hand': CardCodec.encode_deck(self.hand[player]),
@@ -64,15 +79,23 @@ class Agent:
 		#     'avatars': self.avatars[::slice_step],
 		#     'round_results': self.round_results[::slice_step]
 		# }
-		winner = state['winner']
-		if winner is None:
-			winner = -1
-		l = [winner, state['opp_hand'], len(state['hand'])]
+		# winner = state['winner']
+		# if winner is None:
+		# 	winner = -1
+		# l = [winner, state['opp_hand'], len(state['hand'])]
+
+		# Append all values that 
+		# for v in state.values():
+		# 	try:
+		# 		l.append(int(v))
+		# 	except:
+		# 		l.append(-1)
+
 
 		# for v in state.values():
 		
-		for i in range(4):
-			l.append(99)
+		# for i in range(4):
+		# 	l.append(99)
 			
 
 		# l = [hash(str(v)) for v in state.values()]
