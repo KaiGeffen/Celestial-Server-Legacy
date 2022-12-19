@@ -30,6 +30,10 @@ class ServerController:
 
     # Return True if a play/pass occurred (False if play couldn't be completed)
     def on_player_input(self, player, choice, version=None):
+        # TODO Hack for the ml to remember 6 as pass
+        if choice == 6:
+            choice = PASS
+
         if choice == 13: # Autowin, debug
             self.model.wins[0] = 5
             self.model.version_incr()
@@ -79,6 +83,7 @@ class ServerController:
 
                 return True
             else:
+                print(f'Cant play that card: {choice}')
                 return False
 
     # Return false if given card couldn't be played
@@ -87,7 +92,7 @@ class ServerController:
             self.play(player, card_num)
             return True
         else:
-            print(f"Can't play the {card_num}th card")
+            # print(f"Can't play the {card_num}th card")
             return False
 
     # Player puts the the nth card of their hand on the stack
