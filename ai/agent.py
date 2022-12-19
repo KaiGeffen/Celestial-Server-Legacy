@@ -272,7 +272,7 @@ def train():
 		if done or game.model.version_no > 10 ** 5:
 			for agent in [agent0, agent1]:
 				agent.n_games += 1
-			# Expensive, todo
+			
 			round_results = client_state['round_results']
 			delta_t = time.time() - start_time
 			start_time = time.time()
