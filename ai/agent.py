@@ -5,6 +5,7 @@ import time
 from collections import deque
 # from game import SnakeGameAI, Direction, Point
 from model import Linear_QNet, QTrainer
+from Translator import translate_state
 # from helper import plot
 
 import CardCodec
@@ -19,6 +20,8 @@ LR = 0.001
 # Vectors that express any given state
 STATE_SIZE = 7 + 30 + 1 + 30*2 + 3 + 3
 CHOICES = 7
+# How many games to play before saving the model
+N_GAMES = 100
 
 class Agent:
 	def __init__(self, player_number):
@@ -32,124 +35,6 @@ class Agent:
 		# TODO 11 should be 6 or 60 for building the deck
 		self.model = Linear_QNet(STATE_SIZE, 256, CHOICES)
 		self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
-	
-	# Pass in the generic client_state that the server conveys
-	def get_state(self, state):
-
-		# TODO For each card have a count of it in your hand, then also have an ordering
-		# This uncompressed format makes the training work better
-
-		# TODO Dynamic card points (Child / Pet)
-
-		# Form the least of features
-		l = []
-
-		# Our hand
-		stack = CardCodec.decode_deck(state['hand'])
-		for i in range(6):
-			if len(stack) > i:
-				l.append(stack[i].id)
-			else:
-				l.append(-1)
-
-		# Opponent Hand
-		l.append(state['opp_hand'])
-
-		# Our deck
-		stack = CardCodec.decode_deck(state['deck'])
-		for i in range(30): # Large number
-			if len(stack) > i:
-				l.append(stack[i].id)
-			else:
-				l.append(-1)
-
-		# Their deck
-		l.append(state['opp_deck'])
-
-		# Our pile
-		pile = CardCodec.decode_deck(state['pile'][0])
-		for i in range(30): # Large number
-			if len(stack) > i:
-				l.append(stack[i].id)
-			else:
-				l.append(-1)
-
-		# Their pile
-		pile = CardCodec.decode_deck(state['pile'][1])
-		for i in range(30): # Large number
-			if len(stack) > i:
-				l.append(stack[i].id)
-			else:
-				l.append(-1)
-
-		# Max mana
-		l.append(state['max_mana'][0])
-
-		# Current mana
-		l.append(state['mana'])
-
-		# Passes
-		l.append(state['passes'])
-
-		# Vision
-		l.append(state['vision'])
-
-		# Statuses
-		l.append(hash(state['status']))
-		l.append(hash(state['opp_status']))
-
-		# {
-		#     'hand': CardCodec.encode_deck(self.hand[player]),
-		#     'opp_hand': len(self.hand[player ^ 1]),
-		#     'deck': CardCodec.encode_deck(sorted(self.deck[player], key=deck_sort)),
-		#     'opp_deck': len(self.deck[player ^ 1]),
-		#     'pile': list(map(CardCodec.encode_deck, self.pile[::slice_step])),
-		#     # Only send the opponent's last shuffle
-		#     'last_shuffle': CardCodec.encode_deck(sorted(self.last_shuffle[player ^ 1], key=deck_sort)),
-		#     'expended': list(map(CardCodec.encode_deck, self.expended[::slice_step])),
-		#     'wins': self.wins[::slice_step],
-		#     'max_mana': self.max_mana[::slice_step],
-		#     'mana': self.mana[player],
-		#     'status': CardCodec.encode_statuses(self.status[player]),
-		#     'opp_status': CardCodec.encode_statuses(self.status[player ^ 1]),
-		#     'story': self.get_relative_story(player, total_vision=is_recap),
-		#     'priority': self.priority ^ player,
-		#     'passes': self.passes,
-		#     'recap': CardCodec.encode_recap(relative_recap, shallow=is_recap),
-		#     'mulligans_complete': self.mulligans_complete[::slice_step],
-		#     'version_number': self.version_no,
-		#     'cards_playable': cards_playable,
-		#     'vision': self.vision[player],
-		#     'winner': None if self.get_winner() is None else self.get_winner() ^ player,
-		#     'score': self.score[::slice_step],
-		#     'sound_effect': self.sound_effect,
-		#     'animations': self.hide_opp_animations(self.animations[::slice_step]),
-		#     'costs': costs,
-		#     'avatars': self.avatars[::slice_step],
-		#     'round_results': self.round_results[::slice_step]
-		# }
-		# winner = state['winner']
-		# if winner is None:
-		# 	winner = -1
-		# l = [winner, state['opp_hand'], len(state['hand'])]
-
-		# Append all values that 
-		# for v in state.values():
-		# 	try:
-		# 		l.append(int(v))
-		# 	except:
-		# 		l.append(-1)
-
-
-		# for v in state.values():
-		
-		# for i in range(4):
-		# 	l.append(99)
-			
-
-		# l = [hash(str(v)) for v in state.values()]
-
-		return np.array(l, dtype=int)
 
 	def remember(self, state, action, reward, next_state, done):
 		self.memory.append((state, action, reward, next_state, done)) # popleft if MAX_MEMORY is reached
@@ -221,7 +106,7 @@ def train():
 	game.do_mulligan(0, [False, False, False])
 	game.do_mulligan(1, [False, False, False])
 
-	while True:
+	while agent0.n_games < N_GAMES:
 		# Determine which agent is acting/learning
 		agent = None
 		player_number = None
@@ -235,7 +120,7 @@ def train():
 
 		# Get the current state
 		client_state = game.get_client_model(player_number)
-		state0 = agent.get_state(client_state)
+		state0 = translate_state(client_state)
 
 		# Get the action
 		valid_actions = agent.get_valid_actions(client_state)
@@ -247,7 +132,7 @@ def train():
 		# 	if action[i]:
 		# 		a = i
 		result = game.on_player_input(player_number, action)
-		state1 = agent.get_state(game.get_client_model(player_number))
+		state1 = translate_state(game.get_client_model(player_number))
 
 		# Determine the reward/done of new state
 		done = reward = None
@@ -292,7 +177,8 @@ def train():
 			# TODO Al suggest not needed, reconsider this
 			agent.train_long_memory()
 
-	# TODO: Save the agent model at the end
+	# TODO Save and manage both agents
+	agent0.model.save()
 
 def get_deck():
 	s = '65:65:4:4:4:26:26:33:33:33:31:58:53:53:62'

@@ -2,11 +2,7 @@ import asyncio
 import json
 import logging
 import websockets
-import ssl
-import pathlib
-import os
 import Authenticate
-import re
 
 from internet.Settings import *
 import CardCodec
@@ -14,7 +10,7 @@ from logic.ServerController import ServerController
 from logic.TutorialController import TutorialController
 from logic.Catalog import get_computer_deck
 from logic.ClientModel import ClientModel
-import AI
+from ai.AI import get_action
 
 logging.basicConfig()
 
@@ -198,8 +194,7 @@ class GameMatch:
     # Opponent plays cards until they don't have priority
     async def opponent_acts(self):
         async with self.lock:
-            opponent_model = ClientModel(self.game.get_client_model(1))
-            opponent_action = AI.get_action(opponent_model)
+            opponent_action = get_action(self.game.get_client_model(1))
 
             valid = self.game.on_player_input(1, opponent_action)
 

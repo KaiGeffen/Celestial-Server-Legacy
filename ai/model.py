@@ -4,6 +4,8 @@ import torch.optim as optim
 import torch.nn.functional as F
 import os
 
+FOLDER_PATH = './model'
+
 class Linear_QNet(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         super().__init__()
@@ -16,12 +18,18 @@ class Linear_QNet(nn.Module):
         return x
 
     def save(self, file_name='model.pth'):
-        model_folder_path = './model'
-        if not os.path.exists(model_folder_path):
-            os.makedirs(model_folder_path)
+        if not os.path.exists(FOLDER_PATH):
+            os.makedirs(FOLDER_PATH)
 
-        file_name = os.path.join(model_folder_path, file_name)
+        file_name = os.path.join(FOLDER_PATH, file_name)
         torch.save(self.state_dict(), file_name)
+
+    def load(self, file_name='model.pth'):
+        folder_path = './ai/model'
+        file_name = os.path.join(folder_path, file_name)
+
+        self.load_state_dict(torch.load(file_name))
+        self.eval()
 
 
 class QTrainer:
