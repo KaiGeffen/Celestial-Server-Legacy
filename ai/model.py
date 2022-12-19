@@ -30,6 +30,7 @@ class Linear_QNet(nn.Module):
 
         self.load_state_dict(torch.load(file_name))
         self.eval()
+        print(self)
 
 
 class QTrainer:
@@ -43,6 +44,7 @@ class QTrainer:
     def train_step(self, state, action, reward, next_state, done):
         state = torch.tensor(state, dtype=torch.float)
         next_state = torch.tensor(next_state, dtype=torch.float)
+        # TODO Remove below and add sourceTensor.clone().detach()
         action = torch.tensor(action, dtype=torch.long)
         reward = torch.tensor(reward, dtype=torch.float)
         # (n, x)

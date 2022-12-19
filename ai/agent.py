@@ -18,10 +18,10 @@ MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
 LR = 0.001
 # Vectors that express any given state
-STATE_SIZE = 7 + 30 + 1 + 30*2 + 3 + 3
+STATE_SIZE = 7 + 30 + 1 + 30*2 + 3 + 3 + 1
 CHOICES = 7
 # How many games to play before saving the model
-N_GAMES = 100
+N_GAMES = 1000
 
 class Agent:
 	def __init__(self, player_number):
@@ -78,7 +78,7 @@ class Agent:
 			prediction = self.model(state0)
 
 			# Get the best options in order
-			for best_choice in torch.argsort(prediction):
+			for best_choice in torch.argsort(prediction, descending=True):
 				if best_choice in valid_actions:
 					return best_choice
 			# print()
