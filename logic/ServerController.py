@@ -31,7 +31,7 @@ class ServerController:
     # Return True if a play/pass occurred (False if play couldn't be completed)
     def on_player_input(self, player, choice, version=None):
         # TODO Hack for the ml to remember 6 as pass
-        if choice == 6:
+        if choice == -1:
             choice = PASS
 
         if choice == 13: # Autowin, debug

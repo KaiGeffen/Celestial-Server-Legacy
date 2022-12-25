@@ -10,7 +10,7 @@ from Translator import translate_state
 
 import CardCodec
 from logic.ServerController import ServerController
-
+from logic.Catalog import all_cards
 
 # For actions, 0th is pass, 1-6 are play that card
 
@@ -19,9 +19,11 @@ BATCH_SIZE = 1000
 LR = 0.001
 # Vectors that express any given state
 STATE_SIZE = 7 + 30 + 1 + 30*2 + 3 + 3 + 1
-CHOICES = 7
+# One choice for each card, afterwards determine that card's position in their hand
+CHOICES = 1 + 59 + 4
 # How many games to play before saving the model
-N_GAMES = 1000
+N_GAMES = 10000
+PASS = -1
 
 class Agent:
 	def __init__(self, player_number):
@@ -39,6 +41,7 @@ class Agent:
 	def remember(self, state, action, reward, next_state, done):
 		self.memory.append((state, action, reward, next_state, done)) # popleft if MAX_MEMORY is reached
 
+	# NOTE Not useful for our use-case
 	def train_long_memory(self):
 		if len(self.memory) > BATCH_SIZE:
 			mini_sample = random.sample(self.memory, BATCH_SIZE) # list of tuples
@@ -53,42 +56,71 @@ class Agent:
 
 	# NOTE Model views passing as 6 instead of 10!
 	# Return list of valid actions (As index in hand)
-	def get_valid_actions(self, client_state):
-		# Passing is always allowed
-		result = [6]
+	# TODO Update this note, outdated
 
+	# Get the id of each card that user can play
+	def get_valid_actions(self, client_state) -> :
+		# Passing is always allowed
+		result = [PASS]
+
+		hand = CardCodec.decode_deck(client_state['hand'])
 		playable_list = client_state['cards_playable']
 		for i in range(len(playable_list)):
 			if playable_list[i]:
-				result.append(i)
+				card = hand[i]
+
+				# Append the id of the card
+				result.append(card.id)
 
 		return result
 
-	def get_action(self, state, valid_actions):
+	# Return the suggested action as either PASS or the card's id
+	def get_pass_or_id_action(self, state, client_state):
+		# Get valid actions we could take
+		self.get_valid_actions(client_state)
+
 		# random moves: tradeoff exploration / exploitation
 		self.epsilon = 80 - self.n_games
-		# final_move = [0, 0,0,0, 0,0,0]
 
 		if random.randint(0, 200) < self.epsilon:
-			move = random.choice(valid_actions)
+			card_id = random.choice(valid_actions)
 			return move
 		else:
 			# Get the best prediction 
 			state0 = torch.tensor(state, dtype=torch.float)
 			prediction = self.model(state0)
 
+			print(prediction)
+
 			# Get the best options in order
 			for best_choice in torch.argsort(prediction, descending=True):
-				if best_choice in valid_actions:
-					return best_choice
-			# print()
-			# move = torch.argmax(prediction).item()
+				# Translate from the index in the vector to a card id or pass option
 
-			# # Pass if what we want to do isn't valid
-			# if move in valid_actions:
-			# 	return move
-			# else:
-			# 	return 10
+				# Choice to pass
+				if best_choice == 0:
+					return PASS
+				else:
+					# Otherwise translate choice to index within all cards
+					# NOTE subtract 1 to account for pass being 0
+					card = all_cards[best_choice - 1]	
+
+					if card.id in valid_actions:
+						return card.id
+
+	# Get the action to take in the form PASS or the index within the hand of the card
+	def get_action(self, state, client_state):
+		action = self.get_pass_or_id_action(state, client_state)
+
+		# If action is to pass, return that
+		if action == PASS:
+			return PASS
+
+		hand = CardCodec.decode_deck(client_state['hand'])
+		for i in range(len(hand)):
+			if hand[i].id == action:
+				return i
+
+		raise Exception('Get action returned an invalid action.')
 
 
 def train():
@@ -122,16 +154,10 @@ def train():
 		client_state = game.get_client_model(player_number)
 		state0 = translate_state(client_state)
 
-		# Get the action
-		valid_actions = agent.get_valid_actions(client_state)
-		action = agent.get_action(state0, valid_actions)
+		# Get the action to take (Pass or which index of card in hand to play)
+		action = agent.get_action(state0, client_state)
 
-		# Perform action and get new state
-		# a = None # Integer version of the action vector
-		# for i in range(len(action)):
-		# 	if action[i]:
-		# 		a = i
-		result = game.on_player_input(player_number, action)
+		result = game.on_agent_input(player_number, action)
 		state1 = translate_state(game.get_client_model(player_number))
 
 		# Determine the reward/done of new state
@@ -161,7 +187,7 @@ def train():
 			round_results = client_state['round_results']
 			delta_t = time.time() - start_time
 			start_time = time.time()
-			print(f'Round Scores Game {agent.n_games} (Took {delta_t}):\n{round_results[0]}\n{round_results[1]}')
+			print(f'Round Scores Game {agent.n_games}/{N_GAMES} (Took {delta_t}):\n{round_results[0]}\n{round_results[1]}')
 
 			# TODO Make a new game, write to long memory for both agents
 			# Train the long memory
@@ -173,9 +199,6 @@ def train():
 			# TODO Mulligans
 			game.do_mulligan(0, [False, False, False])
 			game.do_mulligan(1, [False, False, False])
-
-			# TODO Al suggest not needed, reconsider this
-			agent.train_long_memory()
 
 	# TODO Save and manage both agents
 	agent0.model.save()
