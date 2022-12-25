@@ -59,7 +59,7 @@ class Agent:
 	# TODO Update this note, outdated
 
 	# Get the id of each card that user can play
-	def get_valid_actions(self, client_state) -> :
+	def get_valid_actions(self, client_state):
 		# Passing is always allowed
 		result = [PASS]
 
@@ -77,14 +77,14 @@ class Agent:
 	# Return the suggested action as either PASS or the card's id
 	def get_pass_or_id_action(self, state, client_state):
 		# Get valid actions we could take
-		self.get_valid_actions(client_state)
+		valid_actions = self.get_valid_actions(client_state)
 
 		# random moves: tradeoff exploration / exploitation
 		self.epsilon = 80 - self.n_games
 
 		if random.randint(0, 200) < self.epsilon:
-			card_id = random.choice(valid_actions)
-			return move
+			choice = random.choice(valid_actions)
+			return choice
 		else:
 			# Get the best prediction 
 			state0 = torch.tensor(state, dtype=torch.float)
@@ -157,7 +157,7 @@ def train():
 		# Get the action to take (Pass or which index of card in hand to play)
 		action = agent.get_action(state0, client_state)
 
-		result = game.on_agent_input(player_number, action)
+		result = game.on_player_input(player_number, action)
 		state1 = translate_state(game.get_client_model(player_number))
 
 		# Determine the reward/done of new state
