@@ -67,7 +67,7 @@ def want_dry_round(model):
     # Consider how many cards we draw, and how many opponent draws
     we_draw = min(2, 6 - len(model.hand), len(model.deck) + len(model.pile[0]))
     result += 2 * we_draw
-    they_draw = min(2, 6 - model.opp_hand, model.opp_deck + len(model.pile[1]))
+    they_draw = min(2, 6 - len(model.opp_hand), model.opp_deck + len(model.pile[1]))
     result -= 2 * they_draw
 
     # The amount of Inspired that will be lost, for us and them

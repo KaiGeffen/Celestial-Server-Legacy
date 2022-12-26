@@ -176,7 +176,7 @@ class Imprison(Card):
 
     def rate_play(self, world):
         # TODO Use a function for predicting opponent's hand size
-        return self.rate_reset(world) - world.opp_hand
+        return self.rate_reset(world) - len(world.opp_hand)
 imprison = Imprison(name="Imprison", cost=2, id=35, rarity=1)
 class Gift(Card):
     def play(self, player, game, index, bonus):
@@ -186,7 +186,7 @@ class Gift(Card):
             self.draw(1, game, player)
 
     def rate_play(self, world):
-        return 3 + world.opp_hand/2 - len(world.hand)/2
+        return 3 + len(world.opp_hand)/2 - len(world.hand)/2
 gift = Gift(name="Gift", cost=3, points=3, text="3:3, both players draw 1", id=12)
 class Symbiosis(Card):
     def play(self, player, game, index, bonus):

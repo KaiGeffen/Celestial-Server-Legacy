@@ -331,7 +331,8 @@ class Card:
             0.1
         ]
 
-        hand_count = max(0, min(6, world.opp_hand + extra_cards))
+        # Bugged, opp hand is a encoded string of their hand, so length isn't getting what we think here
+        hand_count = max(0, min(6, len(world.opp_hand) + extra_cards))
 
         return cards_in_hand_to_value[hand_count]
 
