@@ -302,7 +302,8 @@ class ServerModel:
 
         return {
             'hand': CardCodec.encode_deck(self.hand[player]),
-            'opp_hand': len(self.hand[player ^ 1]),
+            # TODO Hide this on the server side (Currently sent for debugging)
+            'opp_hand': CardCodec.encode_deck(self.hand[player ^ 1]),
             'deck': CardCodec.encode_deck(sorted(self.deck[player], key=deck_sort)),
             'opp_deck': len(self.deck[player ^ 1]),
             'pile': list(map(CardCodec.encode_deck, self.pile[::slice_step])),
