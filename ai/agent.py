@@ -22,7 +22,7 @@ STATE_SIZE = 7 + 30 + 1 + 30*2 + 3 + 3 + 1
 # One choice for each card, afterwards determine that card's position in their hand
 CHOICES = 1 + 59 + 4
 # How many games to play before saving the model
-N_GAMES = 500
+N_GAMES = 50
 PASS = -1
 EPSILON = 100
 
@@ -90,7 +90,7 @@ class Agent:
 			state0 = torch.tensor(state, dtype=torch.float)
 			prediction = self.model(state0)
 
-			print(prediction)
+			# print(prediction)
 
 			# Get the best options in order
 			for best_choice in torch.argsort(prediction, descending=True):
