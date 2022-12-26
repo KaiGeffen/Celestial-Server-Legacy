@@ -995,13 +995,17 @@ full_catalog = [
     paramountcy, axolotl, fish_bones, heron,
     kneel, conquer, nightmare, carrion, occupation, gentle_rain, sunflower, hollow, moon,
 
-    rat, beggar, fresh_air, possibilities, hatchling, eyes, capybara,
-    rekindle, tragedy, hound, lullaby, longing, dwindle,
+    # rat, beggar, fresh_air, possibilities, hatchling, eyes, capybara,
+    # rekindle, tragedy, hound, lullaby, longing, dwindle,
 
     ]
 
 non_collectibles = [hidden_card] + tokens
 all_cards = full_catalog + non_collectibles
+
+# A sparse mapping 
+
+
 
 
 common_cards = list(filter(lambda card: card.rarity == 0, full_catalog))

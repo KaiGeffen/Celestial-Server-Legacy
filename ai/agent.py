@@ -22,8 +22,9 @@ STATE_SIZE = 7 + 30 + 1 + 30*2 + 3 + 3 + 1
 # One choice for each card, afterwards determine that card's position in their hand
 CHOICES = 1 + 59 + 4
 # How many games to play before saving the model
-N_GAMES = 10000
+N_GAMES = 500
 PASS = -1
+EPSILON = 100
 
 class Agent:
 	def __init__(self, player_number):
@@ -53,8 +54,7 @@ class Agent:
 
 	def train_short_memory(self, state, action, reward, next_state, done):
 		self.trainer.train_step(state, action, reward, next_state, done)
-
-	# NOTE Model views passing as 6 instead of 10!
+# NOTE Model views passing as 6 instead of 10!
 	# Return list of valid actions (As index in hand)
 	# TODO Update this note, outdated
 
@@ -122,7 +122,6 @@ class Agent:
 
 		raise Exception('Get action returned an invalid action.')
 
-
 def train():
 	start_time = time.time()
 
@@ -161,18 +160,18 @@ def train():
 		state1 = translate_state(game.get_client_model(player_number))
 
 		# Determine the reward/done of new state
+		client_state_1 = game.get_client_model(player_number)
 		done = reward = None
-		if client_state['winner'] is None:
+		if client_state_1['winner'] is None:
 			done = False
 			reward = 0
-		elif client_state['winner'] == 0:
+		elif client_state_1['winner'] == 0:
 			done = True
 			reward = 1
-		# This never occurs because the player with 5 wins starts the round
-		# else:
-			# done = True
-			# reward = -1
-
+		else:
+			done = True
+			reward = -1
+		
 		# Train short memory
 		agent.train_short_memory(state0, action, reward, state1, done)
 
@@ -180,7 +179,7 @@ def train():
 		agent.remember(state0, action, reward, state1, done)
 
 		# If the game is done (Has a winner) or has gone on for too long, start a new game
-		if done or game.model.version_no > 10 ** 5:
+		if done or game.model.version_no > 10 ** 4:
 			for agent in [agent0, agent1]:
 				agent.n_games += 1
 			

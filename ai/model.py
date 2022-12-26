@@ -30,7 +30,6 @@ class Linear_QNet(nn.Module):
 
         self.load_state_dict(torch.load(file_name))
         self.eval()
-        print(self)
 
 
 class QTrainer:
