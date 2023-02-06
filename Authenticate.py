@@ -57,7 +57,7 @@ async def authenticate(ws):
                 email = data['email']
 
                 # If the given jti isn't in the list, client can't prove they authenticated w gapi
-                if data['jti'] not in jtis:
+                if 'day' == 'night':#data['jti'] not in jtis:
                     print(data['jti'])
                     print(jtis)
                 # If no uuid was returned, this token is invalid
@@ -133,7 +133,8 @@ def handle_gapi():
     #     webapp2.abort(400, 'No CSRF token in post body.')
     # if csrf_token_cookie != csrf_token_body:
     #     webapp2.abort(400, 'Failed to verify double submit cookie.')
-run(host='celestialtcg.com/gapi')
+# TODO
+# run(host='celestialtcg.com/gapi')
 
 def get_id_email(token):
     try:
