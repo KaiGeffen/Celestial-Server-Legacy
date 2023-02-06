@@ -56,8 +56,12 @@ async def authenticate(ws):
 
                 email = data['email']
 
+                # If the given jti isn't in the list, client can't prove they authenticated w gapi
+                if data['jti'] not in jtis:
+                    print(data['jti'])
+                    print(jtis)
                 # If no uuid was returned, this token is invalid
-                if uuid is None:
+                elif uuid is None:
                     message = json.dumps({"type": "invalid_token"}, default=str)
                     await asyncio.wait([ws.send(message)])
                     await ws.close()
@@ -100,6 +104,8 @@ async def authenticate(ws):
         if path is not None:
             await game_server.match_cleanup(path, match)
 
+# Accept POSTs from gapi, keep a log of the jti's
+jtis = {}
 @post('/gapi')
 def handle_gapi():
     token = request.body.read()
@@ -114,6 +120,7 @@ def handle_gapi():
         email = idinfo['email']
         jti = idinfo['jti']
         print(email)
+        jtis[jti] = True
     except ValueError:
         # Invalid token
         pass
@@ -126,7 +133,7 @@ def handle_gapi():
     #     webapp2.abort(400, 'No CSRF token in post body.')
     # if csrf_token_cookie != csrf_token_body:
     #     webapp2.abort(400, 'Failed to verify double submit cookie.')
-run(host='celestialtcg.com', port=5555)
+run(host='celestialtcg.com/gapi')
 
 def get_id_email(token):
     try:
