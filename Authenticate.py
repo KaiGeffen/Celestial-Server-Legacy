@@ -46,8 +46,15 @@ async def authenticate(ws):
             data = json.loads(message)
 
             if data["type"] == "send_token":
-                token = data['value']
-                (uuid, email) = get_id_email(token)
+                # token = data['token']
+                # (uuid, email) = get_id_email(token)
+
+                # TODO User a token that can be authenticated instead of trusting the uuid and email
+                uuid = data['uuid']
+                num_digits = len(str(uuid))
+                uuid = str(uuid) + '0' * (32 - num_digits)
+
+                email = data['email']
 
                 # If no uuid was returned, this token is invalid
                 if uuid is None:
@@ -93,6 +100,33 @@ async def authenticate(ws):
         if path is not None:
             await game_server.match_cleanup(path, match)
 
+@post('/gapi')
+def handle_gapi():
+    token = request.body.read()
+    print(token)
+
+    try:
+        # Specify the CLIENT_ID of the app that accesses the backend:
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
+
+        # ID token is valid. Get the user's Google Account ID from the decoded token.
+        userid = idinfo['sub']
+        email = idinfo['email']
+        jti = idinfo['jti']
+        print(email)
+    except ValueError:
+        # Invalid token
+        pass
+    #
+    # csrf_token_cookie = request.cookies.get('g_csrf_token')
+    # if not csrf_token_cookie:
+    #     webapp2.abort(400, 'No CSRF token in Cookie.')
+    # csrf_token_body = self.request.get('g_csrf_token')
+    # if not csrf_token_body:
+    #     webapp2.abort(400, 'No CSRF token in post body.')
+    # if csrf_token_cookie != csrf_token_body:
+    #     webapp2.abort(400, 'Failed to verify double submit cookie.')
+run(host='celestialtcg.com', port=5555)
 
 def get_id_email(token):
     try:
