@@ -44,6 +44,7 @@ async def authenticate(ws):
     try:
         async for message in ws:
             data = json.loads(message)
+            print(message)
 
             if data["type"] == "send_token":
                 # token = data['token']
