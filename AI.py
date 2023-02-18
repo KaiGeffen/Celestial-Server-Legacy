@@ -63,7 +63,6 @@ def want_dry_round(model):
     result = 0
 
     # Valuing each card drawn as worth 2 inspire
-
     # Consider how many cards we draw, and how many opponent draws
     we_draw = min(2, 6 - len(model.hand), len(model.deck) + len(model.pile[0]))
     result += 2 * we_draw

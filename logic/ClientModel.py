@@ -9,7 +9,7 @@ class ClientModel:
         super().__init__()
 
         self.hand = CardCodec.decode_deck(state['hand'])
-        self.opp_hand = state['opp_hand']
+        self.opp_hand = CardCodec.decode_deck(state['opp_hand'])
         self.deck = CardCodec.decode_deck(state['deck'])
         self.opp_deck = state['opp_deck']
         self.pile = list(map(CardCodec.decode_deck, state['pile']))
