@@ -17,7 +17,7 @@ START_HAND = START_HAND_REAL - DRAW_PER_TURN
 HAND_CAP = 6
 
 MANA_GAIN_PER_TURN = 1
-START_MANA = 1 - MANA_GAIN_PER_TURN
+START_MANA = 10 - MANA_GAIN_PER_TURN
 MANA_CAP = 10
 
 # Input signifying user wants to pass
@@ -49,27 +49,30 @@ class ServerController:
             return False
 
         if choice == PASS:
-            self.model.passes += 1
-            self.model.amt_passes[player] += 1
-
-            self.model.switch_priority()
-
-            self.model.sound_effect = SoundEffect.Pass
-
-            # If both player's have passed in sequence, end turn and start another
-            if self.model.passes == 2:
-                self.model.passes = 0
-
-                self.do_takedown()
-
-                # Model must be incremented here, so that all sounds/animations from the upkeep are sent to user
-                self.model.version_incr()
-
-                self.do_upkeep()
+            if not self.can_pass(player):
+                return False
             else:
-                self.model.version_incr()
+                self.model.passes += 1
+                self.model.amt_passes[player] += 1
 
-            return True
+                self.model.switch_priority()
+
+                self.model.sound_effect = SoundEffect.Pass
+
+                # If both player's have passed in sequence, end turn and start another
+                if self.model.passes == 2:
+                    self.model.passes = 0
+
+                    self.do_takedown()
+
+                    # Model must be incremented here, so that all sounds/animations from the upkeep are sent to user
+                    self.model.version_incr()
+
+                    self.do_upkeep()
+                else:
+                    self.model.version_incr()
+
+                return True
         else:
             if self.attempt_play(player, choice):
                 self.model.passes = 0
@@ -353,6 +356,16 @@ class ServerController:
         # Player doesn't have enough mana
         if self.get_cost(card, player) > self.model.mana[player]:
             return False
+
+        return True
+
+    # Check if the given player can pass in this state
+    def can_pass(self, player):
+        # If max mana (10) has been hit, and player has playable cards, they cannot dry pass
+        if self.model.max_mana[player] == MANA_CAP and len(self.model.story.acts) == 0:
+            for i in range(len(self.model.hand[player])):
+                if self.can_play(player, i):
+                    return False
 
         return True
 

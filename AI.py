@@ -164,7 +164,7 @@ def get_action(model) -> int:
         return 10
 
     # If we can achieve a dry round and we want to, pass
-    if want_dry_round(model):
+    if want_dry_round(model) and (model.max_mana[0] < 10 or len(model.story.acts) > 0):
         return 10
 
     # TODO Know I can't beat them
