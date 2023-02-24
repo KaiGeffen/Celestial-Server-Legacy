@@ -73,6 +73,7 @@ class ServerController:
         else:
             if self.attempt_play(player, choice):
                 self.model.passes = 0
+                self.model.last_player_who_played = player
                 self.model.switch_priority()
 
                 self.model.version_incr()
@@ -177,14 +178,8 @@ class ServerController:
         self.model.amt_drawn = [0, 0]
         self.model.sound_effect = None
 
-        # Give priority to the player in the lead, or random if tied
-        if self.model.wins[0] > self.model.wins[1]:
-            self.model.priority = 0
-        elif self.model.wins[1] > self.model.wins[0]:
-            self.model.priority = 1
-        else:
-            # TODO make deterministic?
-            self.model.priority = random.choice([0, 1])
+        # Give priority to the last player who has played a card
+        self.model.priority = self.model.last_player_who_played
 
         # Each player resets their mana, performs upkeep statuses, card effects, then draws for the round
         for player in (0, 1):

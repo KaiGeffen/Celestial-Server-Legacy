@@ -48,6 +48,11 @@ class TutorialController(ServerController):
     def do_mulligan(self, player, mulligans):
         self.model.mulligans_complete[player] = True
 
+    # Ensure that human starts each round with priority
+    def do_upkeep(self):
+        super().do_upkeep()
+        self.model.priority = 0
+
     # TODO Don't copy so much, call something
     # Perform the takedown phase
     def do_takedown(self):

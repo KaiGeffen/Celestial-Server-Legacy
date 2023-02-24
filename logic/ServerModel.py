@@ -83,6 +83,9 @@ class ServerModel:
         # For each player, the amount of points they earned in the nth round
         self.round_results =[[],[]]
 
+        # The last player to play a card (Default to player who starts with priority)
+        self.last_player_who_played = 0
+
     def version_incr(self):
         self.version_no += 1
         self.animations = [[], []]
