@@ -60,32 +60,40 @@ async def authenticate(ws):
 
                 email = data['email']
 
-                # If the given jti isn't in the list, client can't prove they authenticated w gapi
-                if 'day' == 'night':#data['jti'] not in jtis:
-                    print(data['jti'])
-                    print(jtis)
                 # If no uuid was returned, this token is invalid
-                elif uuid is None:
+                if uuid is None:
                     message = json.dumps({"type": "invalid_token"}, default=str)
                     await asyncio.wait([ws.send(message)])
                     await ws.close()
+                    continue
+
                 elif uuid in signed_in_uuids and signed_in_uuids[uuid].connected:
-                    # Important to not pop in the finally below
-                    uuid = None
-                    message = json.dumps({"type": "already_signed_in"}, default=str)
-                    await asyncio.wait([ws.send(message)])
-                    await ws.close()
+                    # If signed in ws is still open, alert user of error
+                    try:
+                        await signed_in_uuids[uuid].ensure_open()
+
+                        # Set to None to not pop this uuid from signed in uuids below!
+                        uuid = None
+                        message = json.dumps({"type": "already_signed_in"}, default=str)
+                        await asyncio.wait([ws.send(message)])
+                        await ws.close()
+                        continue
+
+                    # If existing connection is closed, sign in this user as normal below
+                    # TODO Dry with below case
+                    except websockets.ConnectionClosed as e:
+                        pass
+
+                signed_in_uuids[uuid] = ws
+                user_data = get_user_data(uuid, email)
+
+                # If user's account is just being created, prompt them to init it
+                if user_data is None:
+                    message = json.dumps({"type": "prompt_user_init"}, default=str)
                 else:
-                    signed_in_uuids[uuid] = ws
-                    user_data = get_user_data(uuid, email)
+                    message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
 
-                    # If user's account is just being created, prompt them to init it
-                    if user_data is None:
-                        message = json.dumps({"type": "prompt_user_init"}, default=str)
-                    else:
-                        message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
-
-                    await asyncio.wait([ws.send(message)])
+                await asyncio.wait([ws.send(message)])
             elif data["type"] == "send_user_progress":
                 adjust_user_progress(uuid, data["value"])
             elif data["type"] == "send_decks":
