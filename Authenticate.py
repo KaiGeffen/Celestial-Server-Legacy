@@ -28,6 +28,9 @@ else:
 
 # NOTE Have to add 1 for working with sql arrays, they start at 1
 
+# Make a list of uuids and if they are signed in
+signed_in_uuids = {}
+
 async def authenticate(ws):
     # Send a request for token
     message = json.dumps({"type": "request_token"})
@@ -65,7 +68,12 @@ async def authenticate(ws):
                     message = json.dumps({"type": "invalid_token"}, default=str)
                     await asyncio.wait([ws.send(message)])
                     await ws.close()
+                elif uuid in signed_in_uuids:
+                    message = json.dumps({"type": "already_signed_in"}, default=str)
+                    await asyncio.wait([ws.send(message)])
+                    await ws.close()
                 else:
+                    signed_in_uuids[uuid] = True
                     user_data = get_user_data(uuid, email)
 
                     # If user's account is just being created, prompt them to init it
@@ -103,6 +111,9 @@ async def authenticate(ws):
         # Exit from any games that user was in / matchmaking that user was in
         if path is not None:
             await game_server.match_cleanup(path, match)
+
+        # Remove this account from list of signed in accounts
+        signed_in_uuids.pop(uuid)
 
 # Accept POSTs from gapi, keep a log of the jti's
 jtis = {}
