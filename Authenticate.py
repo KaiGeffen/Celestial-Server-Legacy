@@ -67,7 +67,7 @@ async def authenticate(ws):
                     await ws.close()
                     continue
 
-                elif uuid in signed_in_uuids and signed_in_uuids[uuid].connected:
+                elif uuid in signed_in_uuids:
                     # If signed in ws is still open, alert user of error
                     try:
                         await signed_in_uuids[uuid].ensure_open()
@@ -80,7 +80,6 @@ async def authenticate(ws):
                         continue
 
                     # If existing connection is closed, sign in this user as normal below
-                    # TODO Dry with below case
                     except websockets.ConnectionClosed as e:
                         pass
 
@@ -94,6 +93,7 @@ async def authenticate(ws):
                     message = json.dumps({"type": "send_user_data", "value": user_data}, default=str)
 
                 await asyncio.wait([ws.send(message)])
+            # TODO Ensure that this ws is the signed in one in the above hashmap before doing any of the following operations
             elif data["type"] == "send_user_progress":
                 adjust_user_progress(uuid, data["value"])
             elif data["type"] == "send_decks":
