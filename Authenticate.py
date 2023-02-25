@@ -42,6 +42,7 @@ async def authenticate(ws):
     choice_cards = [0, 0, 0]
 
     path = None
+    uuid = None
 
     # Listen to responses
     try:
@@ -68,12 +69,14 @@ async def authenticate(ws):
                     message = json.dumps({"type": "invalid_token"}, default=str)
                     await asyncio.wait([ws.send(message)])
                     await ws.close()
-                elif uuid in signed_in_uuids:
+                elif uuid in signed_in_uuids and signed_in_uuids[uuid].connected:
+                    # Important to not pop in the finally below
+                    uuid = None
                     message = json.dumps({"type": "already_signed_in"}, default=str)
                     await asyncio.wait([ws.send(message)])
                     await ws.close()
                 else:
-                    signed_in_uuids[uuid] = True
+                    signed_in_uuids[uuid] = ws
                     user_data = get_user_data(uuid, email)
 
                     # If user's account is just being created, prompt them to init it
@@ -112,8 +115,9 @@ async def authenticate(ws):
         if path is not None:
             await game_server.match_cleanup(path, match)
 
-        # Remove this account from list of signed in accounts
-        signed_in_uuids.pop(uuid)
+        if uuid is not None:
+            # Remove this account from list of signed in accounts
+            signed_in_uuids.pop(uuid)
 
 # Accept POSTs from gapi, keep a log of the jti's
 jtis = {}
