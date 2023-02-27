@@ -978,6 +978,19 @@ class Dwindle(Card):
             game.mana[player] -= 2
             self.draw(1, game, player)
 dwindle = Dwindle(name="Dwindle", cost=2, points=0, id=2012)
+class Cloud(Card):
+    def play(self, player, game, index, bonus):
+        super().play(player, game, index, bonus)
+
+        self.draw(1, game, player)
+
+    def morning(self, player, game, index):
+        if len(game.hand[player]) == 6:
+            game.status[player].append(Status.UNLOCKED)
+
+        return True
+cloud = Cloud(name="Cloud", cost=3, points=0, id=2013)
+
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
 full_catalog = [
@@ -998,6 +1011,7 @@ full_catalog = [
     rat, beggar, fresh_air, possibilities, hatchling, eyes, capybara,
     rekindle, tragedy, hound, lullaby, longing, dwindle,
 
+    cloud,
     ]
 
 non_collectibles = [hidden_card] + tokens
