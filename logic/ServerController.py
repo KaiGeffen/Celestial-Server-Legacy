@@ -333,16 +333,11 @@ class ServerController:
     def do_gentle(self):
         # Consider p1 winning and consider p2 winning
         for (p1, p2) in [(0, 1), (1, 0)]:
-            score_dif = self.model.score[p1] - self.model.score[p2]
+            score_above_winning = self.model.score[p1] - self.model.score[p2]
 
-            # Subtract the safety of the losing player
-            score_above_winning = score_dif
-            # Subtract 1 because that much is needed to take the round
-            # NOTE This has been changed
-            # score_above_winning -= 1
-
-            if score_above_winning > 0 and Status.GENTLE in self.model.status[p1]:
-                self.model.status[p1].extend(score_above_winning * [Status.NOURISH])
+            if score_above_winning > 0:
+                amt = self.model.status[p1].count(Status.GENTLE) * score_above_winning
+                self.model.status[p1].extend(amt * [Status.NOURISH])
 
     """UTILITY CHECKS"""
     # Check if the given player can play the given card
