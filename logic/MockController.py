@@ -16,6 +16,11 @@ class MockController(ServerController):
             super().do_mulligan(0, (False, False, False, False))
             super().do_mulligan(1, (False, False, False, False))
 
+    def on_player_input(self, player, choice, version=None):
+        result = super().on_player_input(player, choice, version)
+        if not result:
+            print('Player input invalid!')
+
 
 class TestMorning(unittest.TestCase):
     def test_nightmare(self):
@@ -37,7 +42,6 @@ class TestMorning(unittest.TestCase):
         mock.on_player_input(0, 10)
 
         # Assertions
-        print(model.hand[1])
         self.assertEqual(stalker, model.hand[1][4])
 
 

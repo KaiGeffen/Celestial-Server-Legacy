@@ -184,7 +184,8 @@ class ServerController:
         # Give priority to the last player who has played a card
         self.model.priority = self.model.last_player_who_played
 
-        # Each player resets their mana, performs upkeep statuses, card effects, then draws for the round
+        # Each player resets their mana, performs upkeep statuses, card effects
+        # NOTE Drawing must be done after!
         for player in (0, 1):
             if self.model.max_mana[player] < MANA_CAP:
                 # Become the lower of mana_cap and incrementing current max mana
@@ -206,19 +207,6 @@ class ServerController:
 
                 index += 1
 
-            # Each card in pile has a chance to do an upkeep effect
-            # index = 0
-            # while index < len(self.model.pile[player]):
-            #     card = self.model.pile[player][index]
-            #
-            #     # NOTE This now
-            #     something_activated = card.morning(player, self.model, index)
-            #     if something_activated:
-            #         self.model.animations[player].append(
-            #             Animation('Discard', 'Discard', CardCodec.encode_card(card), index=index, index2=index))
-            #
-            #     index += 1
-
             if len(self.model.pile[player]) > 0:
                 # NOTE Morning is now the only effect that triggers in the discard pile
                 card = self.model.pile[player][-1]
@@ -227,6 +215,8 @@ class ServerController:
                     self.model.animations[player].append(
                         Animation('Discard', 'Discard', CardCodec.encode_card(card), index=index, index2=index))
 
+        # Drawing happens after morning has finished for both players
+        for player in (0, 1):
             # Draw cards for turn
             self.model.draw(player, DRAW_PER_TURN)
 
