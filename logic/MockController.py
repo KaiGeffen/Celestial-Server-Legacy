@@ -4,8 +4,10 @@ from logic.Catalog import *
 
 
 class MockController(ServerController):
-    def __init__(self, skip_mulligan=True):
-        super().__init__([], [], 0, 0)
+    def __init__(self, deck1=[], deck2=[], skip_mulligan=True):
+        super().__init__(deck1, deck2, 0, 0)
+
+        self.start()
 
         # Set priority deterministically
         self.model.priority = 0
@@ -17,16 +19,26 @@ class MockController(ServerController):
 
 class TestMorning(unittest.TestCase):
     def test_nightmare(self):
-        mock = MockController()
+        deck1 = [dove] * 15
+        deck2 = [nightmare] * 15
+        mock = MockController(deck1, deck2)
         model = mock.model
 
-        model.hand[1] = [dove]
-        model.pile[1] = [nightmare]
-
-        mock.on_player_input(0, 10)
+        # Round 1
+        mock.on_player_input(0, 1)
         mock.on_player_input(1, 10)
+        mock.on_player_input(0, 10)
 
-        self.assertEqual(stalker, model.hand[1][1])
+        # Round 2
+        mock.on_player_input(0, 1)
+        mock.on_player_input(1, 1)
+        mock.on_player_input(0, 1)
+        mock.on_player_input(1, 10)
+        mock.on_player_input(0, 10)
+
+        # Assertions
+        print(model.hand[1])
+        self.assertEqual(stalker, model.hand[1][4])
 
 
 if __name__ == '__main__':
