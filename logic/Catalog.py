@@ -649,12 +649,8 @@ class PocketWatch(Card):
         self.draw(2, game, player)
 pocket_watch = PocketWatch(name="Pocket Watch", cost=4, points=2, id=54, rarity=1)
 class Sun(Card):
-    def play(self, player, game, index, bonus):
-        super().play(player, game, index, bonus)
-        self.inspire(1, game, player)
-
     def morning(self, player, game, index):
-        super().add_mana(1, game, player)
+        super().add_mana(3, game, player)
         return True
 sun = Sun(name="Sun", cost=8, points=8, id=56)
 class Sickness(Card):
