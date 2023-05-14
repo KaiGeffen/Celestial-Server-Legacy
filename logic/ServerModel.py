@@ -341,11 +341,9 @@ class ServerModel:
     def hide_opp_animations(self, animations):
         opp_animations = animations[1]
 
-        # Mulligan phase should hide everything but that they shuffled
-        for anim in opp_animations:
-            if anim['zone_from'] == 'Mulligan' or anim['zone_to'] == 'Mulligan':
-                just_shuffle = [Animation('Shuffle', 'Deck')]
-                return [animations[0], just_shuffle]
+        # Everything in their mulligan phase should be hidden
+        pred = lambda anim : not (anim['zone_from'] == 'Mulligan' or anim['zone_to'] == 'Mulligan')
+        opp_animations = filter(pred, opp_animations)
 
         # Cards going to their hand should not show what card it is
         obfuscated = []
