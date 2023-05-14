@@ -38,8 +38,6 @@ class Enrage(Card):
 
         for act in game.story.acts:
             act.bonus -= act.card.cost
-
-        game.sound_effect = SoundEffect.Yell
 enrage = Enrage(name="Enrage", cost=8, points=2, id=47, rarity=2)
 class Desert(Card):
     def play(self, player, game, index, bonus):
@@ -70,7 +68,7 @@ desert = Desert(name="Desert", cost=2, points=0, id=49, rarity=0)
 """BIRD"""
 class Dove(Card):
     def play(self, player, game, index, bonus):
-        game.sound_effect = SoundEffect.Bird
+        # game.sound_effect = SoundEffect.Bird
         super().play(player, game, index, bonus)
 dove = Dove(name="Dove", cost=1, points=1, qualities=[Quality.VISIBLE, Quality.FLEETING],
             text="1:1, visible, fleeting (After resolving, this card is removed from the game instead of moving to your discard pile)",
@@ -151,7 +149,7 @@ class BoneKnife(Card):
         super().play(player, game, index, bonus)
         self.discard(1, game, opp)
 
-        game.sound_effect = SoundEffect.Cut
+        # game.sound_effect = SoundEffect.Cut
 
     def rate_play(self, world):
         return self.rate_discard(world)
@@ -362,7 +360,7 @@ cornucopia = Cornucopia(name="Cornucopia", cost=6, points=2, id=61, rarity=2)
 """Earth"""
 class CrossedBones(Card):
     def play(self, player, game, index, bonus):
-        game.sound_effect = SoundEffect.Fire
+        # game.sound_effect = SoundEffect.Fire
 
         super().play(player, game, index, bonus)
 
@@ -398,7 +396,7 @@ class Bastet(Card):
 
         super().play(player, game, index, bonus)
 
-        game.sound_effect = SoundEffect.Meow
+        # game.sound_effect = SoundEffect.Meow
 bastet = Bastet(1)
 class NightVision(SightCard):
     def play(self, player, game, index, bonus):
@@ -433,7 +431,7 @@ class Scarab(SightCard):
 scarab = Scarab(amt=4, name="Scarab", cost=0, points=0, id=50, rarity=0)
 class Drown(Card):
     def play(self, player, game, index, bonus):
-        game.sound_effect = SoundEffect.Drown
+        # game.sound_effect = SoundEffect.Drown
         super().play(player, game, index, bonus)
         self.mill(3, game, player)
 drown = Drown(name="Drown", cost=1, points=1, text="1:1, mill yourself 3 (Top 3 cards of deck go to pile)", id=5)
@@ -476,7 +474,7 @@ class Sarcophagus(Card):
 
             bonus += highest_cost
 
-            game.sound_effect = SoundEffect.Sarcophagus
+            # game.sound_effect = SoundEffect.Sarcophagus
             game.animations[player].append(
                 Animation('Discard', 'Deck', card=CardCodec.encode_card(card)))
 
@@ -567,7 +565,7 @@ class Spy(Card):
 spy = Spy(name="Spy", cost=1, id=27, rarity=1)
 class Uprising(Card):
     def play(self, player, game, index, bonus):
-        game.sound_effect = SoundEffect.Crowd
+        # game.sound_effect = SoundEffect.Crowd
         super().play(player, game, index, bonus + index)
 
     def rate_play(self, world):

@@ -69,7 +69,7 @@ class Card:
     def reset(self, game):
         game.score = [0, 0]
 
-        game.sound_effect = SoundEffect.Reset
+        # game.sound_effect = SoundEffect.Reset
 
         return '\nReset'
 
@@ -107,7 +107,7 @@ class Card:
         game.animations[player].append(
             Animation('Status', index=0))
 
-        game.sound_effect = SoundEffect.Inspire
+        # game.sound_effect = SoundEffect.Inspire
 
         return self.add_status(amt, game, player, Status.INSPIRE)
 
@@ -116,7 +116,7 @@ class Card:
         game.animations[player].append(
             Animation('Status', index=2))
 
-        game.sound_effect = SoundEffect.Nourish
+        # game.sound_effect = SoundEffect.Nourish
 
         return self.add_status(amt, game, player, Status.NOURISH)
 
@@ -247,12 +247,12 @@ class Card:
                 card.points += amt
                 card.dynamic_text = f'0:{card.points}, Fleeting'
 
-                game.sound_effect = SoundEffect.Birth
+                # game.sound_effect = SoundEffect.Birth
                 return f'\nBuild +{amt}'
 
         card = Card(name='Robot', points=amt, qualities=[Quality.FLEETING], dynamic_text=f'0:{amt}, fleeting', id=1003)
         if game.create(player, card):
-            game.sound_effect = SoundEffect.Birth
+            # game.sound_effect = SoundEffect.Birth
             return f'\nBuild {amt}'
         else:
             return ''
