@@ -125,7 +125,7 @@ class ServerModel:
 
             amt -= 1
 
-            # self.sound_effect = SoundEffect.Discard
+            # self.sound_effect = None
 
             self.animations[player].append(
                 Animation('Hand', 'Discard', card=CardCodec.encode_card(card), index=index, index2=len(self.pile[player]) - 1))
@@ -155,7 +155,7 @@ class ServerModel:
                     self.deck[player].pop(i)
                     self.amt_drawn[player] += 1
 
-                    # self.sound_effect = SoundEffect.Draw
+                    # self.sound_effect = None
                     self.animations[player].append(
                         Animation('Deck', 'Hand', card=CardCodec.encode_card(card), index2=len(self.hand[player]) - 1))
                     return card
@@ -167,7 +167,7 @@ class ServerModel:
         if len(self.hand[player]) < HAND_CAP:
             self.hand[player].append(card)
 
-            self.sound_effect = SoundEffect.Create
+            # self.sound_effect = None
             self.animations[player].append(
                 Animation('Gone', 'Hand', card=CardCodec.encode_card(card), index2=len(self.hand[player]) - 1))
 

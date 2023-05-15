@@ -51,7 +51,7 @@ class Desert(Card):
             # Return the card to hand only if there is room
             if super().create(act.card, game, act.owner):
                 game.animations[act.owner].pop()
-                game.sound_effect = None
+                # game.sound_effect = None
 
                 hand_index = len(game.hand[act.owner]) - 1
                 game.animations[act.owner].append(

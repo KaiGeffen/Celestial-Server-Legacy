@@ -88,6 +88,8 @@ class ServerController:
     # Return false if given card couldn't be played
     def attempt_play(self, player, card_num):
         if self.can_play(player, card_num):
+            self.model.sound_effect = None
+
             self.play(player, card_num)
             return True
         else:
@@ -112,8 +114,6 @@ class ServerController:
             card_in_hand.in_hand_on_play(player, self.model)
 
         self.model.story.add_act(card, owner=player, source=Source.HAND)
-
-        self.model.sound_effect = SoundEffect.Play
 
     # The given player is redrawing the cards specified by mulligans
     def do_mulligan(self, player, mulligans):
@@ -179,7 +179,7 @@ class ServerController:
         self.model.vision = [0, 0]
         self.model.amt_passes = [0, 0]
         self.model.amt_drawn = [0, 0]
-        self.model.sound_effect = None
+        # self.model.sound_effect = None
 
         # Give priority to the last player who has played a card
         self.model.priority = self.model.last_player_who_played
@@ -280,6 +280,9 @@ class ServerController:
         # Remember how the round ended for user's recap (Must come after wins are determined)
         self.model.story.save_end_state(self.model)
         self.model.story.clear()
+
+        # Reset the sound effect so that win/lose/tie doesn't play
+        self.model.sound_effect = None
 
     """EXPOSED UTILITY METHODS"""
     def get_client_model(self, player):
