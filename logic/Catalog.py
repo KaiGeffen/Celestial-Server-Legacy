@@ -188,13 +188,13 @@ class Gift(Card):
 gift = Gift(name="Gift", cost=3, points=3, text="3:3, both players draw 1", id=12)
 class Symbiosis(Card):
     def play(self, player, game, index, bonus):
-        nourished = Status.NOURISH in game.status[player]
+        nourished = (Status.NOURISH in game.status[player]) or (Status.STARVE in game.status[player])
         super().play(player, game, index, bonus)
         if nourished:
             super().discard(1, game, player^1)
 
     def rate_play(self, world):
-        nourished = Status.NOURISH in world.status
+        nourished = (Status.NOURISH in world.status) or (Status.STARVE in world.status)
 
         if nourished:
             return self.points + self.rate_discard(world)

@@ -92,7 +92,13 @@ class Card:
             recap = ''
 
         for _ in range(amt):
-            game.status[player].append(stat)
+            # Cancel nourish + starve if possible
+            if (stat is Status.NOURISH) and (Status.STARVE in game.status[player]):
+                game.status[player].remove(Status.STARVE)
+            elif (stat is Status.STARVE) and (Status.NOURISH in game.status[player]):
+                game.status[player].remove(Status.NOURISH)
+            else:
+                game.status[player].append(stat)
 
         return recap
 
