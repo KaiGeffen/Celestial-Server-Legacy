@@ -38,7 +38,7 @@ class Enrage(Card):
 
         for act in game.story.acts:
             act.bonus -= act.card.cost
-enrage = Enrage(name="Enrage", cost=8, points=2, id=47, rarity=2)
+enrage = Enrage(name="Enrage", cost=8, points=2, id=47)
 class Desert(Card):
     def play(self, player, game, index, bonus):
 
@@ -63,7 +63,7 @@ class Desert(Card):
             bonus += 3
 
         super().play(player, game, index, bonus)
-desert = Desert(name="Desert", cost=2, points=0, id=49, rarity=0)
+desert = Desert(name="Desert", cost=2, points=0, id=49)
 
 """BIRD"""
 class Dove(Card):
@@ -94,7 +94,7 @@ class Pelican(Card):
 
         super().play(player, game, index, bonus + amt)
         self.oust(amt, game, player)
-pelican = Pelican(name="Pelican", cost=4, points=4, id=40, qualities=[Quality.VISIBLE], rarity=0)
+pelican = Pelican(name="Pelican", cost=4, points=4, id=40, qualities=[Quality.VISIBLE])
 class Icarus(Card):
     def get_cost(self, player, game):
         amt = 0
@@ -108,7 +108,7 @@ class Icarus(Card):
             return 0
         else:
             return self.cost
-icarus = Icarus(name="Icarus", cost=7, points=7, id=46, rarity=3)
+icarus = Icarus(name="Icarus", cost=7, points=7, id=46)
 class Eagle(SightCard):
     def on_play(self, player, game):
         game.hand[player] = [dove] * len(game.hand[player])
@@ -118,7 +118,7 @@ class Eagle(SightCard):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.nourish(2, game, player)
-eagle = Eagle(amt=4, name="Eagle", cost=6, points=6, id=43, rarity=2)
+eagle = Eagle(amt=4, name="Eagle", cost=6, points=6, id=43)
 class Vulture(Card):
     def morning(self, player, game, index):
         super().create(dove, game, player)
@@ -128,7 +128,7 @@ class Phoenix(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.create(dove, game, player)
-phoenix = Phoenix(name="Phoenix", cost=5, points=5, qualities=[Quality.VISIBLE, Quality.FLEETING], id=51, rarity=0)
+phoenix = Phoenix(name="Phoenix", cost=5, points=5, qualities=[Quality.VISIBLE, Quality.FLEETING], id=51)
 
 class Heron(Card):
     def play(self, player, game, index, bonus):
@@ -136,11 +136,11 @@ class Heron(Card):
         self.reset(game)
 
     def get_cost(self, player, game):
-        return len(game.pile[player])
+        return self.cost + len(game.pile[player])
 
     def rate_play(self, world):
         return self.rate_reset(world)
-heron = Heron(name="Heron", cost=0, points=0, id=65, qualities=[Quality.VISIBLE], rarity=1)
+heron = Heron(name="Heron", cost=1, points=0, id=65, qualities=[Quality.VISIBLE])
 
 """Discard"""
 class BoneKnife(Card):
@@ -175,7 +175,7 @@ class Imprison(Card):
     def rate_play(self, world):
         # TODO Use a function for predicting opponent's hand size
         return self.rate_reset(world) - len(world.opp_hand)
-imprison = Imprison(name="Imprison", cost=2, id=35, rarity=1)
+imprison = Imprison(name="Imprison", cost=1, id=35)
 class Gift(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
@@ -200,14 +200,14 @@ class Symbiosis(Card):
             return self.points + self.rate_discard(world)
         else:
             return self.points
-symbiosis = Symbiosis(name="Symbiosis", cost=6, points=6, id=57, rarity=0)
+symbiosis = Symbiosis(name="Symbiosis", cost=6, points=6, id=57)
 
 class Nightmare(Card):
     def morning(self, player, game, index):
         if len(game.hand[player^1]) < len(game.hand[player]):
             super().create(stalker, game, player)
             return True
-nightmare = Nightmare(name="Nightmare", cost=2, points=2, id=68, rarity=1)
+nightmare = Nightmare(name="Nightmare", cost=2, points=2, id=68)
 
 
 """Machines"""
@@ -228,7 +228,7 @@ class Factory(Card):
         if (amt >= 1):
             self.build(amt, game, player)
 factory = Factory(name="Factory", cost=3, text="3:0, build X, where X is number of cards later in the story", id=10)
-class AI(Card):
+class TheFuture(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.draw(1, game, player)
@@ -240,7 +240,7 @@ class AI(Card):
                 amt += card.points
 
         return max(self.cost - amt, 0)
-ai = AI(name="AI", cost=8, points=5, text="8:5, draw 1. Costs X less where X is total robot points in hand", id=22)
+the_future = TheFuture(name="The Future", cost=8, points=4, id=22)
 class Sine(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
@@ -254,7 +254,7 @@ class Generator(Card):
     def morning(self, player, game, index):
         super().build(1, game, player)
         return True
-generator = Generator(name="Generator", cost=4, points=4, id=53, rarity=1)
+generator = Generator(name="Generator", cost=4, points=4, id=53)
 class BecomeMachine(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
@@ -268,7 +268,7 @@ class BecomeMachine(Card):
                 self.transform(index, card, game)
 
             index += 1
-become_machine = BecomeMachine(name="Become Machine", cost=1, points=0, qualities=[Quality.FLEETING], id=55, rarity=1)
+become_machine = BecomeMachine(name="Become Machine", cost=1, points=0, qualities=[Quality.FLEETING], id=55)
 class Cogsplosion(Card):
     def play(self, player, game, index, bonus):
         index = -1
@@ -280,12 +280,12 @@ class Cogsplosion(Card):
 
                 super().play(player, game, index, bonus)
                 self.discard(1, game, player, index=index)
-cogsplosion = Cogsplosion(name="Cogsplosion", cost=4, id=59, rarity=2)
+cogsplosion = Cogsplosion(name="Cogsplosion", cost=4, id=59)
 class Anvil(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.build(2, game, player)
-anvil = Anvil(name="Anvil", cost=3, points=2, id=60, rarity=0)
+anvil = Anvil(name="Anvil", cost=3, points=2, id=60)
 
 """Nature"""
 class Stars(Card):
@@ -314,7 +314,7 @@ class Lotus(Card):
 
         if self.your_final(game, player):
             self.reset(game)
-lotus = Lotus(name="Lotus", cost=5, id=42, rarity=2)
+lotus = Lotus(name="Lotus", cost=5, id=42)
 class Oak(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
@@ -356,7 +356,7 @@ class Cornucopia(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.nourish(2, game, player)
-cornucopia = Cornucopia(name="Cornucopia", cost=6, points=2, id=61, rarity=2)
+cornucopia = Cornucopia(name="Cornucopia", cost=6, points=2, id=61)
 """Earth"""
 class CrossedBones(Card):
     def play(self, player, game, index, bonus):
@@ -384,7 +384,7 @@ class Bastet(Card):
     def __init__(self, points):
         text = f"2:{points}, this card retains all changes to points as it resolves (For example, if this card was nourished by 3, it stays a 2:4 once it is in the discard pile)"
         super().__init__("Bastet", cost=2, points=points, qualities=[Quality.FLEETING],
-                         text=text, dynamic_text=text, id=34, rarity=2)
+                         text=text, dynamic_text=text, id=34)
 
     def play(self, player, game, index, bonus):
         points = self.points + bonus
@@ -402,17 +402,26 @@ class NightVision(SightCard):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.tutor(2, game, player)
-night_vision = NightVision(amt=3, name="Night Vision", cost=1, points=0, id=28, rarity=0)
+night_vision = NightVision(amt=3, name="Night Vision", cost=1, points=0, id=28)
 
-class FishBones(Card):
+class Parch(Card):
     def play(self, player, game, index, bonus):
+        for act in game.story.acts:
+            if act.owner == player:
+                bonus += 1
+
         super().play(player, game, index, bonus)
 
-        self.draw(2, game, player)
-
-        for _ in range(3):
-            self.create_in_pile(broken_bone, game, player)
-fish_bones = FishBones(name="Fish Bones", cost=2, points=0, qualities=[Quality.FLEETING], id=64, rarity=0)
+        i = 0
+        while i < len(game.story.acts):
+            act = game.story.acts[i]
+            if act.owner == player:
+                self.remove_act(i, game)
+            else:
+                i += 1
+    def on_play(self, player, game):
+        game.status[player].append(Status.UNLOCKED)
+parch = Parch(name="Parch", cost=3, points=2, id=64)
 
 """Ships"""
 class FishingBoat(Card):
@@ -421,14 +430,14 @@ class FishingBoat(Card):
 
         for i in range(3):
             self.tutor(1, game, player)
-fishing_boat = FishingBoat(name="Fishing Boat", cost=2, text="2:0, tutor a 1 3 times", id=32)
+fishing_boat = FishingBoat(name="Fishing Boat", cost=2, points=1, id=32)
 
 """Death"""
 class Scarab(SightCard):
     def morning(self, player, game, index):
         game.vision[player] += 1
         return True
-scarab = Scarab(amt=4, name="Scarab", cost=0, points=0, id=50, rarity=0)
+scarab = Scarab(amt=4, name="Scarab", cost=0, points=0, id=50)
 class Drown(Card):
     def play(self, player, game, index, bonus):
         # game.sound_effect = SoundEffect.Drown
@@ -445,7 +454,7 @@ class Unearth(Card):
 
             game.animations[player].append(
                 Animation('Discard', 'Deck', card=CardCodec.encode_card(card)))
-unearth = Unearth(name="Unearth", cost=2, points=2, id=33, rarity=0)
+unearth = Unearth(name="Unearth", cost=2, points=2, id=33)
 class Tumulus(Card):
     def play(self, player, game, index, bonus):
         if len(game.pile[player]) >= 8:
@@ -532,14 +541,14 @@ class Crypt(Card):
 
             if replacement_card is not None:
                 self.transform(index_final_owned_card, replacement_card, game)
-crypt = Crypt(name="Crypt", cost=2, points=2, id=36, rarity=2)
+crypt = Crypt(name="Crypt", cost=2, points=2, id=36)
 
 class Kneel(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.discard(1, game, player)
         self.tutor(7, game, player)
-kneel = Kneel(name="Kneel", cost=0, points=0, qualities=[Quality.FLEETING], id=66, rarity=0)
+kneel = Kneel(name="Kneel", cost=0, points=0, qualities=[Quality.FLEETING], id=66)
 
 """INSECTS"""
 # bee = Card(name="Bee", cost=0, points=1, qualities=[Quality.VISIBLE], text="0:1, visible", id=24)
@@ -547,7 +556,7 @@ class Nectar(SightCard):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.nourish(1, game, player)
-nectar = Nectar(name="Nectar", amt=3, cost=1, text="1:0, nourish 1 (Your next card gives +1 points)", id=25, rarity=0)
+nectar = Nectar(name="Nectar", amt=3, cost=1, text="1:0, nourish 1 (Your next card gives +1 points)", id=25)
 
 """Other"""
 class Hurricane(Card):
@@ -557,12 +566,12 @@ class Hurricane(Card):
 
     def rate_play(self, world):
         return self.rate_reset(world)
-hurricane = Hurricane(name="Hurricane", cost=4, text="4:0, reset", id=13)
+hurricane = Hurricane(name="Hurricane", cost=3, id=13)
 class Spy(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.create(camera, game, player ^ 1)
-spy = Spy(name="Spy", cost=1, id=27, rarity=1)
+spy = Spy(name="Spy", cost=1, id=27)
 class Uprising(Card):
     def play(self, player, game, index, bonus):
         # game.sound_effect = SoundEffect.Crowd
@@ -577,15 +586,13 @@ class Juggle(Card):
 
         self.bottom(amt, game, player)
         self.draw(amt, game, player)
-juggle = Juggle(name="Juggle", cost=1, points=1, id=30, rarity=2)
-class Paranoia(Card):
-    def on_play(self, player, game):
-        amt = game.story.get_length()
-        game.vision[player] += amt
-
+juggle = Juggle(name="Juggle", cost=1, points=1, id=30)
+class Awakening(Card):
     def play(self, player, game, index, bonus):
+        self.add_status(1, game, player, Status.AWAKENED)
+
         super().play(player, game, index, bonus)
-paranoia = Paranoia(name="Paranoia", cost=3, points=3, id=39, rarity=1)
+awakening = Awakening(name="Awakening", cost=3, points=3, id=39)
 class Horus(Card):
     def get_cost(self, player, game):
 
@@ -601,12 +608,12 @@ class Horus(Card):
             return 0
         else:
             return self.cost
-horus = Horus(name="Horus", cost=7, points=7, id=45, rarity=3)
+horus = Horus(name="Horus", cost=7, points=7, id=45)
 class Bandit(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.create(wanted_poster, game, player ^ 1)
-bandit = Bandit(name="Bandit", cost=1, points=2, id=26, rarity=0)
+bandit = Bandit(name="Bandit", cost=1, points=2, id=26)
 class Disintegrate(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
@@ -617,11 +624,11 @@ class Disintegrate(Card):
                 self.transform(target_index, broken_bone, game)
                 return
             target_index += 1
-disintegrate = Disintegrate(name="Disintegrate", cost=1, points=1, id=29, rarity=0)
+disintegrate = Disintegrate(name="Disintegrate", cost=1, points=1, id=29)
 class Ecology(Card):
     def on_play(self, player, game):
         game.mana[player] += 10
-ecology = Ecology(name="Ecology", cost=7, points=0, id=44, rarity=1)
+ecology = Ecology(name="Ecology", cost=7, points=0, id=44)
 class Chimney(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
@@ -645,10 +652,10 @@ class PocketWatch(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.draw(2, game, player)
-pocket_watch = PocketWatch(name="Pocket Watch", cost=4, points=2, id=54, rarity=1)
+pocket_watch = PocketWatch(name="Pocket Watch", cost=4, points=2, id=54)
 class Sun(Card):
     def morning(self, player, game, index):
-        super().add_mana(3, game, player)
+        super().add_mana(2, game, player)
         return True
 sun = Sun(name="Sun", cost=8, points=8, id=56)
 class Sickness(Card):
@@ -656,12 +663,12 @@ class Sickness(Card):
         super().play(player, game, index, bonus)
         self.starve(4, game, player ^ 1)
         self.create(sickness, game, player ^ 1)
-sickness = Sickness(name="Sickness", cost=3, points=0, qualities=[Quality.FLEETING], id=58, rarity=1)
+sickness = Sickness(name="Sickness", cost=3, points=-1, qualities=[Quality.FLEETING], id=58)
 class Axolotl(Card):
     def morning(self, player, game, index):
         super().create(axolotl, game, player)
         return True
-axolotl = Axolotl(name="Axolotl", cost=1, points=1, id=63, rarity=0)
+axolotl = Axolotl(name="Axolotl", cost=1, points=1, id=63)
 class Moon(Card):
     def morning(self, player, game, index):
         # Iterate through each card below this, trigger its morning effect
@@ -680,7 +687,7 @@ class Moon(Card):
                 count += 1
 
         return True
-moon = Moon(name="Moon", cost=5, points=5, id=73)
+moon = Moon(name="Moon", cost=5, points=4, id=73)
 
 
 class Paramountcy(Card):
@@ -696,7 +703,7 @@ class Paramountcy(Card):
                 # story_index = len(game.story.acts) - 1
                 game.animations[player].append(Animation('Discard', 'Story', index2=i))
 
-paramountcy = Paramountcy(name="Paramountcy", cost=9, points=0, id=62, rarity=3)
+paramountcy = Paramountcy(name="Paramountcy", cost=9, points=0, id=62)
 
 class Conquer(Card):
     def get_cost(self, player, game):
@@ -710,7 +717,7 @@ class Conquer(Card):
                     num_seen_cards += 1
 
         return max(0, self.cost - num_seen_cards)
-conquer = Conquer(name="Conquer", cost=5, points=2, id=67, rarity=1)
+conquer = Conquer(name="Conquer", cost=5, points=3, id=67)
 
 
 class Clone(Card):
@@ -731,7 +738,7 @@ class Swamp(Card):
         amt = max(0, len(game.hand[player]) - 2)
         self.discard(amt, game, player)
         self.nourish(amt, game, player)
-swamp = Swamp(name="Swamp", cost=0, points=0, qualities=[Quality.FLEETING], id=72, rarity=0)
+swamp = Swamp(name="Swamp", cost=0, points=0, qualities=[Quality.FLEETING], id=72)
 
 class Carrion(Card):
     def play(self, player, game, index, bonus):
@@ -744,13 +751,13 @@ class Carrion(Card):
         self.dig(3, game, player)
 
         self.nourish(amt, game, player)
-carrion = Carrion(name="Carrion", cost=2, points=1, id=74, rarity=2)
+carrion = Carrion(name="Carrion", cost=2, points=1, id=74)
 
 class Occupation(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.create(camera, game, player ^ 1)
-occupation = Occupation(name="Occupation", cost=7, points=7, id=75, rarity=2)
+occupation = Occupation(name="Occupation", cost=7, points=7, id=75)
 
 class GentleRain(Card):
     def play(self, player, game, index, bonus):
@@ -759,7 +766,7 @@ class GentleRain(Card):
         amt = game.amt_drawn[player]
 
         self.nourish(amt, game, player)
-gentle_rain = GentleRain(name="Gentle Rain", cost=4, points=2, id=71, rarity=3)
+gentle_rain = GentleRain(name="Gentle Rain", cost=4, points=2, id=71)
 
 class Sunflower(Card):
     def play(self, player, game, index, bonus):
@@ -770,7 +777,7 @@ class Sunflower(Card):
         super().play(player, game, index, bonus)
 
         self.inspire(points, game, player)
-sunflower = Sunflower(name="Sunflower", cost=2, points=1, id=69, rarity=2)
+sunflower = Sunflower(name="Sunflower", cost=2, points=1, id=69)
 
 class Hollow(Card):
     def play(self, player, game, index, bonus):
@@ -781,7 +788,7 @@ class Hollow(Card):
         game.score[player] = 0
 
         self.nourish(amt, game, player)
-hollow = Hollow(name="Hollow", cost=0, points=0, id=76, rarity=0)
+hollow = Hollow(name="Hollow", cost=0, points=0, id=76)
 
 """ DEV CARDS """
 class Rat(Card):
@@ -990,16 +997,16 @@ hidden_card = Card(name="Cardback", cost=0, points=0, text="?", id=1000)
 full_catalog = [
     stars, bone_knife, cog, crossed_bones, dove, drown, dash, swift,
     gears, cosmos, factory, fruiting, gift, hurricane, dinosaur_bones, mine,
-    chimney, tumulus, uprising, stalker, sarcophagus, anubis, ai, oak,
+    chimney, tumulus, uprising, stalker, sarcophagus, anubis, the_future, oak,
 
     nectar, bandit, spy, night_vision, sine,
-    fishing_boat, unearth, bastet, imprison, paranoia,
+    fishing_boat, unearth, bastet, imprison, awakening,
     pelican, lotus, ecology, horus, icarus, enrage,
 
     bounty, desert, scarab, phoenix, vulture, generator, pocket_watch, become_machine, sun,
     symbiosis,
     sickness, cogsplosion, anvil,
-    paramountcy, axolotl, fish_bones, heron,
+    paramountcy, axolotl, parch, heron,
     kneel, conquer, nightmare, carrion, occupation, gentle_rain, sunflower, hollow, moon,
 
     rat, beggar, fresh_air, possibilities, hatchling, eyes, capybara,

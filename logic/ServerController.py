@@ -176,7 +176,10 @@ class ServerController:
 
     # Perform the upkeep phase
     def do_upkeep(self):
-        self.model.vision = [0, 0]
+        new_vision_0 = self.model.vision[0] if Status.AWAKENED in self.model.status[0] else 0
+        new_vision_1 = self.model.vision[1] if Status.AWAKENED in self.model.status[1] else 0
+        self.model.vision = [new_vision_0, new_vision_1]
+
         self.model.amt_passes = [0, 0]
         self.model.amt_drawn = [0, 0]
         # self.model.sound_effect = None
@@ -316,7 +319,8 @@ class ServerController:
 
         cleared_statuses = [Status.INSPIRE,
                             Status.GENTLE,
-                            Status.UNLOCKED]
+                            Status.UNLOCKED,
+                            Status.AWAKENED]
 
         def clear_temp_statuses(stat):
             return stat not in cleared_statuses

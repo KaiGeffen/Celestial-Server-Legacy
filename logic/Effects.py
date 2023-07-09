@@ -13,3 +13,4 @@ class Status(Enum):
     STARVE = "Starve"
     GENTLE = "Gentle"
     UNLOCKED = "Unlocked"
+    AWAKENED = "Awakened"
