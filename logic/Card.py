@@ -245,18 +245,18 @@ class Card:
 
         return recap
 
-    # If no robot is in hand, make a 0:X fleeting robot, otherwise add +X to the existing robot
+    # If no child is in hand, make a 0:X fleeting child, otherwise add +X to the existing child
     def build(self, amt, game, player):
         # TODO Method for checking something is in hand
         for card in game.hand[player]:
-            if card.name == 'Robot':
+            if card.name == 'Child':
                 card.points += amt
                 card.dynamic_text = f'0:{card.points}, Fleeting'
 
                 # game.sound_effect = SoundEffect.Birth
                 return f'\nBuild +{amt}'
 
-        card = Card(name='Robot', points=amt, qualities=[Quality.FLEETING], dynamic_text=f'0:{amt}, fleeting', id=1003)
+        card = Card(name='Child', points=amt, qualities=[Quality.FLEETING], dynamic_text=f'0:{amt}, fleeting', id=1003)
         if game.create(player, card):
             # game.sound_effect = SoundEffect.Birth
             return f'\nBuild {amt}'
