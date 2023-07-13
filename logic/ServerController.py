@@ -228,7 +228,6 @@ class ServerController:
 
     # Perform the takedown phase
     def do_takedown(self):
-
         # Resolve the story
         self.model.score = [0, 0]
         wins = [0, 0]
@@ -237,27 +236,6 @@ class ServerController:
         self.model.recap.reset()
 
         self.model.story.run(self.model)
-
-        #
-        #
-        # while self.model.story.do_act(self.model):
-        #
-        #
-        # # The starting position of this card on the story
-        # index = 0
-        # while len(self.model.stack) > 0:
-        #     card, player = self.model.stack.pop(0)
-        #
-        #     # Add the points from this card to the owner's points this round
-        #     # Stack gets passed since it can influence how much a card is worth
-        #     recap_text = card.play(player, self.model, index, 0)
-        #     self.model.recap.add(card, player, recap_text)
-        #
-        #     # Put the spent card in players pile, unless it has Fleeting
-        #     if Quality.FLEETING not in card.qualities:
-        #         self.model.pile[player].append(card)
-        #
-        #     index += 1
 
         # Add to wins here
         if self.model.score[0] > self.model.score[1]:
@@ -269,8 +247,6 @@ class ServerController:
         # Adjust the scores to reflect the wins from this round
         self.model.wins[0] += wins[0]
         self.model.wins[1] += wins[1]
-
-        self.do_gentle()
 
         # Remember the scores
         self.model.round_results[0].append(self.model.score[0])
@@ -318,23 +294,12 @@ class ServerController:
                 self.model.status[player].append(Status.INSPIRED)
 
         cleared_statuses = [Status.INSPIRE,
-                            Status.GENTLE,
                             Status.UNLOCKED,
                             Status.AWAKENED]
 
         def clear_temp_statuses(stat):
             return stat not in cleared_statuses
         self.model.status[player] = list(filter(clear_temp_statuses, self.model.status[player]))
-
-    # If the winning player has gentle, award carryover equal to how much extra they won by
-    def do_gentle(self):
-        # Consider p1 winning and consider p2 winning
-        for (p1, p2) in [(0, 1), (1, 0)]:
-            score_above_winning = self.model.score[p1] - self.model.score[p2]
-
-            if score_above_winning > 0:
-                amt = self.model.status[p1].count(Status.GENTLE) * score_above_winning
-                self.model.status[p1].extend(amt * [Status.NOURISH])
 
     """UTILITY CHECKS"""
     # Check if the given player can play the given card

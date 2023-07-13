@@ -109,18 +109,12 @@ class Stalker(Card):
         return 10
 stalker = Stalker(name="Stalker", cost=6, points=3, id=19)
 class Imprison(Card):
-    def play(self, player, game, index, bonus):
-        opp = (player + 1) % 2
-
-        super().play(player, game, index, bonus)
-        self.reset(game)
-
-        game.score[opp] = len(game.hand[opp])
-
-    def rate_play(self, world):
-        # TODO Use a function for predicting opponent's hand size
-        return self.rate_reset(world) - len(world.opp_hand)
-imprison = Imprison(name="Imprison", cost=1, id=35)
+    def on_round_end(self, player, game):
+        # If opponent had 3 or fewer points
+        if game.score[player^1] <= 3:
+            # Give them Nourish -1
+            game.status[player^1].extend([Status.STARVE])
+imprison = Imprison(name="Imprison", cost=1, points=3, id=35)
 class Gift(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
@@ -241,10 +235,14 @@ class Fruiting(Card):
         self.nourish(3, game, player)
 fruiting = Fruiting(name="Fruiting", cost=3, id=11)
 class Oak(Card):
-    def play(self, player, game, index, bonus):
-        super().play(player, game, index, bonus)
-        self.gentle(game, player)
-oak = Oak(name="Oak", cost=8, points=8, id=23)
+    def on_round_end(self, player, game):
+        score_above_winning = game.score[player] - game.score[player^1]
+
+        amt = max(0, score_above_winning)
+
+        game.status[player].extend(amt * [Status.NOURISH])
+
+oak = Oak(name="Oak", cost=0, points=8, id=23)
 class Bounty(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)

@@ -11,6 +11,5 @@ class Status(Enum):
     INSPIRED = "Inspired"
     NOURISH = "Nourish"
     STARVE = "Starve"
-    GENTLE = "Gentle"
     UNLOCKED = "Unlocked"
     AWAKENED = "Awakened"

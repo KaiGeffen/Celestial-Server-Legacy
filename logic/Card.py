@@ -64,6 +64,10 @@ class Card:
     def on_play(self, player, game):
         pass
 
+    # If this card resolved this round, trigger this effect at the end of round
+    def on_round_end(self, player, game):
+        pass
+
     """GENERIC THINGS A CARD CAN DO"""
     # Reset the scores to 0, 0 - removes all safe
     def reset(self, game):
@@ -236,14 +240,6 @@ class Card:
     # Oust the top X cards from the player's pile
     def dig(self, amt, game, player):
         game.dig(player, amt)
-
-    # At the end of this round, if you win, convert points to nourish such that you win by 1
-    def gentle(self, game, player):
-        recap = '\nGentle'
-
-        game.status[player].append(Status.GENTLE)
-
-        return recap
 
     # If no child is in hand, make a 0:X fleeting child, otherwise add +X to the existing child
     def build(self, amt, game, player):
