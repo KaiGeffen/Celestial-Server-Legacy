@@ -5,26 +5,26 @@ from Animation import Animation
 
 # TODO make a separate file for tokens
 """Tokens"""
-class Camera(Card):
+class Seen(Card):
     def on_upkeep(self, player, game, index):
         game.vision[player ^ 1] += 4
         return True
-camera = Camera(name="Camera", cost=2, qualities=[Quality.FLEETING],
+seen = Seen(name="Seen", cost=2, qualities=[Quality.FLEETING],
                 text="2:0, Fleeting, at the start of each round, give your opponent vision 4", id=1001)
-class BrokenBone(Card):
+class Ashes(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.draw(1, game, player)
-broken_bone = BrokenBone(name="Broken Bone", cost=1, qualities=[Quality.FLEETING], id=1002)
+ashes = Ashes(name="Ashes", cost=1, qualities=[Quality.FLEETING], id=1002)
 robot = Card(name='Robot', qualities=[Quality.FLEETING], text="0:X, Fleeting", id=1003)
-class WantedPoster(Card):
+class Predator(Card):
     def play(self, player, game, index, bonus):
         bonus += 2 * game.pile[player ^ 1].count(bandit)
 
         super().play(player, game, index, bonus)
-wanted_poster = WantedPoster(name="Wanted Poster", cost=1, qualities=[Quality.FLEETING], id=1004)
+predator = Predator(name="Predator", cost=1, qualities=[Quality.FLEETING], id=1004)
 
-tokens = [camera, broken_bone, robot, wanted_poster]
+tokens = [seen, ashes, robot, predator]
 
 """FIRE"""
 dash = FireCard(name="Dash", cost=2, points=3, text="2:3, flare (Worth 1 less for every card before it)", id=6)
@@ -365,7 +365,7 @@ class CrossedBones(Card):
         super().play(player, game, index, bonus)
 
         for _ in range(2):
-            self.create_in_pile(broken_bone, game, player)
+            self.create_in_pile(ashes, game, player)
 crossed_bones = CrossedBones(name="Crossed Bones", cost=1, points=1, qualities=[Quality.FLEETING], id=3)
 class Mine(Card):
     def play(self, player, game, index, bonus):
@@ -378,7 +378,7 @@ class DinosaurBones(Card):
         super().play(player, game, index, bonus)
 
         for _ in range(3):
-            self.create_in_pile(broken_bone, game, player)
+            self.create_in_pile(ashes, game, player)
 dinosaur_bones = DinosaurBones(name="Dinosaur Bones", cost=4, points=4, qualities=[Quality.FLEETING], id=14)
 class Bastet(Card):
     def __init__(self, points):
@@ -570,7 +570,7 @@ hurricane = Hurricane(name="Hurricane", cost=3, id=13)
 class Spy(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
-        self.create(camera, game, player ^ 1)
+        self.create(seen, game, player ^ 1)
 spy = Spy(name="Spy", cost=1, id=27)
 class Uprising(Card):
     def play(self, player, game, index, bonus):
@@ -612,7 +612,7 @@ horus = Horus(name="Horus", cost=7, points=7, id=45)
 class Bandit(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
-        self.create(wanted_poster, game, player ^ 1)
+        self.create(predator, game, player ^ 1)
 bandit = Bandit(name="Bandit", cost=1, points=2, id=26)
 class Disintegrate(Card):
     def play(self, player, game, index, bonus):
@@ -621,7 +621,7 @@ class Disintegrate(Card):
         target_index = 0
         for act in game.story.acts:
             if act.card.cost == 1:
-                self.transform(target_index, broken_bone, game)
+                self.transform(target_index, ashes, game)
                 return
             target_index += 1
 disintegrate = Disintegrate(name="Disintegrate", cost=1, points=1, id=29)
@@ -756,7 +756,7 @@ carrion = Carrion(name="Carrion", cost=2, points=1, id=74)
 class Occupation(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
-        self.create(camera, game, player ^ 1)
+        self.create(seen, game, player ^ 1)
 occupation = Occupation(name="Occupation", cost=7, points=7, id=75)
 
 class GentleRain(Card):
