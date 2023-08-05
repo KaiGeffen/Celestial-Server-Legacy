@@ -20,7 +20,7 @@ class Swift(Card):
         # TODO
         return value
 swift = Swift(name="Swift", cost=2, points=2, qualities=[Quality.VISIBLE, Quality.FLEETING], id=7)
-class Pelican(Card):
+class SecretaryBird(Card):
     def play(self, player, game, index, bonus):
         amt = 0
         for card in game.hand[player]:
@@ -29,7 +29,7 @@ class Pelican(Card):
 
         super().play(player, game, index, bonus + amt)
         self.oust(amt, game, player)
-pelican = Pelican(name="Pelican", cost=4, points=4, id=40, qualities=[Quality.VISIBLE])
+secretary_bird = SecretaryBird(name="Secretary Bird", cost=4, points=4, id=40, qualities=[Quality.VISIBLE])
 class Phoenix(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)

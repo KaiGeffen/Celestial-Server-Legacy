@@ -233,19 +233,19 @@ cloud = Cloud(name="Cloud", cost=3, points=0, id=2013)
 """Lists"""
 hidden_card = Card(name="Cardback", cost=0, points=0, id=1000)
 full_catalog = [
-    stars, bone_knife, cog, crossed_bones, dove, drown, dash, swift,
-    gears, cosmos, factory, fruiting, gift, hurricane, dinosaur_bones, mine,
-    chimney, tumulus, uprising, stalker, sarcophagus, anubis, the_future, oak,
+    stars, dagger, nascence, impulse, dove, drown, dash, swift,
+    birth, cosmos, ancestry, fruit, mercy, hurricane, aronist, mine,
+    wing_clipping, veteran, uprising, shadow, cling, death, the_future, oak,
 
-    nectar, bandit, spy, night_vision, sine,
-    fishing_boat, unearth, bastet, imprison, awakening,
-    pelican, ecology, horus, icarus,
+    nectar, prey, clear_view, night_vision, hungry_ghost,
+    fishing_boat, hold_tight, pet, imprison, awakening,
+    secretary_bird, ecology, enlightenment, excess,
 
-    bounty, scarab, phoenix, generator, pocket_watch, become_machine, sun,
-    symbiosis,
-    sickness, anvil,
-    paramountcy, axolotl, parch, heron,
-    conquer, nightmare, carrion, gentle_rain, sunflower, hollow, moon,
+    bounty, dawn, phoenix, generator, iceberg, rebirth, sun,
+    boa,
+    sickness, cradle,
+    paramountcy, dew, parch, heron,
+    conquer, nightmare, from_ashes, gentle_rain, sunflower, hollow, moon,
 
     rat, beggar, fresh_air, possibilities, hatchling, eyes, capybara,
     rekindle, tragedy, hound, lullaby, longing, dwindle,
@@ -273,89 +273,89 @@ def get_computer_deck(i = None):
     possible_decks = [
         [
             # Standard anubis
-            crossed_bones, crossed_bones, crossed_bones, drown, drown,
+            impulse, impulse, impulse, drown, drown,
             swift, swift, dash,
-            gift, fruiting,
-            dinosaur_bones, dinosaur_bones,
-            tumulus, tumulus,
-            anubis,
+            mercy, fruit,
+            aronist, aronist,
+            veteran, veteran,
+            death,
         ], [
             # All in anubis
             stars, stars,
-            crossed_bones, crossed_bones, drown, drown, drown,
-            dinosaur_bones, dinosaur_bones, dinosaur_bones, dinosaur_bones,
-            tumulus,
-            sarcophagus,
-            anubis, anubis,
+            impulse, impulse, drown, drown, drown,
+            aronist, aronist, aronist, aronist,
+            veteran,
+            cling,
+            death, death,
         ], [
             # Aggro Anubis
             stars,
-            crossed_bones, crossed_bones, crossed_bones, crossed_bones, crossed_bones,
+            impulse, impulse, impulse, impulse, impulse,
             dash, dash, swift, swift,
-            gift, gift,
+            mercy, mercy,
             mine, mine,
-            anubis
+            death
         ], [
             # Standard oak
             stars, stars, stars,
             dove, dove, dove,
             cosmos, swift,
-            gift, gift, fruiting, fruiting,
-            dinosaur_bones,
-            anubis,
+            mercy, mercy, fruit, fruit,
+            aronist,
+            death,
             oak,
         ], [
             # Sarco oak
             stars, stars, stars,
             dove, drown, drown,
-            cosmos, gears,
-            gift, fruiting,
-            stalker, uprising, sarcophagus, sarcophagus,
+            cosmos, birth,
+            mercy, fruit,
+            shadow, uprising, cling, cling,
             oak,
         ], [
             # Uprising
-            cog, cog,
-            dove, dove, crossed_bones,
-            gears, gears, gears, swift, dash,
-            gift, gift, gift,
+            nascence, nascence,
+            dove, dove, impulse,
+            birth, birth, birth, swift, dash,
+            mercy, mercy, mercy,
             uprising, uprising,
         ], [
             # Uprising + Factory
-            cog, cog, cog,
-            dove, dove, dove, crossed_bones,
+            nascence, nascence, nascence,
+            dove, dove, dove, impulse,
             cosmos, swift, dash,
-            factory, gift, gift,
-            uprising, stalker,
+            ancestry, mercy, mercy,
+            uprising, shadow,
         ], [
             # Aggro
             stars,
-            dove, crossed_bones, crossed_bones, crossed_bones, crossed_bones,
-            gears, swift, swift, dash, dash,
-            gift, gift, gift,
+            dove, impulse, impulse, impulse, impulse,
+            birth, swift, swift, dash, dash,
+            mercy, mercy, mercy,
             mine,
         ], [
             # Bad stalker
             stars, stars,
             dove, dove, dove,
             swift, swift,
-            fruiting, fruiting,
-            chimney, chimney, chimney,
-            stalker, stalker, sarcophagus,
+            fruit, fruit,
+            wing_clipping, wing_clipping, wing_clipping,
+            shadow, shadow, cling,
         ], [
             # Stalker oak
             stars, stars, stars,
             dove, dove, dove,
             cosmos,
-            fruiting, fruiting,
-            chimney, chimney, chimney,
-            stalker, stalker, sarcophagus,
+            fruit, fruit,
+            wing_clipping, wing_clipping, wing_clipping,
+            shadow, shadow, cling,
             oak
         ], [
             # Aggro to late hyperthin
             dove, dove, dove, dove, dove, dove,
             dash, dash,
-            gift, gift, gift,
-            dinosaur_bones, dinosaur_bones,
+            mercy, mercy, mercy,
+            aronist, aronist,
             oak, oak,
         ]
     ]

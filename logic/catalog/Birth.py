@@ -1,25 +1,26 @@
 from logic.Card import Card
+from logic.catalog.Tokens import child
 from logic.Effects import Status, Quality
 from logic.Story import Source
 from Animation import Animation
 
-class Cog(Card):
+class nascence(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.build(1, game, player)
-cog = Cog(name="Cog", cost=0, id=2)
-class Gears(Card):
+nascence = nascence(name="Nascence", cost=0, id=2)
+class Birth(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.build(2, game, player)
-gears = Gears(name="Gears", cost=2, id=8)
-class Factory(Card):
+birth = Birth(name="Birth", cost=2, id=8)
+class Ancestry(Card):
     def play(self, player, game, index, bonus):
         amt = game.story.get_length()
         super().play(player, game, index, bonus)
         if (amt >= 1):
             self.build(amt, game, player)
-factory = Factory(name="Factory", cost=3, id=10)
+ancestry = Ancestry(name="Ancestry", cost=3, id=10)
 class TheFuture(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
@@ -38,7 +39,7 @@ class Generator(Card):
         super().build(1, game, player)
         return True
 generator = Generator(name="Generator", cost=4, points=4, id=53)
-class BecomeMachine(Card):
+class Rebirth(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
 
@@ -51,12 +52,12 @@ class BecomeMachine(Card):
                 self.transform(index, card, game)
 
             index += 1
-become_machine = BecomeMachine(name="Become Machine", cost=1, points=0, qualities=[Quality.FLEETING], id=55)
-class Anvil(Card):
+rebirth = Rebirth(name="Rebirth", cost=1, points=0, qualities=[Quality.FLEETING], id=55)
+class Cradle(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.build(2, game, player)
-anvil = Anvil(name="Anvil", cost=3, points=2, id=60)
+cradle = Cradle(name="Cradle", cost=3, points=2, id=60)
 class Uprising(Card):
     def play(self, player, game, index, bonus):
         # game.sound_effect = SoundEffect.Crowd

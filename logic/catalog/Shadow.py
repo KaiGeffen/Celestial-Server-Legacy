@@ -3,7 +3,7 @@ from logic.Effects import Status, Quality
 from logic.Story import Source
 from Animation import Animation
 
-class BoneKnife(Card):
+class Dagger(Card):
     def play(self, player, game, index, bonus):
         opp = (player + 1) % 2
         super().play(player, game, index, bonus)
@@ -13,8 +13,8 @@ class BoneKnife(Card):
 
     def rate_play(self, world):
         return self.rate_discard(world)
-bone_knife = BoneKnife(name="Bone Knife", cost=1, id=1)
-class Stalker(Card):
+dagger = Dagger(name="Dagger", cost=1, id=1)
+class Shadow(Card):
     def get_cost(self, player, game):
         opp = (player + 1) % 2
 
@@ -22,7 +22,7 @@ class Stalker(Card):
 
     def rate_delay(self, world):
         return 10
-stalker = Stalker(name="Stalker", cost=6, points=3, id=19)
+shadow = Shadow(name="Shadow", cost=6, points=3, id=19)
 class Imprison(Card):
     def on_round_end(self, player, game):
         # If opponent had 3 or fewer points
@@ -33,10 +33,10 @@ imprison = Imprison(name="Imprison", cost=3, points=3, id=35)
 class Nightmare(Card):
     def morning(self, player, game, index):
         if len(game.hand[player^1]) < len(game.hand[player]):
-            super().create(stalker, game, player)
+            super().create(shadow, game, player)
             return True
 nightmare = Nightmare(name="Nightmare", cost=2, points=2, id=68)
-class Symbiosis(Card):
+class Boa(Card):
     def play(self, player, game, index, bonus):
         nourished = (Status.NOURISH in game.status[player]) or (Status.STARVE in game.status[player])
         super().play(player, game, index, bonus)
@@ -50,15 +50,15 @@ class Symbiosis(Card):
             return self.points + self.rate_discard(world)
         else:
             return self.points
-symbiosis = Symbiosis(name="Symbiosis", cost=6, points=6, id=57)
-class Sine(Card):
+boa = Boa(name="Boa", cost=6, points=6, id=57)
+class HungryGhost(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.starve(4, game, player)
 
     def rate_delay(self, world):
         return 12
-sine = Sine(name="Sine", cost=2, points=4, id=31)
+hungry_ghost = HungryGhost(name="Hungry Ghost", cost=2, points=4, id=31)
 class Hurricane(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
@@ -67,7 +67,7 @@ class Hurricane(Card):
     def rate_play(self, world):
         return self.rate_reset(world)
 hurricane = Hurricane(name="Hurricane", cost=3, id=13)
-class Chimney(Card):
+class WingClipping(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
 
@@ -80,7 +80,7 @@ class Chimney(Card):
 
     def rate_play(self, world):
         return self.points + self.rate_discard(world)
-chimney = Chimney(name="Chimney", cost=5, points=3, id=16)
+wing_clipping = WingClipping(name="Wing Clipping", cost=5, points=3, id=16)
 class Sickness(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)

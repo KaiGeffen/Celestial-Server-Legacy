@@ -5,7 +5,7 @@ from logic.Story import Source
 from Animation import Animation
 
 dash = FireCard(name="Dash", cost=2, points=3, id=6)
-class CrossedBones(Card):
+class Impulse(Card):
     def play(self, player, game, index, bonus):
         # game.sound_effect = SoundEffect.Fire
 
@@ -13,20 +13,20 @@ class CrossedBones(Card):
 
         for _ in range(2):
             self.create_in_pile(ashes, game, player)
-crossed_bones = CrossedBones(name="Crossed Bones", cost=1, points=1, qualities=[Quality.FLEETING], id=3)
+impulse = Impulse(name="Impulse", cost=1, points=1, qualities=[Quality.FLEETING], id=3)
 class Mine(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
 
         self.dig(4, game, player)
 mine = Mine(name="Mine", cost=4, points=4, id=15)
-class DinosaurBones(Card):
+class Arsonist(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
 
         for _ in range(3):
             self.create_in_pile(ashes, game, player)
-dinosaur_bones = DinosaurBones(name="Dinosaur Bones", cost=4, points=4, qualities=[Quality.FLEETING], id=14)
+aronist = Arsonist(name="Arsonist", cost=4, points=4, qualities=[Quality.FLEETING], id=14)
 class Parch(Card):
     def play(self, player, game, index, bonus):
         for act in game.story.acts:
@@ -45,18 +45,7 @@ class Parch(Card):
     def on_play(self, player, game):
         game.status[player].append(Status.UNLOCKED)
 parch = Parch(name="Parch", cost=3, points=2, id=64)
-class Unearth(Card):
-    def play(self, player, game, index, bonus):
-        super().play(player, game, index, bonus)
-
-        if game.pile[player]:
-            card = game.pile[player].pop()
-            game.deck[player].append(card)
-
-            game.animations[player].append(
-                Animation('Discard', 'Deck', card=CardCodec.encode_card(card)))
-unearth = Unearth(name="Unearth", cost=2, points=2, id=33)
-class Tumulus(Card):
+class Veteran(Card):
     def play(self, player, game, index, bonus):
         if len(game.pile[player]) >= 8:
             bonus += 2
@@ -66,8 +55,8 @@ class Tumulus(Card):
     def rate_play(self, world):
         pile_has_8 = len(world.pile[0]) # TODO Cards in story
         return 4 + 2 * pile_has_8
-tumulus = Tumulus(name="Tumulus", cost=5, points=4, id=17)
-class Sarcophagus(Card):
+veteran = Veteran(name="Veteran", cost=5, points=4, id=17)
+class Cling(Card):
     def play(self, player, game, index, bonus):
         highest_cost = -1
         highest_index = None
@@ -108,15 +97,15 @@ class Sarcophagus(Card):
             return highest_cost
         else:
             return highest_cost + 1
-sarcophagus = Sarcophagus(name="Sarcophagus", cost=6, id=20)
-class Anubis(Card):
+cling = Cling(name="Cling", cost=6, id=20)
+class Death(Card):
     def get_cost(self, player, game):
         if len(game.pile[player]) >= 12:
             return 0
         else:
             return self.cost
-anubis = Anubis(name="Anubis", cost=7, points=7, id=21)
-class Carrion(Card):
+death = Death(name="Death", cost=7, points=7, id=21)
+class FromAshes(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
 
@@ -127,4 +116,4 @@ class Carrion(Card):
         self.dig(3, game, player)
 
         self.nourish(amt, game, player)
-carrion = Carrion(name="Carrion", cost=2, points=1, id=74)
+from_ashes = FromAshes(name="From Ashes", cost=2, points=1, id=74)

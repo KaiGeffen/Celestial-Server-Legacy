@@ -4,23 +4,23 @@ from logic.Effects import Status, Quality
 from logic.Story import Source
 from Animation import Animation
 
-class Scarab(SightCard):
+class Dawn(SightCard):
     def morning(self, player, game, index):
         game.vision[player] += 1
         return True
-scarab = Scarab(amt=4, name="Scarab", cost=0, points=0, id=50)
-class Spy(Card):
+dawn = Dawn(amt=4, name="Dawn", cost=0, points=0, id=50)
+class ClearView(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.create(seen, game, player ^ 1)
-spy = Spy(name="Spy", cost=1, id=27)
+clear_view = ClearView(name="Clear View", cost=1, id=27)
 class Awakening(Card):
     def play(self, player, game, index, bonus):
         self.add_status(1, game, player, Status.AWAKENED)
 
         super().play(player, game, index, bonus)
 awakening = Awakening(name="Awakening", cost=3, points=3, id=39)
-class Horus(Card):
+class Enlightenment(Card):
     def get_cost(self, player, game):
 
         num_seen_cards = 0
@@ -35,12 +35,12 @@ class Horus(Card):
             return 0
         else:
             return self.cost
-horus = Horus(name="Horus", cost=7, points=7, id=45)
-class Bandit(Card):
+enlightenment = Enlightenment(name="Enlightenment", cost=7, points=7, id=45)
+class Prey(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
         self.create(predator, game, player ^ 1)
-bandit = Bandit(name="Prey", cost=1, points=2, id=26)
+prey = Prey(name="Prey", cost=1, points=2, id=26)
 class Conquer(Card):
     def get_cost(self, player, game):
         num_seen_cards = 0
