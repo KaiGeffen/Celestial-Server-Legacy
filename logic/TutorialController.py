@@ -1,6 +1,6 @@
 from logic.ServerController import ServerController
 from logic.ServerModel import ServerModel
-from logic.Catalog import *
+from logic.catalog import *
 
 # TODO Redo
 
