@@ -114,7 +114,7 @@ class Imprison(Card):
         if game.score[player^1] <= 3:
             # Give them Nourish -1
             game.status[player^1].extend([Status.STARVE])
-imprison = Imprison(name="Imprison", cost=1, points=3, id=35)
+imprison = Imprison(name="Imprison", cost=3, points=3, id=35)
 class Gift(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
@@ -241,8 +241,7 @@ class Oak(Card):
         amt = max(0, score_above_winning)
 
         game.status[player].extend(amt * [Status.NOURISH])
-
-oak = Oak(name="Oak", cost=0, points=8, id=23)
+oak = Oak(name="Oak", cost=8, points=8, id=23)
 class Bounty(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
