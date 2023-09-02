@@ -221,13 +221,15 @@ class Cloud(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
 
+        self.inspire(len(game.hand[player]))
+
         self.draw(1, game, player)
 
-    def morning(self, player, game, index):
-        if len(game.hand[player]) == 6:
-            game.status[player].append(Status.UNLOCKED)
+    # def morning(self, player, game, index):
+    #     if len(game.hand[player]) == 6:
+    #         game.status[player].append(Status.UNLOCKED)
 
-        return True
+    #     return True
 cloud = Cloud(name="Cloud", cost=3, points=0, id=2013)
 
 """Lists"""

@@ -66,7 +66,7 @@ class Hurricane(Card):
 
     def rate_play(self, world):
         return self.rate_reset(world)
-hurricane = Hurricane(name="Hurricane", cost=3, id=13)
+hurricane = Hurricane(name="Hurricane", cost=4, id=13)
 class WingClipping(Card):
     def play(self, player, game, index, bonus):
         super().play(player, game, index, bonus)
