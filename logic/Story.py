@@ -37,6 +37,8 @@ class Story:
         game.animations = [[], []]
 
         index = 0
+        # List of callbacks that occur as the round ends
+        round_end_effects = []
         while self.acts:
             act = self.acts.pop(0)
 
@@ -55,11 +57,7 @@ class Story:
                                            game=game,
                                            index=index,
                                            bonus=act.bonus)
-                elif act.source is Source.SPRING:
-                    result = act.card.play_spring(player=act.owner,
-                                                  game=game,
-                                                  index=index,
-                                                  bonus=act.bonus)
+                    round_end_effects.append((act.card.on_round_end, act.owner))
 
             # Card goes to pile unless it has fleeting
             if Quality.FLEETING not in act.card.qualities:
@@ -78,6 +76,10 @@ class Story:
 
             self.recap.add_state(state_after_play)
             game.animations = [[], []]
+
+        # Do any round end effects
+        for (callback, player) in round_end_effects:
+            callback(player, game)
 
     def save_end_state(self, game):
         # Save an ending state which includes win/loss/tie sfx

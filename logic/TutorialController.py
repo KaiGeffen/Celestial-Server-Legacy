@@ -9,12 +9,12 @@ class TutorialController(ServerController):
     def __init__(self, num=None):
 
         p_decks = [
-            [dove, dove, dove, dove, dove, gift, dash,
-             gift, dove, dash, dove, dash, dove, dove],
-            [uprising, dove, gift, dash, stars, stars, dove,
-             stars, stars, uprising, stars, gift, dove, stars],
-            [uprising, dove, dove, fruiting, dash, dove, dove,
-             stars, cosmos, fruiting, uprising, dove, stars, fruiting, dove]
+            [dove, dove, dove, dove, dove, mercy, dash,
+             mercy, dove, dash, dove, dash, dove, dove],
+            [uprising, dove, mercy, dash, stars, stars, dove,
+             stars, stars, uprising, stars, mercy, dove, stars],
+            [uprising, dove, dove, fruit, dash, dove, dove,
+             stars, cosmos, fruit, uprising, dove, stars, fruit, dove]
         ]
         o_decks = [
             [dove, dove, dove, dove, dove, dove, dove, dove,
@@ -26,10 +26,10 @@ class TutorialController(ServerController):
         ]
 
         # NOTE The last cards are the top of the deck, which isn't shuffled for tutorial
-        player_deck = [gift, gift, dove, dash, gift, dove, dove, dash,
+        player_deck = [mercy, mercy, dove, dash, mercy, dove, dove, dash,
                        dove, dove, dash, dove, dash, dove, dove]
-        ai_deck = [dove, gift, dove, dove, gift, dove, dove, dove,
-                   gift, dove, dove, dove, dove, dove, dove]
+        ai_deck = [dove, mercy, dove, dove, mercy, dove, dove, dove,
+                   mercy, dove, dove, dove, dove, dove, dove]
 
         if num is not None:
             player_deck = p_decks[num]

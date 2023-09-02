@@ -64,6 +64,10 @@ class Card:
     def on_play(self, player, game):
         pass
 
+    # If this card resolved this round, trigger this effect at the end of round
+    def on_round_end(self, player, game):
+        pass
+
     """GENERIC THINGS A CARD CAN DO"""
     # Reset the scores to 0, 0 - removes all safe
     def reset(self, game):
@@ -237,26 +241,18 @@ class Card:
     def dig(self, amt, game, player):
         game.dig(player, amt)
 
-    # At the end of this round, if you win, convert points to nourish such that you win by 1
-    def gentle(self, game, player):
-        recap = '\nGentle'
-
-        game.status[player].append(Status.GENTLE)
-
-        return recap
-
-    # If no robot is in hand, make a 0:X fleeting robot, otherwise add +X to the existing robot
+    # If no child is in hand, make a 0:X fleeting child, otherwise add +X to the existing child
     def build(self, amt, game, player):
         # TODO Method for checking something is in hand
         for card in game.hand[player]:
-            if card.name == 'Robot':
+            if card.name == 'Child':
                 card.points += amt
                 card.dynamic_text = f'0:{card.points}, Fleeting'
 
                 # game.sound_effect = SoundEffect.Birth
                 return f'\nBuild +{amt}'
 
-        card = Card(name='Robot', points=amt, qualities=[Quality.FLEETING], dynamic_text=f'0:{amt}, fleeting', id=1003)
+        card = Card(name='Child', points=amt, qualities=[Quality.FLEETING], dynamic_text=f'0:{amt}, fleeting', id=1003)
         if game.create(player, card):
             # game.sound_effect = SoundEffect.Birth
             return f'\nBuild {amt}'

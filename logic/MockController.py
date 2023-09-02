@@ -54,11 +54,11 @@ class TestMorning(unittest.TestCase):
         mock.on_player_pass(0)
 
         # Assertions
-        self.assertEqual(stalker, model.hand[1][4])
+        self.assertEqual(shadow, model.hand[1][4])
 
 class TestNourish(unittest.TestCase):
     def test_boa_negative(self):
-        deck1 = [sine, symbiosis, sine]
+        deck1 = [hungry_ghost, boa, hungry_ghost]
         deck2 = [dove] * 15
         mock = MockController(deck1, deck2)
         model = mock.model
@@ -76,7 +76,7 @@ class TestNourish(unittest.TestCase):
 
     # Test that if you gain equal parts nourish and starve it cancels
     def test_boa_nourish_cancels(self):
-        deck1 = [symbiosis, dove, dove]
+        deck1 = [boa, dove, dove]
         deck2 = [sickness] * 15
         mock = MockController(deck1, deck2)
         model = mock.model
