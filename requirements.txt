@@ -1,3 +1,4 @@
+python_version=3.9.2
 websockets~=10.1
 
 # Modules for authentication
