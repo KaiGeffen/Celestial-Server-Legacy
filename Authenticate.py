@@ -179,12 +179,12 @@ def get_id_email(token):
 def get_user_data(id, email):
     try:
         # Connect to an existing database
-        connection = psycopg2.connect(user="doadmin",
+        connection = psycopg2.connect(user="postgres",
                                       password=os.environ["DB_PWD"],
                                       host=HOST,
-                                      port="25060",
-                                      database="defaultdb",
-                                      sslmode="require")
+                                      port="5432",
+                                      database="celestial",
+                                      sslmode="disable")
 
         cursor = connection.cursor()
 
@@ -244,12 +244,12 @@ def adjust_user_data_chosen_card(uuid, chosen_card, default_card):
 
     try:
         # Connect to an existing database
-        connection = psycopg2.connect(user="doadmin",
+        connection = psycopg2.connect(user="postgres",
                                       password=os.environ["DB_PWD"],
                                       host=HOST,
-                                      port="25060",
-                                      database="defaultdb",
-                                      sslmode="require")
+                                      port="5432",
+                                      database="celestial",
+                                      sslmode="disable")
 
         cursor = connection.cursor()
 
@@ -329,12 +329,12 @@ def update_db(cmd):
     print(cmd)
     try:
         # Connect to an existing database
-        connection = psycopg2.connect(user="doadmin",
+        connection = psycopg2.connect(user="postgres",
                                       password=os.environ["DB_PWD"],
                                       host=HOST,
-                                      port="25060",
-                                      database="defaultdb",
-                                      sslmode="require")
+                                      port="5432",
+                                      database="celestial",
+                                      sslmode="disable")
 
         cursor = connection.cursor()
 
