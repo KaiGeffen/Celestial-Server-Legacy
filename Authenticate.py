@@ -108,7 +108,7 @@ async def authenticate(ws):
 
                 match, player = await game_server.get_match(ws, path, uuid)
             elif data["type"] == "exit_match":
-                print('Exiting match for signed in user with email: ' + uuid)
+                # print('Exiting match for signed in user with uuid: ' + uuid)
                 await game_server.match_cleanup(path, match, ws)
                 path = match = None
             # In all other cases the message has to do with a game action, so it should be handled as a game message
@@ -196,15 +196,13 @@ def get_user_data(id, email):
         if count > 0:
             # If they do, return that entry
             user_data = cursor.fetchone()
-            print(f"Request user data is: {user_data}")
+            # print(f"Requested user data is: {user_data}")
             return user_data
 
         else:
             # TODO Take the user's preexisting progress / decks here
 
             # If they don't create one, then return the basic entry
-            print("User doesn't yet exist")
-
             basic_entry = f"('{id}', '{email}')"
             insert_query = f"INSERT INTO players (ID, EMAIL) VALUES {basic_entry}"
             cursor.execute(insert_query)
@@ -219,7 +217,7 @@ def get_user_data(id, email):
         if connection:
             cursor.close()
             connection.close()
-            print("PostgreSQL connection is closed")
+            # print("PostgreSQL connection is closed")
 
 # For user with given id, add the given pack to their inventory
 def adjust_user_data_opened_pack(uuid, pack):
@@ -266,7 +264,7 @@ def adjust_user_data_chosen_card(uuid, chosen_card, default_card):
         if connection:
             cursor.close()
             connection.close()
-            print("PostgreSQL connection is closed")
+            # print("PostgreSQL connection is closed")
 
 # For user with given id, update their user progress
 def adjust_user_progress(uuid, user_progress):
@@ -326,7 +324,7 @@ def add_loss(uuid):
 
 # For user with given id, update their decks
 def update_db(cmd):
-    print(cmd)
+    # print(cmd)
     try:
         # Connect to an existing database
         connection = psycopg2.connect(user="postgres",
@@ -347,4 +345,4 @@ def update_db(cmd):
         if connection:
             cursor.close()
             connection.close()
-            print("PostgreSQL connection is closed")
+            # print("PostgreSQL connection is closed")
