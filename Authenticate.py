@@ -2,6 +2,8 @@ import os
 import asyncio
 import psycopg2
 import json
+
+import psycopg2.sql
 import internet.WebSocketServer as game_server
 import websockets
 
@@ -219,53 +221,6 @@ def get_user_data(id, email):
             connection.close()
             # print("PostgreSQL connection is closed")
 
-# For user with given id, add the given pack to their inventory
-def adjust_user_data_opened_pack(uuid, pack):
-    update_query = "UPDATE players\n"
-    update_query += f"SET igc = igc - {COST_PACK}" \
-
-    for i in range(5):
-        val = pack[i]
-
-        # Must increase by amt of the card in the first 5 because it won't get saved between successive increments
-        amt = pack[:5].count(val)
-
-        update_query += f", inventory[{val + 1}] = coalesce(inventory[{val + 1}], 0) + {amt}"
-    update_query += f"\nWHERE id = '{uuid}';"
-
-    update_db(update_query)
-
-# For user with given id, submit their choice (Remove the default chosen card, add the one they chose)
-def adjust_user_data_chosen_card(uuid, chosen_card, default_card):
-    if chosen_card == default_card:
-        return
-
-    try:
-        # Connect to an existing database
-        connection = psycopg2.connect(user="postgres",
-                                      password=os.environ["DB_PWD"],
-                                      host=HOST,
-                                      port="5432",
-                                      database="celestial",
-                                      sslmode="disable")
-
-        cursor = connection.cursor()
-
-        update_query = "UPDATE players\n"
-        update_query += f"SET inventory[{chosen_card + 1}] = coalesce(inventory[{chosen_card + 1}], 0) + 1, inventory[{default_card + 1}] = coalesce(inventory[{default_card + 1}], 0) - 1\n"
-        update_query += f"WHERE id = '{uuid}';"
-
-        cursor.execute(update_query)
-        connection.commit()
-
-    except (Exception, psycopg2.Error) as error:
-        print("Error while connecting to PostgreSQL", error)
-    finally:
-        if connection:
-            cursor.close()
-            connection.close()
-            # print("PostgreSQL connection is closed")
-
 # For user with given id, update their user progress
 def adjust_user_progress(uuid, user_progress):
     # SQL db uses curly brace instead of square for arrays
@@ -311,8 +266,9 @@ def add_win(uuid):
     update_query = "UPDATE players\n"
     update_query += f"SET wins = wins + 1"
     update_query += f"\nWHERE id = '{uuid}';"
+    sanitied_s = psycopg2.sql
 
-    update_db(update_query)
+    update_db(sanitizied_s)
 
 # For user with given id, record a loss
 def add_loss(uuid):
