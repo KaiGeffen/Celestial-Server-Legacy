@@ -191,8 +191,9 @@ def get_user_data(id, email):
         cursor = connection.cursor()
 
         # Check if user has an entry
-        select_query = f"SELECT * from players where id = '{id}'"
-        cursor.execute(select_query)
+        cursor.execute(
+            "SELECT * FROM players WHERE id = '%(id)s'",
+            {'id': id})
         count = cursor.rowcount
         # TODO Throw if there is more than one row with that uuid
         if count > 0:
@@ -205,9 +206,9 @@ def get_user_data(id, email):
             # TODO Take the user's preexisting progress / decks here
 
             # If they don't create one, then return the basic entry
-            basic_entry = f"('{id}', '{email}')"
-            insert_query = f"INSERT INTO players (ID, EMAIL) VALUES {basic_entry}"
-            cursor.execute(insert_query)
+            cursor.execute(
+                "INSERT INTO players (ID, EMAIL) VALUES ('%(id)s', '%(email)s')",
+                {'id': id, 'email': email})
             connection.commit()
 
             print(f"Created the basic entry for user: {email}")
@@ -226,60 +227,75 @@ def adjust_user_progress(uuid, user_progress):
     # SQL db uses curly brace instead of square for arrays
     progress_no_quotes = str(user_progress).replace("'", "").replace('[', '{').replace(']', '}')
 
-    update_query = "UPDATE players\n"
-    update_query += f"SET userprogress = '{progress_no_quotes}'\n"
-    update_query += f"WHERE id = '{uuid}';"
-
-    update_db(update_query)
+    update_db(
+        """
+        UPDATE players
+        SET userprogress = %(progress_no_quotes)s
+        WHERE id = %(uuid)s;
+        """,
+        {'progress_no_quotes': progress_no_quotes, 'uuid': uuid}
+    )
 
 # For user with given id, update their decks
 def adjust_decks(uuid, decks):
+    # SQL db uses curly brace instead of square for arrays
     decks_no_quotes = str(decks).replace("'", "").replace('[', '{').replace(']', '}')
 
-    update_query = "UPDATE players\n"
-    # SQL db uses curly brace instead of square for arrays
-    update_query += f"SET decks = '{decks_no_quotes}'\n"
-    update_query += f"WHERE id = '{uuid}';"
-
-    update_db(update_query)
+    update_db(
+        """
+        UPDATE players
+        SET decks = %(decks_no_quotes)s
+        WHERE id = %(uuid)s;
+        """,
+        {'decks_no_quotes': decks_no_quotes, 'uuid': uuid}
+    )
 
 # For user with given id, update their inventory
 def adjust_inventory(uuid, binary_string):
-    update_query = "UPDATE players\n"
-    # SQL db uses curly brace instead of square for arrays
-    update_query += f"SET inventory = '{binary_string}'\n"
-    update_query += f"WHERE id = '{uuid}';"
-
-    update_db(update_query)
+    update_db(
+        """
+        UPDATE players
+        SET inventory = %(binary_string)s
+        WHERE id = %(uuid)s;
+        """,
+        {'binary_string': binary_string, 'uuid': uuid}
+    )
 
 # For user with given id, update their completed missions
 def adjust_completed_missions(uuid, binary_string):
-    update_query = "UPDATE players\n"
-    # SQL db uses curly brace instead of square for arrays
-    update_query += f"SET completedmissions = '{binary_string}'\n"
-    update_query += f"WHERE id = '{uuid}';"
-
-    update_db(update_query)
+    update_db(
+        """
+        UPDATE players
+        SET completedmissions = %(binary_string)s
+        WHERE id = %(uuid)s;
+        """,
+        {'binary_string': binary_string, 'uuid': uuid}
+    )
 
 # For user with given id, add them a win's worth of igc and record 1 win
 def add_win(uuid):
-    update_query = "UPDATE players\n"
-    update_query += f"SET wins = wins + 1"
-    update_query += f"\nWHERE id = '{uuid}';"
-    sanitied_s = psycopg2.sql
-
-    update_db(sanitizied_s)
+    update_db(
+        """
+        UPDATE players
+        SET wins = wins + 1
+        WHERE id = %(uuid)s;
+        """,
+        {'uuid': uuid}
+    )
 
 # For user with given id, record a loss
 def add_loss(uuid):
-    update_query = "UPDATE players\n"
-    update_query += f"SET losses = losses + 1"
-    update_query += f"\nWHERE id = '{uuid}';"
-
-    update_db(update_query)
+    update_db(
+        """
+        UPDATE players
+        SET losses = losses + 1
+        WHERE id = %(uuid)s;
+        """,
+        {'uuid': uuid}
+    )
 
 # For user with given id, update their decks
-def update_db(cmd):
+def update_db(cmd, vars):
     # print(cmd)
     try:
         # Connect to an existing database
@@ -292,11 +308,11 @@ def update_db(cmd):
 
         cursor = connection.cursor()
 
-        cursor.execute(cmd)
+        cursor.execute(cmd, vars)
         connection.commit()
 
     except (Exception, psycopg2.Error) as error:
-        print("Error while connecting to PostgreSQL", error)
+        print("Error while connecting to PostgreSQL", error, cmd, vars)
     finally:
         if connection:
             cursor.close()
